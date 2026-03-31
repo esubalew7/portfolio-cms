@@ -1,27 +1,58 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { socialLinks } from './SocialLinks';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
   const { isDarkMode, toggleTheme } = useTheme();
 
-  // Handle scroll events for sticky shadow
+  // Watch for scroll position changes using Intersection Observer for precise active highlighting
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    const handleScrollState = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScrollState);
+
+    const sections = document.querySelectorAll("section[id]");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, {
+      rootMargin: "-20% 0px -70% 0px" // Trigger highlight when section nears upper half of viewport
+    });
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollState);
+      sections.forEach((section) => observer.unobserve(section));
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Smooth scroll handler targeting exact section offset
+  const scrollToSection = (e, id) => {
+    e.preventDefault();
+    setIsMenuOpen(false); // Close mobile menu when clicked
+    
+    const element = document.getElementById(id);
+    if (element) {
+      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Skill', path: '/skill' },
-    { name: 'Projects', path: '/projects' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Home', id: 'home' },
+    { name: 'About', id: 'about' },
+    { name: 'Skills', id: 'skills' },
+    { name: 'Projects', id: 'projects' },
+    { name: 'Contact', id: 'contact' },
   ];
 
   return (
@@ -34,26 +65,29 @@ export const Navbar = () => {
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         {/* Logo */}
-        <NavLink to="/" className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 tracking-wide">
+        <a 
+          href="#home" 
+          onClick={(e) => scrollToSection(e, 'home')}
+          className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 tracking-wide"
+        >
           Esu<span className="text-gray-800 dark:text-white">balew</span>
-        </NavLink>
+        </a>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              className={({ isActive }) =>
-                `text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
-                  isActive
-                    ? 'text-blue-600 dark:text-blue-400 font-bold'
-                    : 'text-gray-700 dark:text-gray-300'
-                }`
-              }
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              onClick={(e) => scrollToSection(e, link.id)}
+              className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+                activeSection === link.id
+                  ? 'text-blue-600 dark:text-blue-400 font-bold'
+                  : 'text-gray-700 dark:text-gray-300'
+              }`}
             >
               {link.name}
-            </NavLink>
+            </a>
           ))}
 
           {/* Theme Toggle Button */}
@@ -74,11 +108,11 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu Button + Mobile Theme Toggle */}
+        {/* Mobile Menu Action Buttons */}
         <div className="md:hidden flex items-center space-x-4">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
           >
             {isDarkMode ? (
               <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -111,27 +145,42 @@ export const Navbar = () => {
 
       {/* Mobile Navigation Dropdown */}
       <div
-        className={`md:hidden absolute w-full bg-white dark:bg-gray-900 shadow-xl border-t border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out overflow-hidden ${
-          isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
+        className={`md:hidden absolute w-full bg-white dark:bg-gray-900 shadow-xl border-t border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out overflow-hidden flex flex-col ${
+          isMenuOpen ? 'max-h-[30rem] opacity-100 py-4' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="flex flex-col py-2 px-6 pb-4 space-y-2">
+        <div className="flex flex-col px-6 space-y-2 pb-4 border-b border-gray-200 dark:border-gray-800">
           {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              onClick={() => setIsMenuOpen(false)}
-              className={({ isActive }) =>
-                `block py-3 px-4 rounded-lg text-base font-medium transition-colors ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-600 dark:bg-gray-800 dark:text-blue-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
-                }`
-              }
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              onClick={(e) => scrollToSection(e, link.id)}
+              className={`block py-3 px-4 rounded-lg text-base font-medium transition-colors ${
+                activeSection === link.id
+                  ? 'bg-blue-50 text-blue-600 dark:bg-gray-800 dark:text-blue-400'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
+              }`}
             >
               {link.name}
-            </NavLink>
+            </a>
           ))}
+        </div>
+        
+        {/* Render Socials on Mobile Dropdown Bottom */}
+        <div className="flex justify-center items-center py-6 px-4">
+          <div className="flex gap-6">
+            {socialLinks.map(link => (
+              <a 
+                key={link.name} 
+                href={link.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                {link.icon}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </nav>
