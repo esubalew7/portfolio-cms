@@ -72,7 +72,7 @@ const skillCategories = [
 
 export const SkillsSection = () => {
   return (
-    <section id="skills" className="container mx-auto px-4 py-20 md:py-32 max-w-7xl">
+    <section id="skills" className="container mx-auto px-4 py-10 md:py-20 max-w-7xl">
       <motion.div
         variants={staggerContainer(0.1, 0)}
         initial="hidden"

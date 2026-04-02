@@ -44,7 +44,7 @@ export const ContactSection = () => {
     try {
       await axios.post('/api/contact', formData);
       setSubmitStatus('success');
-      setFormData({ name: '', email: '', message: '' }); 
+      setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitStatus('error');
@@ -54,8 +54,8 @@ export const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="container mx-auto px-4 py-20 md:py-32 max-w-4xl relative z-10">
-       <motion.div
+    <section id="contact" className="container mx-auto px-4 py-10 md:py-20 max-w-4xl relative z-10">
+      <motion.div
         variants={staggerContainer(0.2, 0)}
         initial="hidden"
         whileInView="visible"
@@ -69,9 +69,9 @@ export const ContactSection = () => {
           </p>
         </motion.div>
 
-        <motion.form 
+        <motion.form
           onSubmit={handleSubmit}
-          variants={fadeIn('up', 0.3)} 
+          variants={fadeIn('up', 0.3)}
           className="bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-8 border border-gray-100 dark:border-gray-800 space-y-6"
           noValidate
         >
@@ -90,49 +90,49 @@ export const ContactSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Name</label>
-              <input 
+              <input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                type="text" 
-                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`} 
-                placeholder="John Doe" 
+                type="text"
+                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                placeholder="John Doe"
               />
               {errors.name && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.name}</p>}
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
-              <input 
+              <input
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                type="email" 
-                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`} 
-                placeholder="john@example.com" 
+                type="email"
+                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                placeholder="john@example.com"
               />
               {errors.email && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.email}</p>}
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="message" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Message</label>
-            <textarea 
+            <textarea
               id="message"
               name="message"
               value={formData.message}
               onChange={handleChange}
-              rows="5" 
-              className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all resize-none`} 
-              placeholder="How can I help you? Project details, timelines, etc." 
+              rows="5"
+              className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all resize-none`}
+              placeholder="How can I help you? Project details, timelines, etc."
             />
             {errors.message && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.message}</p>}
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={isSubmitting}
             className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 dark:disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-lg flex justify-center items-center"
           >

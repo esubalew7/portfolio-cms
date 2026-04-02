@@ -10,7 +10,7 @@ export const AboutSection = () => {
   ];
 
   return (
-    <section id="about" className="container mx-auto px-4 py-20 md:py-32 max-w-6xl">
+    <section id="about" className="container mx-auto px-4 py-10 md:py-20 max-w-6xl">
       <motion.div
         variants={staggerContainer(0.2, 0)}
         initial="hidden"
