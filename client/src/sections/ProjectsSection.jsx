@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../animations/variants';
-import rentHousingPlatform from '../assets/rent-housing-platform.png';
+import rentHousingPlatform from '../assets/Rent-housing-platform.png';
 import collegeWebsite from '../assets/collegeWebsite.png';
 import movieApp from '../assets/movieApp.png';
 import portfolio from '../assets/portfolio.png';
