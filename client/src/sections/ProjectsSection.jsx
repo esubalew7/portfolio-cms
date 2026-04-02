@@ -25,7 +25,7 @@ const projectData = [
     image: portfolio,
     description: 'A personal MERN portfolio showcasing my projects and skills with a modern, responsive design and smooth user experience.',
     techStack: ['React', 'Node.js', 'MongoDB', 'Express'],
-    liveUrl: 'https://portfolio-mern-ochre.vercel.app/',
+    liveUrl: 'https://portfolio-mern-one-rho.vercel.app/',
     githubUrl: 'https://github.com/esubalew7/portfolio-mern',
   },
   {
