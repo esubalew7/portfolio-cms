@@ -48,7 +48,7 @@ export const ParticlesBackground = () => {
         particles: {
           color: {
             // White for dark mode, subtle slate gray for light mode
-            value: isDarkMode ? "#ffffff" : "#475569", 
+            value: isDarkMode ? "#ffffff" : "#475569",
           },
           links: {
             color: isDarkMode ? "#cbd5e1" : "#94a3b8", // Slate-300 / Slate-400
@@ -72,7 +72,7 @@ export const ParticlesBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 60, // Smooth optimal quantity
+            value: 100, // Smooth optimal quantity
           },
           opacity: {
             value: 0.5,
@@ -81,13 +81,13 @@ export const ParticlesBackground = () => {
             type: "circle",
           },
           size: {
-            value: { min: 1.5, max: 2.5 },
+            value: { min: 2, max: 3 }, //size means the size of the particles
           },
         },
         detectRetina: true,
-        fullScreen: { 
+        fullScreen: {
           enable: false // Disables sticking to viewport window so it acts like absolute wrapper for the section
-        } 
+        }
       }}
     />
   );

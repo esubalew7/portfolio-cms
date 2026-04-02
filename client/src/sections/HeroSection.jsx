@@ -10,23 +10,23 @@ export const HeroSection = () => {
     'Creative Thinker.',
     'React Enthusiast.'
   ];
-  
+
   const typedText = useTypewriter(roles);
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1, 
-      transition: { staggerChildren: 0.2 } 
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2 }
     }
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { duration: 0.8, ease: "easeOut" } 
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" }
     }
   };
 
@@ -36,11 +36,11 @@ export const HeroSection = () => {
       <ParticlesBackground />
       <div className="container mx-auto px-6 text-center max-w-4xl relative z-10 pointer-events-none">
         <motion.div
-           variants={containerVariants}
-           initial="hidden"
-           whileInView="visible"
-           viewport={{ once: true }}
-           className="space-y-8 pointer-events-auto"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="space-y-8 pointer-events-auto"
         >
           <motion.div variants={itemVariants}>
             <p className="text-blue-600 dark:text-blue-400 font-bold tracking-widest uppercase mb-4 text-sm md:text-base">
@@ -61,18 +61,18 @@ export const HeroSection = () => {
           </motion.div>
 
           <motion.p variants={itemVariants} className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            I specialize in building exceptional digital experiences. Currently, I'm focused on 
+            I specialize in building exceptional digital experiences. Currently, I'm focused on
             building scalable, responsive full-stack web applications to solve real-world problems.
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-            <a 
+            <a
               href="#projects"
               className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-blue-500/30 w-full sm:w-auto text-lg"
             >
               View Projects
             </a>
-            <a 
+            <a
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
