@@ -1,37 +1,52 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../animations/variants';
+import rentHousingPlatform from '../assets/rent-housing-platform.png';
+import collegeWebsite from '../assets/collegeWebsite.png';
+import movieApp from '../assets/movieApp.png';
+import portfolio from '../assets/portfolio.png';
+
 
 const projectData = [
   {
     id: 1,
-    title: 'E-commerce Platform',
+    title: 'Rent Housing Platform',
     category: 'MERN',
-    image: 'https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=800&auto=format&fit=crop',
-    description: 'A full-scale e-commerce solution with state management, secure payment integration, and a comprehensive admin dashboard.',
+    image: rentHousingPlatform,
+    description: 'A full-stack MERN application that connects tenants with landlords, featuring secure authentication, property listings, and advanced search and filtering for seamless rental experiences.',
     techStack: ['React', 'Node.js', 'MongoDB', 'Express'],
-    liveUrl: '#',
-    githubUrl: '#',
+    liveUrl: 'https://rent-housing-finder-2.vercel.app/',
+    githubUrl: 'https://github.com/esubalew7/Rent-Housing-Finder-2',
   },
   {
     id: 2,
-    title: 'AI Dashboard UI',
-    category: 'Frontend',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
-    description: 'A dark-themed modern dashboard interface designed with Tailwind CSS, data visualization, and Framer Motion.',
-    techStack: ['React', 'Tailwind', 'Framer Motion'],
-    liveUrl: '#',
-    githubUrl: '#',
+    title: 'Portfolio Website',
+    category: 'MERN',
+    image: portfolio,
+    description: 'A personal MERN portfolio showcasing my projects and skills with a modern, responsive design and smooth user experience.',
+    techStack: ['React', 'Node.js', 'MongoDB', 'Express'],
+    liveUrl: 'https://portfolio-mern-ochre.vercel.app/',
+    githubUrl: 'https://github.com/esubalew7/portfolio-mern',
   },
   {
     id: 3,
-    title: 'Social Media API',
-    category: 'Backend',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop',
-    description: 'A robust REST API architecture providing real-time messaging, JWT authentication, and optimized aggregation pipelines.',
-    techStack: ['Node.js', 'Express', 'JWT', 'Socket.io'],
-    liveUrl: '#',
-    githubUrl: '#',
+    title: 'College Website',
+    category: 'Frontend',
+    image: collegeWebsite,
+    description: 'A responsive college website built with HTML, CSS, and JavaScript, featuring clean navigation and structured pages for academic information and campus content.',
+    techStack: ['HTML', 'CSS', 'JavaScript'],
+    liveUrl: 'https://college-website-lemon-three.vercel.app/',
+    githubUrl: 'https://github.com/esubalew7/College-Website',
+  },
+  {
+    id: 4,
+    title: 'Movie Trailers Website',
+    category: 'Frontend',
+    image: movieApp,
+    description: 'A React-based movie browsing app integrated with TMDB API, allowing users to explore trending films and watch trailers in a dynamic interface.',
+    techStack: ['React'],
+    liveUrl: 'https://movie-app-taupe-one.vercel.app/',
+    githubUrl: 'https://github.com/esubalew7/movie-app',
   },
 ];
 
@@ -53,15 +68,15 @@ const ProjectCard = ({ project }) => {
 
       <div className="relative overflow-hidden aspect-video z-10 bg-gray-100 dark:bg-gray-800">
         <div className="absolute inset-0 bg-gray-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 mix-blend-multiply" />
-        
+
         {/* Loading Skeleton */}
         {!imageLoaded && (
-           <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse z-10" />
+          <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse z-10" />
         )}
-        
-        <img 
-          src={project.image} 
-          alt={project.title} 
+
+        <img
+          src={project.image}
+          alt={project.title}
           onLoad={() => setImageLoaded(true)}
           className={`w-full h-full object-cover transform sm:-translate-x-1 group-hover:scale-105 transition-all duration-700 ease-out z-10 ${imageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-xl'}`}
         />
@@ -81,7 +96,7 @@ const ProjectCard = ({ project }) => {
           ))}
         </div>
         <div className="flex gap-4 mt-auto">
-          <a 
+          <a
             href={project.liveUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -89,7 +104,7 @@ const ProjectCard = ({ project }) => {
           >
             Live Demo
           </a>
-          <a 
+          <a
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -114,7 +129,7 @@ export const ProjectsSection = () => {
 
   return (
     <section id="projects" className="container mx-auto px-4 py-20 md:py-32 max-w-7xl relative">
-       <motion.div
+      <motion.div
         variants={staggerContainer(0.2, 0)}
         initial="hidden"
         whileInView="visible"
@@ -131,11 +146,10 @@ export const ProjectsSection = () => {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-6 py-2.5 rounded-full font-bold tracking-wide transition-all duration-300 transform active:scale-95 ${
-                filter === f
-                  ? 'bg-blue-600 text-white shadow-[0_5px_15px_-3px_rgba(37,99,235,0.4)]'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-100 dark:border-gray-700'
-              }`}
+              className={`px-6 py-2.5 rounded-full font-bold tracking-wide transition-all duration-300 transform active:scale-95 ${filter === f
+                ? 'bg-blue-600 text-white shadow-[0_5px_15px_-3px_rgba(37,99,235,0.4)]'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-100 dark:border-gray-700'
+                }`}
             >
               {f}
             </button>

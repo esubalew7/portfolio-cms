@@ -5,9 +5,9 @@ import { fadeIn, staggerContainer } from '../animations/variants';
 const projectData = [
   {
     id: 1,
-    title: 'E-commerce Platform',
+    title: 'Rent Housing Platform',
     category: 'MERN',
-    image: 'https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=800&auto=format&fit=crop',
+    image: '../assets/rent-housing-platform.png',
     description: 'A full-scale e-commerce solution with state management, secure payment integration, and a comprehensive admin dashboard.',
     techStack: ['React', 'Node.js', 'MongoDB', 'Express'],
     liveUrl: '#',
@@ -76,7 +76,7 @@ export const Projects = () => {
 
   return (
     <section className="container mx-auto px-4 py-16 md:py-24 max-w-7xl">
-       <motion.div
+      <motion.div
         variants={staggerContainer(0.2, 0)}
         initial="hidden"
         whileInView="visible"
@@ -93,11 +93,10 @@ export const Projects = () => {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-                filter === f
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-              }`}
+              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${filter === f
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
             >
               {f}
             </button>
@@ -120,9 +119,9 @@ export const Projects = () => {
                 {/* Image Container with Hover Effect */}
                 <div className="relative overflow-hidden aspect-video">
                   <div className="absolute inset-0 bg-gray-900/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
+                  <img
+                    src={project.image}
+                    alt={project.title}
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 ease-in-out"
                   />
                 </div>
@@ -145,7 +144,7 @@ export const Projects = () => {
 
                   {/* Action Buttons */}
                   <div className="flex gap-4 mt-auto">
-                    <a 
+                    <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -153,7 +152,7 @@ export const Projects = () => {
                     >
                       Live Demo
                     </a>
-                    <a 
+                    <a
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"

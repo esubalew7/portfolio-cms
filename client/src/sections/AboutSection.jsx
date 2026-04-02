@@ -27,9 +27,9 @@ export const AboutSection = () => {
           {/* Profile Image - Retained and styled */}
           <motion.div variants={fadeIn('right', 0.3)} className="w-full lg:w-5/12">
             <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-800 relative group">
-              <img 
-                src="/images/esu1.png" 
-                alt="Esubale profile image" 
+              <img
+                src="/images/esu1.png"
+                alt="Esubale profile image"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
               <div className="absolute inset-0 border-4 border-transparent group-hover:border-blue-500/30 transition-colors duration-500 rounded-3xl pointer-events-none z-10"></div>
@@ -40,7 +40,7 @@ export const AboutSection = () => {
           <motion.div variants={fadeIn('left', 0.4)} className="w-full lg:w-7/12 space-y-8">
             <div className="space-y-6">
               <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
-                Software Engineer & <br className="hidden md:block" />
+                Computer Science Student & <br className="hidden md:block" />
                 <span className="text-blue-600 dark:text-blue-400">MERN Stack Developer</span>
               </h3>
 
