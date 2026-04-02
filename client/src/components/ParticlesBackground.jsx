@@ -1,39 +1,34 @@
-import { useEffect, useState } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
+import { useCallback } from "react";
+import Particles from "react-tsparticles";
+import { loadSlim } from "tsparticles-slim";
 import { useTheme } from "../context/ThemeContext";
 
 export const ParticlesBackground = () => {
-  const [init, setInit] = useState(false);
   const { isDarkMode } = useTheme();
 
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
+  // Engine initialization loads the slim bundle which is highly optimized
+  const particlesInit = useCallback(async (engine) => {
+    await loadSlim(engine);
   }, []);
-
-  // Soft dynamic colors matching the overall theme palette
-  const particlesColor = isDarkMode ? "#60a5fa" : "#3b82f6"; // Tailwind blue-400 / blue-500
-  const linksColor = isDarkMode ? "#1e293b" : "#e2e8f0";     // Tailwind slate-800 / slate-200
-
-  if (!init) return null;
 
   return (
     <Particles
       id="tsparticles"
-      className="absolute inset-0 -z-10" // Stays perfectly behind foreground elements
+      init={particlesInit}
+      className="absolute inset-0 z-0 pointer-events-auto"
       options={{
         background: {
           color: {
             value: "transparent",
           },
         },
-        fpsLimit: 120, // High performance animation
+        fpsLimit: 120,
         interactivity: {
           events: {
+            onClick: {
+              enable: true,
+              mode: "push",
+            },
             onHover: {
               enable: true,
               mode: "repulse",
@@ -41,31 +36,35 @@ export const ParticlesBackground = () => {
             resize: true,
           },
           modes: {
+            push: {
+              quantity: 4, // Amount of particles dropped per click
+            },
             repulse: {
-              distance: 120,
+              distance: 120, // Hover radius
               duration: 0.4,
             },
           },
         },
         particles: {
           color: {
-            value: particlesColor,
+            // White for dark mode, subtle slate gray for light mode
+            value: isDarkMode ? "#ffffff" : "#475569", 
           },
           links: {
-            color: linksColor,
+            color: isDarkMode ? "#cbd5e1" : "#94a3b8", // Slate-300 / Slate-400
             distance: 150,
             enable: true,
-            opacity: 0.6,
+            opacity: isDarkMode ? 0.2 : 0.4,
             width: 1,
           },
           move: {
             direction: "none",
             enable: true,
             outModes: {
-              default: "bounce",
+              default: "bounce", // Bounces within the container
             },
             random: false,
-            speed: 1, // Slow moving, non-distracting
+            speed: 1.5,
             straight: false,
           },
           number: {
@@ -73,7 +72,7 @@ export const ParticlesBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 45, // Keep count fairly sparse
+            value: 60, // Smooth optimal quantity
           },
           opacity: {
             value: 0.5,
@@ -82,10 +81,13 @@ export const ParticlesBackground = () => {
             type: "circle",
           },
           size: {
-            value: { min: 1, max: 2 },
+            value: { min: 1.5, max: 2.5 },
           },
         },
-        detectRetina: true, // Hi-DPI screen clarity
+        detectRetina: true,
+        fullScreen: { 
+          enable: false // Disables sticking to viewport window so it acts like absolute wrapper for the section
+        } 
       }}
     />
   );

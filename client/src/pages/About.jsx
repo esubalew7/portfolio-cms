@@ -19,9 +19,9 @@ export const About = () => {
         <div className="flex flex-col md:flex-row gap-12 items-center">
           <motion.div variants={fadeIn('right', 0.3)} className="w-full md:w-1/2">
             <div className="aspect-square bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-800">
-               <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
-                 [Profile Image Placeholder]
-               </div>
+              <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
+                <img src="/images/esu1.png" alt="Esubale profile image" />
+              </div>
             </div>
           </motion.div>
 
@@ -30,7 +30,7 @@ export const About = () => {
               Transforming ideas into digital reality
             </h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
-              I am a dedicated MERN Stack Developer with a strong focus on creating dynamic, interactive, and highly performant web applications. 
+              I am a dedicated MERN Stack Developer with a strong focus on creating dynamic, interactive, and highly performant web applications.
             </p>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
               My journey in software development is driven by a constant desire to learn and solve complex problems using elegant solutions and modern architecture.

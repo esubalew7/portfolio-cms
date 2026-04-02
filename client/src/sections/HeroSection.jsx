@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useTypewriter } from '../hooks/useTypewriter';
-import { ParticlesBackground } from '../components/ParticlesBackground';
 import { SocialIconRow } from '../components/SocialLinks';
+import { ParticlesBackground } from '../components/ParticlesBackground';
 
 export const HeroSection = () => {
   const roles = [
@@ -32,6 +32,7 @@ export const HeroSection = () => {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center py-20 overflow-hidden">
+      {/* Absolute positioning constrained cleanly strictly to the Hero sizing boundaries */}
       <ParticlesBackground />
       <div className="container mx-auto px-6 text-center max-w-4xl relative z-10 pointer-events-none">
         <motion.div

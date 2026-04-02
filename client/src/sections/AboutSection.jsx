@@ -26,15 +26,13 @@ export const AboutSection = () => {
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           {/* Profile Image - Retained and styled */}
           <motion.div variants={fadeIn('right', 0.3)} className="w-full lg:w-5/12">
-            <div className="aspect-[4/5] bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-800 relative group">
-               <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800/40">
-                 {/* Visual placeholder enhancement */}
-                 <svg className="w-24 h-24 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                 </svg>
-                 <span className="font-semibold tracking-widest uppercase text-sm">[Profile Image Placeholder]</span>
-               </div>
-               <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500/30 transition-colors duration-500 rounded-3xl pointer-events-none"></div>
+            <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-800 relative group">
+              <img 
+                src="/images/esu1.png" 
+                alt="Esubale profile image" 
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              <div className="absolute inset-0 border-4 border-transparent group-hover:border-blue-500/30 transition-colors duration-500 rounded-3xl pointer-events-none z-10"></div>
             </div>
           </motion.div>
 
@@ -42,14 +40,14 @@ export const AboutSection = () => {
           <motion.div variants={fadeIn('left', 0.4)} className="w-full lg:w-7/12 space-y-8">
             <div className="space-y-6">
               <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
-                Software Engineer & <br className="hidden md:block"/>
+                Software Engineer & <br className="hidden md:block" />
                 <span className="text-blue-600 dark:text-blue-400">MERN Stack Developer</span>
               </h3>
-              
+
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
                 I am a third-year Computer Science student at Bahir Dar University, where I combine rigorous academic theory with hands-on, practical engineering. My true passion lies in architecting full-stack web applications that bridge the gap between complex backend data models and elegant front-end user interfaces.
               </p>
-              
+
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
                 As a developer, I am deeply committed to writing clean, modular code and designing robust, scalable systems. My approach prioritizes modern UI/UX principles, ensuring that my software is not just powerful under the hood, but intuitive for every end-user. Backed by an aggressive learning mindset, I constantly explore emerging technologies to stay ahead of the curve.
               </p>
@@ -72,7 +70,7 @@ export const AboutSection = () => {
 
             {/* Call to action button */}
             <div className="pt-6">
-              <a 
+              <a
                 href="#contact"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
               >

@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { MainLayout } from './layouts/MainLayout';
 import { Home } from './pages/Home';
 import { Loader } from './components/Loader';
+import { ScrollToTop } from './components/ScrollToTop';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +31,8 @@ const App = () => {
             <Route path="/" element={<Home />} />
           </Route>
         </Routes>
+        
+        <ScrollToTop />
       </BrowserRouter>
     </ThemeProvider>
   );
