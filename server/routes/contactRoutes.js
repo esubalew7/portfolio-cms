@@ -1,5 +1,6 @@
 // Import express
 import express from "express";
+import protect from "../middleware/authMiddleware.js"; // Import auth middleware
 
 // Import controller functions
 import {
@@ -22,7 +23,7 @@ router.post("/", createContact);
 // @desc    Get all contact messages
 // @access  Public (later Admin)
 // ===============================
-router.get("/", getAllContacts);
+router.get("/", protect, getAllContacts); // Add protect middleware to get all contacts
 
 // Export router
 export default router;

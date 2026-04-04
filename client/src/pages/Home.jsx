@@ -19,17 +19,17 @@ export const Home = () => {
       </div>
 
       <HeroSection />
-      
+
       <div className="relative border-y border-gray-200/50 dark:border-white/5 backdrop-blur-sm bg-white/40 dark:bg-black/10 transition-colors">
         <AboutSection />
       </div>
-      
+
       <div className="relative bg-gradient-to-b from-transparent via-gray-50/50 to-transparent dark:via-gray-900/30">
         <SkillsSection />
       </div>
-      
+
       <ProjectsSection />
-      
+
       <div className="relative bg-gradient-to-t from-gray-50 dark:from-gray-950/80 to-transparent pt-10">
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-800 to-transparent"></div>
         <ContactSection />
