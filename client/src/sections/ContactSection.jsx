@@ -8,6 +8,7 @@ export const ContactSection = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const validate = () => {
     const newErrors = {};
@@ -34,6 +35,7 @@ export const ContactSection = () => {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
     if (submitStatus) setSubmitStatus(null);
+    if (errorMessage) setErrorMessage('');
   };
 
   const handleSubmit = async (e) => {
@@ -41,12 +43,18 @@ export const ContactSection = () => {
     if (!validate()) return;
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setErrorMessage('');
+
     try {
-      await axios.post('/api/contact', formData);
+      await axios.post('/api/contact', formData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Submission error:', error);
+      const message = error?.response?.data?.message || error.message || 'Unable to send message. Please try again later.';
+      setErrorMessage(message);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -83,7 +91,7 @@ export const ContactSection = () => {
 
           {submitStatus === 'error' && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-              <span className="font-bold">Error!</span> Something went wrong while sending your message. Please try again later.
+              <span className="font-bold">Error!</span> {errorMessage || 'Something went wrong while sending your message. Please try again later.'}
             </motion.div>
           )}
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { socialLinks } from './SocialLinks';
 
@@ -106,6 +107,22 @@ export const Navbar = () => {
               </svg>
             )}
           </button>
+
+          {/* Login Link */}
+          <Link
+            to="/login"
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-colors"
+          >
+            Login
+          </Link>
+
+          {/* Dashboard Link */}
+          <Link
+            to="/dashboard"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Dashboard
+          </Link>
         </div>
 
         {/* Mobile Menu Action Buttons */}
@@ -164,6 +181,24 @@ export const Navbar = () => {
               {link.name}
             </a>
           ))}
+
+          {/* Login Link for Mobile */}
+          <Link
+            to="/login"
+            onClick={() => setIsMenuOpen(false)}
+            className="block py-3 px-4 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            Login
+          </Link>
+
+          {/* Dashboard Link for Mobile */}
+          <Link
+            to="/dashboard"
+            onClick={() => setIsMenuOpen(false)}
+            className="block py-3 px-4 rounded-lg text-base font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          >
+            Dashboard
+          </Link>
         </div>
         
         {/* Render Socials on Mobile Dropdown Bottom */}

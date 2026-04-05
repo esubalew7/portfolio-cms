@@ -8,11 +8,12 @@ export const Contact = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
-    
+
     // Check standard email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
@@ -20,7 +21,7 @@ export const Contact = () => {
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    
+
     // Check message length
     if (!formData.message.trim()) {
       newErrors.message = 'Message is required';
@@ -36,32 +37,37 @@ export const Contact = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     // Clear individual field errors when user starts typing correcting input
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
-    
+
     // Remove global banners when user attempts to re-submit
     if (submitStatus) setSubmitStatus(null);
+    if (errorMessage) setErrorMessage('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validate()) return;
 
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setErrorMessage('');
 
     try {
-      // Makes asynchronous request to backend endpoint defined
-      await axios.post('/api/contact', formData);
-      
+      await axios.post('/api/contact', formData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' }); // Reset fields
     } catch (error) {
       console.error('Submission error:', error);
+      const message = error?.response?.data?.message || error.message || 'Unable to send message. Please try again later.';
+      setErrorMessage(message);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -70,7 +76,7 @@ export const Contact = () => {
 
   return (
     <section className="container mx-auto px-4 py-16 md:py-24 max-w-4xl relative z-10">
-       <motion.div
+      <motion.div
         variants={staggerContainer(0.2, 0)}
         initial="hidden"
         whileInView="visible"
@@ -84,9 +90,9 @@ export const Contact = () => {
           </p>
         </motion.div>
 
-        <motion.form 
+        <motion.form
           onSubmit={handleSubmit}
-          variants={fadeIn('up', 0.3)} 
+          variants={fadeIn('up', 0.3)}
           className="bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-8 border border-gray-100 dark:border-gray-800 space-y-6"
           noValidate
         >
@@ -99,56 +105,56 @@ export const Contact = () => {
 
           {submitStatus === 'error' && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-              <span className="font-bold">Error!</span> Something went wrong while sending your message. Please try again later.
+              <span className="font-bold">Error!</span> {errorMessage || 'Something went wrong while sending your message. Please try again later.'}
             </motion.div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Name</label>
-              <input 
+              <input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                type="text" 
-                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`} 
-                placeholder="John Doe" 
+                type="text"
+                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                placeholder="John Doe"
               />
               {errors.name && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.name}</p>}
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
-              <input 
+              <input
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                type="email" 
-                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`} 
-                placeholder="john@example.com" 
+                type="email"
+                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                placeholder="john@example.com"
               />
               {errors.email && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.email}</p>}
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="message" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Message</label>
-            <textarea 
+            <textarea
               id="message"
               name="message"
               value={formData.message}
               onChange={handleChange}
-              rows="5" 
-              className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all resize-none`} 
-              placeholder="How can I help you? Project details, timelines, etc." 
+              rows="5"
+              className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all resize-none`}
+              placeholder="How can I help you? Project details, timelines, etc."
             />
             {errors.message && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.message}</p>}
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={isSubmitting}
             className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 dark:disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-lg flex justify-center items-center"
           >
