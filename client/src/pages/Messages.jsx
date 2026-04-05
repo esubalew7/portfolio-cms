@@ -22,6 +22,8 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
+  const API = "https://portfolio-backend-gxhv.onrender.com";
+
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -32,7 +34,7 @@ const Messages = () => {
       setError(null);
 
       const token = localStorage.getItem('token');
-      const response = await axios.get('/api/contact', {
+      const response = await axios.get(`${API}/api/contact`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -49,8 +51,8 @@ const Messages = () => {
 
   const filteredMessages = messages.filter(message => {
     const matchesSearch = message.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.message?.toLowerCase().includes(searchTerm.toLowerCase());
+      message.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.message?.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesSearch;
   });
