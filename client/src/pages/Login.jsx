@@ -67,7 +67,7 @@ const Login = () => {
     setLoginError('');
 
     try {
-      const response = await axios.post('/api/auth/login', {
+      const response = await axios.post('https://portfolio-backend-gxhv.onrender.com/api/auth/login', {
         email: formData.email,
         password: formData.password
       });
@@ -126,11 +126,10 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm ${
-                    errors.email
-                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
-                      : 'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white dark:bg-gray-700'
-                  }`}
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm ${errors.email
+                    ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
+                    : 'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white dark:bg-gray-700'
+                    }`}
                   placeholder="Enter your email"
                 />
               </div>
@@ -172,11 +171,10 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className={`block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm ${
-                    errors.password
-                      ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
-                      : 'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white dark:bg-gray-700'
-                  }`}
+                  className={`block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm ${errors.password
+                    ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
+                    : 'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white dark:bg-gray-700'
+                    }`}
                   placeholder="Enter your password"
                 />
               </div>
