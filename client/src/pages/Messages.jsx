@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import {
   Search,
   Filter,
@@ -22,8 +22,6 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
-  const API = "https://portfolio-backend-gxhv.onrender.com";
-
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -33,12 +31,7 @@ const Messages = () => {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API}/api/contact`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await api.get('/api/contact');
 
       setMessages(response.data);
     } catch (err) {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../animations/variants';
-import axios from 'axios';
+import api from '../utils/api';
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -46,9 +46,7 @@ export const ContactSection = () => {
     setErrorMessage('');
 
     try {
-      await axios.post('/api/contact', formData, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      await api.post('/api/contact', formData);
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {

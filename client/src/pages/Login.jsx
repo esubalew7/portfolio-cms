@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 
 const Login = () => {
@@ -67,7 +67,7 @@ const Login = () => {
     setLoginError('');
 
     try {
-      const response = await axios.post('https://portfolio-backend-gxhv.onrender.com/api/auth/login', {
+      const response = await api.post('/api/auth/login', {
         email: formData.email,
         password: formData.password
       });

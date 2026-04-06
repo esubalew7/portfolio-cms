@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import {
   Plus,
   Search,
@@ -42,20 +42,8 @@ const DashboardProjects = () => {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.log('No token found');
-        setError('No authentication token found. Please login again.');
-        setLoading(false);
-        return;
-      }
-
       console.log('Making API call...');
-      const response = await axios.get('/api/projects', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await api.get('/api/projects');
 
       console.log('API response:', response.data);
       setProjects(Array.isArray(response.data) ? response.data : []);
@@ -81,12 +69,6 @@ const DashboardProjects = () => {
       setSubmitting(true);
       setError(null);
 
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('No authentication token found. Please login again.');
-        return;
-      }
-
       const projectData = {
         ...formData,
         technologies: formData.technologies.split(',').map(tech => tech.trim()).filter(Boolean)
@@ -94,18 +76,10 @@ const DashboardProjects = () => {
 
       if (editingProject) {
         // Update project
-        await axios.put(`/api/projects/${editingProject._id}`, projectData, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        await api.put(`/api/projects/${editingProject._id}`, projectData);
       } else {
         // Create new project
-        await axios.post('/api/projects', projectData, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        await api.post('/api/projects', projectData);
       }
 
       await fetchProjects();
@@ -125,17 +99,7 @@ const DashboardProjects = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('No authentication token found. Please login again.');
-        return;
-      }
-
-      await axios.delete(`/api/projects/${projectId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await api.delete(`/api/projects/${projectId}`);
 
       await fetchProjects();
     } catch (err) {
