@@ -11,6 +11,7 @@ const router = express.Router();
 // @route   POST /api/auth/register
 // @desc    Register admin (optional)
 // ===============================
+// Pass controller functions directly. Do not call register() here.
 router.post("/register", register);
 
 // ===============================

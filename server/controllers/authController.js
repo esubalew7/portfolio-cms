@@ -1,9 +1,6 @@
 // Import User model
 import User from "../models/User.js";
 
-// Import bcrypt (for safety, though model handles hashing)
-import bcrypt from "bcryptjs";
-
 // Import jsonwebtoken
 import jwt from "jsonwebtoken";
 
@@ -13,6 +10,8 @@ import jwt from "jsonwebtoken";
 // @route   POST /api/auth/register
 // @access  Public (you can disable later)
 // ========================================
+// Controller signature is intentionally (req, res) only.
+// We do not use next() here because this is not error-handling middleware.
 export const register = async (req, res) => {
     try {
         // Get data from request body
@@ -56,6 +55,7 @@ export const register = async (req, res) => {
         });
 
     } catch (error) {
+        // No next() call here; errors are returned directly in the response.
         res.status(500).json({
             success: false,
             message: "Server Error",

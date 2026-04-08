@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 // ========================================
 // 🔐 AUTH MIDDLEWARE
 // ========================================
+// Middleware signature is (req, res, next).
+// Only middleware should call next().
 const protect = (req, res, next) => {
     try {
         let token;

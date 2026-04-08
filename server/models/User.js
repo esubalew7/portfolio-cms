@@ -32,10 +32,10 @@ const userSchema = new mongoose.Schema(
 // ========================================
 // 🔐 HASH PASSWORD BEFORE SAVING
 // ========================================
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
     // Only hash if password is modified
     if (!this.isModified("password")) {
-        return next();
+        return;
     }
 
     // Generate salt (adds randomness)
@@ -43,8 +43,6 @@ userSchema.pre("save", async function (next) {
 
     // Hash password
     this.password = await bcrypt.hash(this.password, salt);
-
-    next();
 });
 
 
