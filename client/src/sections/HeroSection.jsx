@@ -31,13 +31,13 @@ export const HeroSection = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center pt-16 pb-16 overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center py-20 lg:py-24 overflow-hidden">
       {/* Background Particles limited to Hero boundaries */}
       <ParticlesBackground />
 
       {/* 2-Column Responsive Layout Wrapper */}
-      <div className="container mx-auto px-10 md:px-16 lg:px-1 relative z-10 w-full max-w-7xl">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full max-w-7xl">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-16 lg:gap-28">
 
           {/* Left Column: Text Content */}
           <motion.div
@@ -66,8 +66,8 @@ export const HeroSection = () => {
             </motion.div>
 
             <motion.p variants={itemVariants} className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-lg leading-relaxed">
-              I specialize in building exceptional digital experiences. Currently, I'm focused on
-              building scalable, responsive full-stack web applications to solve real-world problems.
+              I am a Computer Science student and MERN Stack Developer with a passion for building dynamic web applications.
+               I specialize in creating seamless user experiences and robust backend systems. Let's build something amazing together!
             </motion.p>
 
             {/* Call to Actions */}

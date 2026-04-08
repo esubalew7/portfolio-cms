@@ -60,7 +60,7 @@ export const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="container mx-auto px-4 py-10 md:py-20 max-w-4xl relative z-10">
+    <section id="contact" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24 max-w-4xl relative z-10">
       <motion.div
         variants={staggerContainer(0.2, 0)}
         initial="hidden"
@@ -78,23 +78,49 @@ export const ContactSection = () => {
         <motion.form
           onSubmit={handleSubmit}
           variants={fadeIn('up', 0.3)}
-          className="bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-8 border border-gray-100 dark:border-gray-800 space-y-6"
+          className="bg-white dark:bg-gray-900 shadow-2xl rounded-3xl p-8 md:p-10 border border-gray-100 dark:border-gray-800 space-y-8"
           noValidate
         >
           {submitStatus === 'success' && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-              <span className="font-bold">Success!</span> Your message has been sent successfully. I will get back to you soon.
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl flex items-center gap-4"
+              role="alert"
+            >
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-green-800 dark:text-green-200">Message Sent Successfully!</h3>
+                <p className="text-sm text-green-700 dark:text-green-300 mt-1">Thank you for reaching out. I'll get back to you soon.</p>
+              </div>
             </motion.div>
           )}
 
           {submitStatus === 'error' && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-              <span className="font-bold">Error!</span> {errorMessage || 'Something went wrong while sending your message. Please try again later.'}
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl flex items-center gap-4"
+              role="alert"
+            >
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-red-800 dark:text-red-200">Failed to Send Message</h3>
+                <p className="text-sm text-red-700 dark:text-red-300 mt-1">{errorMessage || 'Something went wrong. Please try again later.'}</p>
+              </div>
             </motion.div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
+            <div className="space-y-3">
               <label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Name</label>
               <input
                 id="name"
@@ -102,13 +128,13 @@ export const ContactSection = () => {
                 value={formData.name}
                 onChange={handleChange}
                 type="text"
-                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                className={`w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-gray-950 border-2 ${errors.name ? 'border-red-400 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-blue-500'} text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/20 outline-none transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500`}
                 placeholder="John Doe"
               />
               {errors.name && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.name}</p>}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
               <input
                 id="email"
@@ -116,22 +142,22 @@ export const ContactSection = () => {
                 value={formData.email}
                 onChange={handleChange}
                 type="email"
-                className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                className={`w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-gray-950 border-2 ${errors.email ? 'border-red-400 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-blue-500'} text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/20 outline-none transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500`}
                 placeholder="john@example.com"
               />
               {errors.email && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.email}</p>}
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label htmlFor="message" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Message</label>
             <textarea
               id="message"
               name="message"
               value={formData.message}
               onChange={handleChange}
-              rows="5"
-              className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-950 border ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-800 focus:ring-blue-500'} text-gray-900 dark:text-white focus:ring-2 outline-none transition-all resize-none`}
+              rows="6"
+              className={`w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-gray-950 border-2 ${errors.message ? 'border-red-400 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-blue-500'} text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/20 outline-none transition-all duration-300 resize-none placeholder-gray-400 dark:placeholder-gray-500`}
               placeholder="How can I help you? Project details, timelines, etc."
             />
             {errors.message && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.message}</p>}
@@ -140,7 +166,7 @@ export const ContactSection = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 dark:disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-lg flex justify-center items-center"
+            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-blue-300 disabled:to-blue-400 dark:disabled:from-blue-800 dark:disabled:to-blue-900 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg flex justify-center items-center transform hover:scale-[1.02] active:scale-[0.98]"
           >
             {isSubmitting ? (
               <>
@@ -148,10 +174,15 @@ export const ContactSection = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Processing...
+                Sending...
               </>
             ) : (
-              'Send Message'
+              <>
+                Send Message
+                <svg className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+              </>
             )}
           </button>
         </motion.form>

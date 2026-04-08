@@ -14,13 +14,13 @@ import { Loader } from './components/Loader';
 import { ScrollToTop } from './components/ScrollToTop';
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Simulate initial loading time for components/assets to mount (2 seconds)
     const timeout = setTimeout(() => {
       setIsLoading(false);
-    }, 500);
+    }, 2000);
     return () => clearTimeout(timeout);
   }, []);
 

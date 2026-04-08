@@ -81,7 +81,7 @@ export const Navbar = () => {
               key={link.id}
               href={`#${link.id}`}
               onClick={(e) => scrollToSection(e, link.id)}
-              className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+              className={`text-base font-large transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
                 activeSection === link.id
                   ? 'text-blue-600 dark:text-blue-400 font-bold'
                   : 'text-gray-700 dark:text-gray-300'
@@ -108,13 +108,6 @@ export const Navbar = () => {
             )}
           </button>
 
-          {/* Login Link */}
-          <Link
-            to="/login"
-            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-colors"
-          >
-            Login
-          </Link>
 
           {/* Dashboard Link */}
           <Link

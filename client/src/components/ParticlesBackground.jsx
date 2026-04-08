@@ -72,13 +72,14 @@ export const ParticlesBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 100, // Smooth optimal quantity
+            value: 200, // Base number of particles, will be adjusted by density
           },
           opacity: {
             value: 0.5,
           },
           shape: {
-            type: "circle",
+            type: ["circle", "triangle", "polygon"], // Simple circles for a clean, modern look. Could be extended to polygons or custom shapes if desired. such as triangles or hexagons for more visual interest.
+            //  to add the syntax type: ["circle", "triangle", "polygon"] and specify the polygon sides with options.particles.shape.polygon.nb_sides = 5 for pentagons, for example.   
           },
           size: {
             value: { min: 2, max: 3 }, //size means the size of the particles
