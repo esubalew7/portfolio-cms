@@ -73,7 +73,7 @@ const Login = () => {
       });
 
       // Save JWT token to localStorage
-      const { token } = response.data;
+      const { token } = response;
       localStorage.setItem('token', token);
 
       // Redirect to the intended page (or dashboard by default)

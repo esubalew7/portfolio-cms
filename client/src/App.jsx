@@ -37,14 +37,18 @@ const App = () => {
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
           </Route>
-          <Route element={
-            <PrivateRoute>
-              <DashboardLayout />
-            </PrivateRoute>
-          }>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/messages" element={<Messages />} />
-            <Route path="/dashboard/projects" element={<DashboardProjects />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <DashboardLayout />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="projects" element={<DashboardProjects />} />
+            <Route path="messages" element={<Messages />} />
           </Route>
         </Routes>
 

@@ -9,7 +9,7 @@ import {
   AlertCircle,
   Loader2 as Loader,
   ExternalLink,
-  
+  Github,
 } from 'lucide-react';
 
 const DashboardProjects = () => {
@@ -18,6 +18,8 @@ const DashboardProjects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
@@ -36,6 +38,16 @@ const DashboardProjects = () => {
     fetchProjects();
   }, []);
 
+  const isValidUrl = (value) => {
+    if (!value) return false;
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const fetchProjects = async () => {
     try {
       console.log('Fetching projects...');
@@ -51,6 +63,7 @@ const DashboardProjects = () => {
       console.error('Error fetching projects:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch projects';
       setError(errorMessage);
+      setSuccess(null);
       setProjects([]); // Ensure projects is always an array
     } finally {
       setLoading(false);
@@ -61,13 +74,21 @@ const DashboardProjects = () => {
     e.preventDefault();
 
     if (!formData.title.trim() || !formData.description.trim()) {
+      setFormErrors({});
       setError('Title and description are required');
+      return;
+    }
+
+    if (formData.image.trim() && !isValidUrl(formData.image.trim())) {
+      setFormErrors({ image: 'Please enter a valid image URL' });
+      setError('Please fix the image URL before submitting');
       return;
     }
 
     try {
       setSubmitting(true);
       setError(null);
+      setFormErrors({});
 
       const projectData = {
         ...formData,
@@ -75,14 +96,25 @@ const DashboardProjects = () => {
       };
 
       if (editingProject) {
-        // Update project
-        await api.put(`/api/projects/${editingProject._id}`, projectData);
+        // Update existing project in state
+        const response = await api.put(`/api/projects/${editingProject._id}`, projectData);
+        const updatedProject = response.data;
+
+        setProjects((prevProjects) => prevProjects.map((project) =>
+          (project._id || project.id) === (updatedProject._id || updatedProject.id)
+            ? updatedProject
+            : project
+        ));
+        setSuccess('Project updated successfully');
       } else {
-        // Create new project
-        await api.post('/api/projects', projectData);
+        // Create new project and add to state immediately
+        const response = await api.post('/api/projects', projectData);
+        const newProject = response.data;
+
+        setProjects((prevProjects) => [newProject, ...prevProjects]);
+        setSuccess('Project created successfully');
       }
 
-      await fetchProjects();
       closeModal();
     } catch (err) {
       console.error('Error saving project:', err);
@@ -99,9 +131,16 @@ const DashboardProjects = () => {
     }
 
     try {
+      setError(null);
+      setSuccess(null);
       await api.delete(`/api/projects/${projectId}`);
 
-      await fetchProjects();
+      setProjects((prevProjects) => prevProjects.filter((project) => (project._id || project.id) !== projectId));
+      setSuccess('Project deleted successfully');
+
+      window.setTimeout(() => {
+        setSuccess(null);
+      }, 4000);
     } catch (err) {
       console.error('Error deleting project:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to delete project';
@@ -110,6 +149,10 @@ const DashboardProjects = () => {
   };
 
   const openModal = (project = null) => {
+    setError(null);
+    setSuccess(null);
+    setFormErrors({});
+
     if (project) {
       setEditingProject(project);
       setFormData({
@@ -145,17 +188,26 @@ const DashboardProjects = () => {
       liveLink: '',
       githubLink: ''
     });
+    setFormErrors({});
+    setError(null);
+  };
+
+  const normalizedText = (value, fallback = 'No data available') => {
+    if (value === undefined || value === null || value === false) return fallback;
+    if (typeof value === 'string' && !value.trim()) return fallback;
+    return value;
   };
 
   const filteredProjects = projects.filter(project =>
-    project.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.technologies?.some(tech => tech.toLowerCase().includes(searchTerm.toLowerCase()))
+    (project.title || '').toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (project.description || '').toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (project.technologies || []).some(tech => tech.toString().toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const formatDate = (timestamp) => {
-    if (!timestamp) return 'N/A';
+    if (!timestamp) return 'No date available';
     const date = new Date(timestamp);
+    if (Number.isNaN(date.valueOf())) return 'No date available';
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -184,7 +236,7 @@ const DashboardProjects = () => {
         </button>
       </div>
 
-      {/* Error Message */}
+      {/* Status Message */}
       {error && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <div className="flex items-center">
@@ -193,6 +245,19 @@ const DashboardProjects = () => {
             <button
               onClick={() => setError(null)}
               className="ml-auto text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+          <div className="flex items-center">
+            <span className="text-green-800 dark:text-green-200">{success}</span>
+            <button
+              onClick={() => setSuccess(null)}
+              className="ml-auto text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200"
             >
               <X className="h-4 w-4" />
             </button>
@@ -258,60 +323,65 @@ const DashboardProjects = () => {
                       <td className="px-6 py-4">
                         <div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {project.title || 'Untitled'}
+                            {normalizedText(project.title, 'Untitled project')}
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400 overflow-hidden text-ellipsis">
-                            {project.description || 'No description'}
+                            {normalizedText(project.description, 'No description available')}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-1">
-                          {Array.isArray(project.technologies) && project.technologies.slice(0, 3).map((tech, index) => (
-                            <span
-                              key={index}
-                              className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                          {Array.isArray(project.technologies) && project.technologies.length > 3 && (
-                            <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded">
-                              +{project.technologies.length - 3}
-                            </span>
-                          )}
-                          {!Array.isArray(project.technologies) && project.technologies && (
-                            <span className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded">
-                              {project.technologies}
-                            </span>
-                          )}
-                        </div>
+                        {Array.isArray(project.technologies) && project.technologies.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {project.technologies.slice(0, 3).map((tech, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded"
+                              >
+                                {normalizedText(tech, 'Unknown')}
+                              </span>
+                            ))}
+                            {project.technologies.length > 3 && (
+                              <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded">
+                                +{project.technologies.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500 dark:text-gray-400">No technologies available</span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex space-x-2">
-                          {project.liveLink && (
-                            <a
-                              href={project.liveLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-                              title="Live Demo"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                          )}
-                          {project.githubLink && (
-                            <a
-                              href={project.githubLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                              title="GitHub Repository"
-                            >
-                              <Github className="h-4 w-4" />
-                            </a>
-                          )}
-                        </div>
+                        {project.liveLink || project.githubLink ? (
+                          <div className="flex flex-wrap items-center gap-3">
+                            {project.liveLink ? (
+                              <a
+                                href={project.liveLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                                title="Live Demo"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                                <span className="text-xs">Live</span>
+                              </a>
+                            ) : null}
+                            {project.githubLink ? (
+                              <a
+                                href={project.githubLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                                title="GitHub Repository"
+                              >
+                                <Github className="h-4 w-4" />
+                                <span className="text-xs">GitHub</span>
+                              </a>
+                            ) : null}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500 dark:text-gray-400">No links available</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                         {formatDate(project.createdAt)}
@@ -407,10 +477,27 @@ const DashboardProjects = () => {
                   <input
                     type="url"
                     value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, image: e.target.value });
+                      setFormErrors((prev) => ({ ...prev, image: undefined }));
+                    }}
                     placeholder="https://example.com/image.jpg"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent ${formErrors.image ? 'border-red-500 focus:ring-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'}`}
                   />
+                  {formErrors.image && (
+                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                      {formErrors.image}
+                    </p>
+                  )}
+                  {formData.image.trim() && isValidUrl(formData.image.trim()) && (
+                    <div className="mt-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                      <img
+                        src={formData.image.trim()}
+                        alt="Project preview"
+                        className="w-full h-52 object-cover"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div>
