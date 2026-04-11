@@ -7,10 +7,11 @@ console.log("API BASE URL:", API_BASE_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000, // 10 seconds
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  timeout: 10000,
+  // NOTE: Do NOT set Content-Type here.
+  // Axios auto-sets 'application/json' for objects and
+  // 'multipart/form-data' (with boundary) for FormData.
+  // Overriding it breaks file uploads.
 });
 
 const getAuthToken = () => localStorage.getItem('token');
@@ -25,12 +26,16 @@ const normalizeError = (error) => {
   };
 };
 
-// Add request interceptor to include auth token if available
+// Add request interceptor to include auth token and handle FormData correctly
 api.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // If sending FormData, let axios set the correct Content-Type with boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
     }
     return config;
   },
@@ -41,7 +46,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.status === 401) {
+    const status = error.response ? error.response.status : null;
+    if (status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }

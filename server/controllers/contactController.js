@@ -43,10 +43,6 @@ export const createContact = async (req, res) => {
             data: newContact,
         });
     } catch (error) {
-        // -------------------------------
-        // ERROR HANDLING
-        // -------------------------------
-
         res.status(500).json({
             success: false,
             message: "Server Error",
@@ -58,7 +54,7 @@ export const createContact = async (req, res) => {
 // ===============================
 // @desc    Get all contact messages
 // @route   GET /api/contact
-// @access  Admin (for now public)
+// @access  Admin
 // ===============================
 export const getAllContacts = async (req, res) => {
     try {
@@ -69,6 +65,68 @@ export const getAllContacts = async (req, res) => {
             success: true,
             count: contacts.length,
             data: contacts,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+};
+
+// ===============================
+// @desc    Toggle read status of a message
+// @route   PATCH /api/contact/:id
+// @access  Admin
+// ===============================
+export const toggleReadStatus = async (req, res) => {
+    try {
+        const contact = await Contact.findById(req.params.id);
+
+        if (!contact) {
+            return res.status(404).json({
+                success: false,
+                message: "Message not found",
+            });
+        }
+
+        contact.isRead = !contact.isRead;
+        await contact.save();
+
+        res.status(200).json({
+            success: true,
+            data: contact,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+};
+
+
+// ===============================
+// @desc    Delete contact message
+// @route   DELETE /api/contact/:id
+// @access  Admin
+// ===============================
+export const deleteContact = async (req, res) => {
+    try {
+        const contact = await Contact.findByIdAndDelete(req.params.id);
+
+        if (!contact) {
+            return res.status(404).json({
+                success: false,
+                message: "Message not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Message deleted successfully",
         });
     } catch (error) {
         res.status(500).json({

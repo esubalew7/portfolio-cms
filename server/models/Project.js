@@ -24,10 +24,17 @@ const projectSchema = new mongoose.Schema(
             trim: true,          // Clean input
         }],
 
-        // Image URL field
+        // Image URL field (Cloudinary URL — required)
         image: {
-            type: String,        // Data type: String
-            trim: true,          // Clean input
+            type: String,
+            required: [true, "Project image is required"],
+            trim: true,
+        },
+
+        // Cloudinary public_id — used to delete the image from Cloudinary
+        imagePublicId: {
+            type: String,
+            trim: true,
         },
 
         // Live link field

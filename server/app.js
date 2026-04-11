@@ -4,6 +4,7 @@ import dotenv from "dotenv";            // Import dotenv for env variables
 import contactRoutes from "./routes/contactRoutes.js"; // Import contact routes
 import authRoutes from "./routes/authRoutes.js"; // Import auth routes
 import projectRoutes from "./routes/projectRoutes.js"; // Import project routes
+import uploadRoutes from "./routes/uploadRoutes.js"; // Import upload routes
 
 dotenv.config();                        // Load environment variables from .env
 
@@ -14,10 +15,12 @@ const app = express();                  // Create Express app instance
 app.use(cors());                        // Enable Cross-Origin Resource Sharing
 app.use(express.json());                // Parse incoming JSON requests
 
+
 // Routes
 app.use("/api/contact", contactRoutes); // Use routes for contact
 app.use("/api/auth", authRoutes);       // Use routes for auth
 app.use("/api/projects", projectRoutes); // Use routes for projects
+app.use("/api/upload", uploadRoutes);   // Use routes for generic uploads
 
 // Test Route
 app.get("/api/test", (req, res) => {    // Define GET route

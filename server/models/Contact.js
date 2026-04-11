@@ -26,6 +26,12 @@ const contactSchema = new mongoose.Schema(
             trim: true,          // Clean input
         },
 
+        // Read status tracking
+        isRead: {
+            type: Boolean,
+            default: false,
+        },
+
         // Created date
         createdAt: {
             type: Date,          // Data type: Date

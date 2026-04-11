@@ -27,8 +27,28 @@ export const register = async (req, res) => {
             });
         }
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
+        // Trim and lowercase email for consistency
+        const normalizedEmail = email.trim().toLowerCase();
+
+        // Basic email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(normalizedEmail)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide a valid email address",
+            });
+        }
+
+        // Password length validation
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 6 characters long",
+            });
+        }
+
+        // Check if user already exists (case-insensitive)
+        const existingUser = await User.findOne({ email: normalizedEmail });
 
         if (existingUser) {
             return res.status(400).json({
@@ -41,7 +61,7 @@ export const register = async (req, res) => {
         // CREATE USER
         // -------------------------------
         const user = await User.create({
-            email,
+            email: normalizedEmail,
             password, // will be hashed automatically in model
         });
 
@@ -51,15 +71,20 @@ export const register = async (req, res) => {
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            data: user,
+            data: {
+                id: user._id,
+                email: user.email,
+                createdAt: user.createdAt,
+            },
         });
 
     } catch (error) {
         // No next() call here; errors are returned directly in the response.
+        console.error('Registration error:', error);
         res.status(500).json({
             success: false,
             message: "Server Error",
-            error: error.message,
+            error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
         });
     }
 };
@@ -72,7 +97,6 @@ export const register = async (req, res) => {
 // ========================================
 export const login = async (req, res) => {
     try {
-        // Get email and password from request
         const { email, password } = req.body;
 
         // -------------------------------
@@ -85,16 +109,18 @@ export const login = async (req, res) => {
             });
         }
 
+        // ✅ FIX: normalize email (same as register)
+        const normalizedEmail = email.trim().toLowerCase();
+
         // -------------------------------
         // FIND USER
         // -------------------------------
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: normalizedEmail });
 
-        // If user not found
         if (!user) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid credentials",
+                message: "User not found",
             });
         }
 
@@ -106,34 +132,35 @@ export const login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid credentials",
+                message: "Incorrect password",
             });
         }
 
         // -------------------------------
-        // GENERATE JWT TOKEN
+        // GENERATE TOKEN
         // -------------------------------
         const token = jwt.sign(
-            { id: user._id },                // payload (data inside token)
-            process.env.JWT_SECRET,          // secret key from .env
-            { expiresIn: "7d" }              // token expiry
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
         );
 
         // -------------------------------
-        // SUCCESS RESPONSE
+        // RESPONSE
         // -------------------------------
         res.status(200).json({
             success: true,
             message: "Login successful",
-            token, // send token to frontend
+            token,
         });
 
     } catch (error) {
+        console.error("Login error:", error);
+
         res.status(500).json({
             success: false,
             message: "Server Error",
             error: error.message,
         });
     }
-
 };

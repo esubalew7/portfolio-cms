@@ -1,5 +1,6 @@
 // Import Project model (to interact with MongoDB)
 import Project from "../models/Project.js";
+import cloudinary from "../config/cloudinary.js";
 
 // ===============================
 // @desc    Create new project
@@ -8,14 +9,9 @@ import Project from "../models/Project.js";
 // ===============================
 export const createProject = async (req, res) => {
     try {
-        // Destructure data from request body
-        const { title, description, technologies, image, liveLink, githubLink } = req.body;
+        const { title, description, technologies, image, imagePublicId, liveLink, githubLink } = req.body;
 
-        // -------------------------------
         // VALIDATION
-        // -------------------------------
-
-        // Check if required fields are provided
         if (!title || !description) {
             return res.status(400).json({
                 success: false,
@@ -23,29 +19,31 @@ export const createProject = async (req, res) => {
             });
         }
 
-        // -------------------------------
-        // SAVE TO DATABASE
-        // -------------------------------
+        if (!image) {
+            return res.status(400).json({
+                success: false,
+                message: "Project image is required. Upload an image first via /api/upload.",
+            });
+        }
 
+        // Normalize technologies to array
+        const techArray = typeof technologies === "string"
+            ? technologies.split(",").map(t => t.trim()).filter(Boolean)
+            : (Array.isArray(technologies) ? technologies : []);
+
+        // SAVE TO DATABASE
         const newProject = await Project.create({
             title,
             description,
-            technologies: technologies || [],
+            technologies: techArray,
             image,
+            imagePublicId: imagePublicId || '',
             liveLink,
             githubLink,
         });
 
-        // -------------------------------
-        // SUCCESS RESPONSE
-        // -------------------------------
-
         res.status(201).json(newProject);
     } catch (error) {
-        // -------------------------------
-        // ERROR HANDLING
-        // -------------------------------
-
         res.status(500).json({
             success: false,
             message: "Server Error",
@@ -120,6 +118,23 @@ export const updateProject = async (req, res) => {
             });
         }
 
+        // Normalize technologies to array
+        const techArray = typeof technologies === "string"
+            ? technologies.split(",").map(t => t.trim()).filter(Boolean)
+            : (Array.isArray(technologies) ? technologies : []);
+
+        // Find the existing project to preserve its image if no new one is provided
+        const existing = await Project.findById(req.params.id);
+        if (!existing) {
+            return res.status(404).json({
+                success: false,
+                message: "Project not found",
+            });
+        }
+
+        // Use new Cloudinary URL if provided, otherwise keep the existing one
+        const imageUrl = image || existing.image;
+
         // -------------------------------
         // UPDATE IN DATABASE
         // -------------------------------
@@ -129,23 +144,16 @@ export const updateProject = async (req, res) => {
             {
                 title,
                 description,
-                technologies: technologies || [],
-                image,
+                technologies: techArray,
+                image: imageUrl,
                 liveLink,
                 githubLink,
             },
             {
-                new: true, // Return updated document
+                new: true,          // Return updated document
                 runValidators: true, // Run schema validators
             }
         );
-
-        if (!updatedProject) {
-            return res.status(404).json({
-                success: false,
-                message: "Project not found",
-            });
-        }
 
         // -------------------------------
         // SUCCESS RESPONSE
@@ -168,7 +176,7 @@ export const updateProject = async (req, res) => {
 // ===============================
 export const deleteProject = async (req, res) => {
     try {
-        const project = await Project.findByIdAndDelete(req.params.id);
+        const project = await Project.findById(req.params.id);
 
         if (!project) {
             return res.status(404).json({
@@ -177,9 +185,27 @@ export const deleteProject = async (req, res) => {
             });
         }
 
+        // -----------------------------------------------
+        // DELETE IMAGE FROM CLOUDINARY (non-blocking)
+        // -----------------------------------------------
+        if (project.imagePublicId) {
+            try {
+                await cloudinary.uploader.destroy(project.imagePublicId);
+                console.log(`Cloudinary image deleted: ${project.imagePublicId}`);
+            } catch (cloudErr) {
+                // Log but don't block — always remove from DB
+                console.error("Failed to delete Cloudinary image:", cloudErr.message);
+            }
+        }
+
+        // -----------------------------------------------
+        // DELETE PROJECT FROM MONGODB
+        // -----------------------------------------------
+        await Project.findByIdAndDelete(req.params.id);
+
         res.status(200).json({
             success: true,
-            message: "Project deleted successfully",
+            message: "Project and associated image deleted successfully",
         });
     } catch (error) {
         res.status(500).json({

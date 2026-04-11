@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
+import { ProjectProvider } from './context/ProjectContext';
+import { ToastProvider } from './context/ToastContext';
 import { MainLayout } from './layouts/MainLayout';
 import DashboardLayout from './layouts/DashboardLayout';
-import PrivateRoute from './components/PrivateRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 import { Home } from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -26,8 +28,10 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        {/* Loader layered on top gracefully transitions out while React roots render underneath */}
+      <ProjectProvider>
+        <BrowserRouter>
+          <ToastProvider>
+          {/* Loader layered on top gracefully transitions out while React roots render underneath */}
         <AnimatePresence>
           {isLoading && <Loader key="loader" />}
         </AnimatePresence>
@@ -41,9 +45,9 @@ const App = () => {
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute>
+              <ProtectedRoute>
                 <DashboardLayout />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           >
             <Route index element={<Dashboard />} />
@@ -53,7 +57,9 @@ const App = () => {
         </Routes>
 
         <ScrollToTop />
-      </BrowserRouter>
+          </ToastProvider>
+        </BrowserRouter>
+      </ProjectProvider>
     </ThemeProvider>
   );
 };

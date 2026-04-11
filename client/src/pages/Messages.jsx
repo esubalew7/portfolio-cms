@@ -1,198 +1,215 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import api from '../utils/api';
-import {
-  Search,
-  Filter,
-  Mail,
-  MailOpen,
-  Trash2,
-  Star,
-  StarOff,
-  MoreVertical,
-  User,
-  Clock,
-  AlertCircle,
-  Loader2
+import { useToast } from '../context/ToastContext';
+import { 
+  Trash2, 
+  Mail, 
+  MailOpen, 
+  Clock, 
+  User, 
+  ChevronRight,
+  Filter
 } from 'lucide-react';
 
+// UI Components
+import Button from '../components/ui/Button';
+import Modal from '../components/ui/Modal';
+import ConfirmationModal from '../components/ui/ConfirmationModal';
+
+// Dashboard Components
+import PageHeader from '../components/dashboard/PageHeader';
+import DashboardTable from '../components/dashboard/DashboardTable';
+
+// Utils
+import { formatDate, normalizedText } from '../utils/dashboardUtils';
+
 const Messages = () => {
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
+    const [messages, setMessages] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [messageToDelete, setMessageToDelete] = useState(null);
+    const [selectedMessage, setSelectedMessage] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
+    
+    const { showToast } = useToast();
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
+    // Fetch Messages
+    const fetchMessages = async () => {
+        try {
+            setLoading(true);
+            const data = await api.get('/api/contact');
+            setMessages(Array.isArray(data) ? data : []);
+        } catch (error) {
+            showToast(error.message || 'Failed to fetch messages', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const fetchMessages = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    useEffect(() => {
+        fetchMessages();
+    }, []);
 
-      const response = await api.get('/api/contact');
+    // Filter Logic
+    const filteredMessages = useMemo(() => {
+        return messages.filter(msg => 
+            [msg.name, msg.email, msg.subject, msg.message]
+                .some(field => normalizedText(field).toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+    }, [messages, searchTerm]);
 
-      setMessages(response.data);
-    } catch (err) {
-      console.error('Error fetching messages:', err);
-      setError(err.response?.data?.message || 'Failed to fetch messages');
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Handlers
+    const handleViewMessage = (message) => {
+        setSelectedMessage(message);
+    };
 
-  const filteredMessages = messages.filter(message => {
-    const matchesSearch = message.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      message.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      message.message?.toLowerCase().includes(searchTerm.toLowerCase());
+    const handleDeleteMessage = async () => {
+        if (!messageToDelete) return;
+        try {
+            setSubmitting(true);
+            await api.delete(`/api/contact/${messageToDelete._id || messageToDelete.id}`);
+            setMessages(prev => prev.filter(m => (m._id !== messageToDelete._id && m.id !== messageToDelete.id)));
+            showToast('Message deleted successfully');
+        } catch (error) {
+            showToast(error.message || 'Failed to delete message', 'error');
+        } finally {
+            setSubmitting(false);
+            setMessageToDelete(null);
+        }
+    };
 
-    return matchesSearch;
-  });
+    // Table Columns
+    const columns = [
+        {
+            label: 'Contact',
+            className: 'w-1/4',
+            render: (m) => (
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                        {m.name?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                    <div className="min-w-0">
+                        <p className="font-bold text-gray-900 dark:text-white truncate">{m.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{m.email}</p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            label: 'Subject & Preview',
+            className: 'w-1/3',
+            render: (m) => (
+                <div className="min-w-0">
+                    <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{m.subject || 'No Subject'}</p>
+                    <p className="text-xs text-gray-500 line-clamp-1">{m.message}</p>
+                </div>
+            )
+        },
+        {
+            label: 'Date',
+            render: (m) => (
+                <div className="flex items-center gap-2 text-gray-500">
+                    <Clock size={14} />
+                    <span className="text-xs">{formatDate(m.createdAt)}</span>
+                </div>
+            )
+        },
+        {
+            label: 'Actions',
+            className: 'text-right',
+            render: (m) => (
+                <div className="flex justify-end gap-1">
+                    <Button variant="ghost" icon={ChevronRight} onClick={() => handleViewMessage(m)} className="p-2" />
+                    <Button 
+                        variant="ghost" 
+                        icon={Trash2} 
+                        onClick={() => { setMessageToDelete(m); setShowDeleteModal(true); }} 
+                        className="p-2 text-gray-400 hover:text-red-500" 
+                    />
+                </div>
+            )
+        }
+    ];
 
-  const formatDate = (timestamp) => {
-    if (!timestamp) return 'N/A';
-    const date = new Date(timestamp);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+    return (
+        <div className="animate-in fade-in duration-500 font-sans">
+            <PageHeader 
+                title="Messages"
+                subtitle={`Inquiries from your contact form (${filteredMessages.length})`}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                searchPlaceholder="Search by name, email, or message content..."
+            />
 
-  const getInitials = (name) => {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  };
+            <DashboardTable 
+                columns={columns}
+                data={filteredMessages}
+                loading={loading}
+                searchTerm={searchTerm}
+                emptyMessage="No one has reached out yet. Your inbox is clean!"
+            />
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Messages
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage your contact messages and inquiries
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Total Messages
-          </p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {loading ? '...' : messages.length}
-          </p>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search messages..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-      </div>
-
-      {/* Messages Table */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600 dark:text-gray-400">Loading messages...</p>
-          </div>
-        ) : error ? (
-          <div className="p-8 text-center">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <p className="text-red-600 dark:text-red-400 mb-2">Error loading messages</p>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">{error}</p>
-            <button
-              onClick={fetchMessages}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+            {/* View Message Modal */}
+            <Modal
+                isOpen={!!selectedMessage}
+                onClose={() => setSelectedMessage(null)}
+                title="Message Details"
+                maxWidth="max-w-xl"
             >
-              Try Again
-            </button>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Sender
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Message
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                {filteredMessages.length === 0 ? (
-                  <tr>
-                    <td colSpan="4" className="px-6 py-12 text-center">
-                      <Mail className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400">
-                        {searchTerm ? 'No messages match your search' : 'No messages yet'}
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredMessages.map((message) => (
-                    <tr key={message._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-blue-600 dark:bg-blue-500 flex items-center justify-center">
-                              <span className="text-white text-sm font-bold">
-                                {getInitials(message.name)}
-                              </span>
+                {selectedMessage && (
+                    <div className="space-y-6">
+                        <div className="flex items-start justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xl">
+                                    {selectedMessage.name?.[0]?.toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white">{selectedMessage.name}</h4>
+                                    <p className="text-sm text-gray-500">{selectedMessage.email}</p>
+                                </div>
                             </div>
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">
-                              {message.name || 'Unknown'}
+                            <div className="text-right">
+                                <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Received</p>
+                                <p className="text-sm font-medium text-gray-900 dark:text-white">{formatDate(selectedMessage.createdAt)}</p>
                             </div>
-                          </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {message.email}
+
+                        <div className="space-y-2">
+                            <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Subject</h5>
+                            <div className="p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white font-semibold">
+                                {selectedMessage.subject || 'No Subject Provided'}
+                            </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
-                          {message.message}
+
+                        <div className="space-y-2">
+                            <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Message Body</h5>
+                            <div className="p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                {selectedMessage.message}
+                            </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(message.createdAt)}
-                      </td>
-                    </tr>
-                  ))
+
+                        <div className="pt-4 flex gap-3">
+                            <Button variant="secondary" className="flex-1" onClick={() => setSelectedMessage(null)}>Close</Button>
+                            <a href={`mailto:${selectedMessage.email}`} className="flex-1">
+                                <Button variant="primary" icon={Mail} className="w-full">Reply via Email</Button>
+                            </a>
+                        </div>
+                    </div>
                 )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+            </Modal>
+
+            {/* Delete Confirmation */}
+            <ConfirmationModal 
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDeleteMessage}
+                loading={submitting}
+                title="Delete Message"
+                message="Are you sure you want to delete this message? This action is permanent."
+            />
+        </div>
+    );
 };
 
 export default Messages;

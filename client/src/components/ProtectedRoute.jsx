@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 
-const PrivateRoute = ({ children }) => {
+const ProtectedRoute = ({ children }) => {
   const location = useLocation();
   const token = localStorage.getItem('token');
 
@@ -14,4 +14,4 @@ const PrivateRoute = ({ children }) => {
   return children;
 };
 
-export default PrivateRoute;
+export default ProtectedRoute;
