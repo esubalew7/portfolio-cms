@@ -79,7 +79,7 @@ const Messages = () => {
         );
 
         try {
-            await api.patch(`/api/contact/${messageId}/read`, { isRead: true });
+            await api.put(`/api/contact/${messageId}/read`);
         } catch (error) {
             // Revert on failure
             setMessages((prev) =>

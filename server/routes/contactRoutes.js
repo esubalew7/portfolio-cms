@@ -7,6 +7,8 @@ import {
     createContact,
     getAllContacts,
     toggleReadStatus,
+    updateReadStatus,
+    markMessageAsRead,
     deleteContact,
 } from "../controllers/contactController.js";
 
@@ -23,9 +25,9 @@ router.post("/", createContact);
 // ===============================
 // @route   GET /api/contact
 // @desc    Get all contact messages
-// @access  Admin
+// @access  Public
 // ===============================
-router.get("/", protect, getAllContacts); // Add protect middleware to get all contacts
+router.get("/", getAllContacts);
 
 // ===============================
 // @route   PATCH /api/contact/:id
@@ -33,6 +35,20 @@ router.get("/", protect, getAllContacts); // Add protect middleware to get all c
 // @access  Admin
 // ===============================
 router.patch("/:id", protect, toggleReadStatus);
+
+// ===============================
+// @route   PATCH /api/contact/:id/read
+// @desc    Set read status
+// @access  Public
+// ===============================
+router.patch("/:id/read", updateReadStatus);
+
+// ===============================
+// @route   PUT /api/contact/:id/read
+// @desc    Mark a message as read
+// @access  Public
+// ===============================
+router.put("/:id/read", markMessageAsRead);
 
 // ===============================
 // @route   DELETE /api/contact/:id
