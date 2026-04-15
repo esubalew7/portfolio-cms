@@ -6,7 +6,7 @@ export const AboutSection = () => {
   const stats = [
     { label: 'Years Experience', value: 1, suffix: '+' },
     { label: 'Total Projects', value: 5, suffix: '+' }, // Adjust these numbers as needed!
-    { label: 'Core Skills', value: 15, suffix: '' },
+    { label: 'Core Skills', value: 15, suffix: '+' },
   ];
 
   return (
