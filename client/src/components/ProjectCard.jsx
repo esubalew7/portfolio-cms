@@ -44,6 +44,12 @@ const ProjectCard = ({ project }) => {
         />
       </div>
       <div className="p-8 flex flex-col flex-grow z-10 bg-gradient-to-b from-white/0 to-white/50 dark:to-gray-900/50">
+        {/* Category Badge */}
+        <div className="mb-3">
+          <span className="text-[10px] px-2.5 py-1 bg-gray-200/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-gray-300/30 dark:border-gray-700/30">
+            {String(project.category || "frontend").toLowerCase().trim()}
+          </span>
+        </div>
         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {project.title}
         </h3>

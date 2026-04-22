@@ -6,24 +6,29 @@ import { useProjects } from '../context/ProjectContext';
 
 export const Projects = () => {
   const { projects, loading, error } = useProjects();
-  const [filter, setFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState('all');
+  
+  const filters = [
+    { label: 'All', value: 'all' },
+    { label: 'MERN', value: 'mern' },
+    { label: 'Frontend', value: 'frontend' },
+    { label: 'Backend', value: 'backend' }
+  ];
 
-  const filters = ['All', 'MERN', 'Frontend', 'Backend'];
+  // FIX FILTERING LOGIC (ONLY THIS LOGIC)
+  const filteredProjects = Array.isArray(projects) ? projects.filter((project) => {
+    if (activeFilter === "all") return true;
 
-  const getFilteredProjects = () => {
-    if (!projects) return [];
+    const projectCategory = (project.category || "")
+      .toLowerCase()
+      .trim();
 
-    const activeFilter = filter.toLowerCase();
+    return projectCategory === activeFilter;
+  }) : [];
 
-    return projects.filter((project) => {
-      if (activeFilter === "all") return true;
-
-      const category = project.category?.toLowerCase().trim();
-      return category === activeFilter;
-    });
-  };
-
-  const filteredProjects = getFilteredProjects();
+  // DEBUG STEP (MANDATORY)
+  console.log("ACTIVE FILTER:", activeFilter);
+  console.log("PROJECT CATEGORY LIST:", projects.map(p => p.category));
 
   return (
     <section className="container mx-auto px-4 py-16 md:py-24 max-w-7xl">
@@ -42,14 +47,14 @@ export const Projects = () => {
         <motion.div variants={fadeIn('up', 0.2)} className="flex flex-wrap justify-center gap-4 mb-16">
           {filters.map((f) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${filter === f
+              key={f.value}
+              onClick={() => setActiveFilter(f.value)}
+              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${activeFilter === f.value
                 ? 'bg-blue-600 text-white shadow-md'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
             >
-              {f}
+              {f.label}
             </button>
           ))}
         </motion.div>

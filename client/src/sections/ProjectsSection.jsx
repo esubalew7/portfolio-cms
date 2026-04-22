@@ -6,43 +6,29 @@ import { useProjects } from '../context/ProjectContext';
 
 export const ProjectsSection = () => {
   const { projects, loading, error } = useProjects();
-  const [filter, setFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState('all');
   
-  const filters = ['All', 'MERN', 'Frontend', 'Backend'];
+  const filters = [
+    { label: 'All', value: 'all' },
+    { label: 'MERN', value: 'mern' },
+    { label: 'Frontend', value: 'frontend' },
+    { label: 'Backend', value: 'backend' }
+  ];
 
-  const getFilteredProjects = () => {
-    if (!projects) return [];
-    if (filter === 'All') return projects;
+  // STRICT FILTER LOGIC
+  const filteredProjects = Array.isArray(projects) ? projects.filter((project) => {
+    if (activeFilter === "all") return true;
 
-    return projects.filter((project) => {
-      // Reconstruct tech stack to a lowercase string for easy matching
-      const techStackString = Array.isArray(project.technologies) 
-        ? project.technologies.join(' ').toLowerCase() 
-        : (project.technologies || project.techStack?.join(' ') || '').toLowerCase();
+    const projectCategory = (project.category || "")
+      .toLowerCase()
+      .trim();
 
-      if (filter === 'MERN') {
-        const mernKeywords = ['mongo', 'express', 'react', 'node', 'mongoose'];
-        return mernKeywords.some(kw => techStackString.includes(kw));
-      }
-      
-      if (filter === 'Frontend') {
-        const frontendKeywords = ['react', 'html', 'css', 'tailwind', 'javascript', 'vue', 'angular', 'next.js'];
-        return frontendKeywords.some(kw => techStackString.includes(kw));
-      }
-      
-      if (filter === 'Backend') {
-        const backendKeywords = ['node', 'express', 'mongodb', 'api', 'aws', 'server', 'python', 'java'];
-        return backendKeywords.some(kw => techStackString.includes(kw));
-      }
+    return projectCategory === activeFilter;
+  }) : [];
 
-      // If categories were supplied on legacy items:
-      if (project.category && project.category === filter) return true;
-
-      return false;
-    });
-  };
-
-  const filteredProjects = getFilteredProjects();
+  // DEBUG LOGS
+  console.log("HOME SECTION FILTER:", activeFilter);
+  console.log("HOME SECTION PROJECTS:", projects.map(p => p.category));
 
   return (
     <section id="projects" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 max-w-7xl relative">
@@ -61,14 +47,14 @@ export const ProjectsSection = () => {
         <motion.div variants={fadeIn('up', 0.2)} className="flex flex-wrap justify-center gap-3 mb-16">
           {filters.map((f) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-6 py-2.5 rounded-full font-bold tracking-wide transition-all duration-300 transform active:scale-95 ${filter === f
+              key={f.value}
+              onClick={() => setActiveFilter(f.value)}
+              className={`px-6 py-2.5 rounded-full font-bold tracking-wide transition-all duration-300 transform active:scale-95 ${activeFilter === f.value
                 ? 'bg-blue-600 text-white shadow-[0_5px_15px_-3px_rgba(37,99,235,0.4)]'
-                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-100 dark:border-gray-700'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 shadow-sm border border-gray-100 dark:border-gray-700'
                 }`}
             >
-              {f}
+              {f.label}
             </button>
           ))}
         </motion.div>
