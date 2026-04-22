@@ -12,7 +12,13 @@ const app = express();                  // Create Express app instance
 
 // Middleware
 
-app.use(cors());                        // Enable Cross-Origin Resource Sharing
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://portfolio-mern-one-rho.vercel.app'
+  ],
+  credentials: true
+}));                        // Secure CORS for dev/prod
 app.use(express.json());                // Parse incoming JSON requests
 
 
@@ -21,6 +27,18 @@ app.use("/api/contact", contactRoutes); // Use routes for contact
 app.use("/api/auth", authRoutes);       // Use routes for auth
 app.use("/api/projects", projectRoutes); // Use routes for projects
 app.use("/api/upload", uploadRoutes);   // Use routes for generic uploads
+
+// Health check route
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      projects: '/api/projects',
+      health: '/'
+    }
+  });
+});
 
 // Test Route
 app.get("/api/test", (req, res) => {    // Define GET route

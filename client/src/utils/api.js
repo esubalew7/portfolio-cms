@@ -1,13 +1,15 @@
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_URL;
-const API_BASE_URL = rawApiUrl?.trim().replace(/\/+$/, '') || 'http://localhost:5000';
+const API_BASE_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://portfolio-backend-gxhv.onrender.com";
 
 console.log("API BASE URL:", API_BASE_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+timeout: 30000, // 30s for Render cold starts
   // NOTE: Do NOT set Content-Type here.
   // Axios auto-sets 'application/json' for objects and
   // 'multipart/form-data' (with boundary) for FormData.

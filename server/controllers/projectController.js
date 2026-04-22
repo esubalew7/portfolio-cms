@@ -62,6 +62,8 @@ export const getAllProjects = async (req, res) => {
         // Fetch all projects sorted by newest first
         const projects = await Project.find().sort({ createdAt: -1 });
 
+        console.log("Projects fetched");
+
         res.status(200).json(projects);
     } catch (error) {
         res.status(500).json({

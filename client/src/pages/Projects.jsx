@@ -80,9 +80,19 @@ export const Projects = () => {
           </div>
         )}
 
-        {error && !loading && (
-          <div className="text-center py-20">
-            <p className="text-red-500 font-semibold text-lg">{error}</p>
+{error && !loading && (
+          <div className="text-center py-20 space-y-4">
+            <div className="text-yellow-600 dark:text-yellow-400">
+              <div className="text-xl font-semibold mb-2">⚠️ Projects Temporarily Unavailable</div>
+              <p className="text-lg">{error}</p>
+              <p className="text-sm opacity-75 mt-2">Backend services are waking up (Render free tier sleeps after inactivity).</p>
+            </div>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('retryProjects'))}
+              className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              🔄 Retry Now
+            </button>
           </div>
         )}
 

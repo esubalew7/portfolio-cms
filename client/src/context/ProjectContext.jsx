@@ -10,22 +10,39 @@ export const ProjectProvider = ({ children }) => {
 
   const fetchProjects = useCallback(async () => {
     try {
+      // Don't override the "Server is waking up..." message if it's retrying
       setLoading(true);
+      const res = await api.get('/api/projects');
+      setProjects(Array.isArray(res) ? res : []);
       setError(null);
-
-      const response = await api.get('/api/projects');
-      setProjects(Array.isArray(response) ? response : []);
+      setLoading(false);
     } catch (err) {
       console.error('Error fetching projects:', err);
-      const errorMessage = err.message || 'Failed to fetch projects';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+      
+      const isNetworkError = err.code === 'ECONNABORTED' || 
+                            err.message.includes('Network Error') || 
+                            err.message.includes('Failed to fetch') ||
+                            !err.response;
+      
+      if (isNetworkError) {
+        setError('Server is waking up, please wait...');
+        setTimeout(fetchProjects, 3000); // retry after 3 sec
+      } else {
+        setError(err.message || 'Failed to fetch projects');
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
     fetchProjects();
+  }, [fetchProjects]);
+
+  // Listen for manual retry events
+  useEffect(() => {
+    const handleRetry = () => fetchProjects();
+    window.addEventListener('retryProjects', handleRetry);
+    return () => window.removeEventListener('retryProjects', handleRetry);
   }, [fetchProjects]);
 
   const addProject = async (projectData) => {
