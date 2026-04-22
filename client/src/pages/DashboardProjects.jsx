@@ -55,6 +55,7 @@ const DashboardProjects = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    category: 'mern',
     technologies: '',
     liveLink: '',
     githubLink: '',
@@ -83,6 +84,7 @@ const DashboardProjects = () => {
       setFormData({
         title: project.title || '',
         description: project.description || '',
+        category: project.category || 'mern',
         technologies: Array.isArray(project.technologies) ? project.technologies.join(', ') : '',
         liveLink: project.liveLink || project.liveUrl || '',
         githubLink: project.githubLink || project.githubUrl || '',
@@ -90,7 +92,7 @@ const DashboardProjects = () => {
       setImagePreview(project.image || null);
     } else {
       setEditingProject(null);
-      setFormData({ title: '', description: '', technologies: '', liveLink: '', githubLink: '' });
+      setFormData({ title: '', description: '', category: 'mern', technologies: '', liveLink: '', githubLink: '' });
       setImagePreview(null);
     }
     setShowModal(true);
@@ -125,6 +127,7 @@ const DashboardProjects = () => {
     const errors = {};
     if (!formData.title.trim()) errors.title = 'Title is required';
     if (!formData.description.trim()) errors.description = 'Description is required';
+    if (!['mern', 'frontend', 'backend'].includes(formData.category)) errors.category = 'Valid category is required';
     if (!editingProject && !imageFile) errors.image = 'A project image is required';
 
     if (Object.keys(errors).length > 0) {
@@ -159,6 +162,7 @@ const DashboardProjects = () => {
       const projectPayload = {
         title: formData.title,
         description: formData.description,
+        category: formData.category,
         technologies: formData.technologies,
         image: imageUrl,
         imagePublicId,
@@ -317,6 +321,21 @@ const DashboardProjects = () => {
                 error={formErrors.title}
                 placeholder="e.g. AI Portfolio Dashboard"
             />
+            
+            <div className="space-y-1">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Category</label>
+                <select
+                    name="category"
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                >
+                    <option value="mern">MERN</option>
+                    <option value="frontend">Frontend</option>
+                    <option value="backend">Backend</option>
+                </select>
+                {formErrors.category && <p className="text-xs font-semibold text-red-500">{formErrors.category}</p>}
+            </div>
             <FormInput 
                 label="Description" 
                 id="description" 

@@ -9,13 +9,21 @@ import cloudinary from "../config/cloudinary.js";
 // ===============================
 export const createProject = async (req, res) => {
     try {
-        const { title, description, technologies, image, imagePublicId, liveLink, githubLink } = req.body;
+        const { title, description, category, technologies, image, imagePublicId, liveLink, githubLink } = req.body;
 
         // VALIDATION
         if (!title || !description) {
             return res.status(400).json({
                 success: false,
                 message: "Title and description are required",
+            });
+        }
+
+        const normalizedCategory = category?.toLowerCase().trim();
+        if (!normalizedCategory) {
+            return res.status(400).json({
+                success: false,
+                message: "Project category is required",
             });
         }
 
@@ -35,6 +43,7 @@ export const createProject = async (req, res) => {
         const newProject = await Project.create({
             title,
             description,
+            category: normalizedCategory,
             technologies: techArray,
             image,
             imagePublicId: imagePublicId || '',
@@ -107,7 +116,7 @@ export const getProject = async (req, res) => {
 // ===============================
 export const updateProject = async (req, res) => {
     try {
-        const { title, description, technologies, image, liveLink, githubLink } = req.body;
+        const { title, description, category, technologies, image, liveLink, githubLink } = req.body;
 
         // -------------------------------
         // VALIDATION
@@ -117,6 +126,14 @@ export const updateProject = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Title and description are required",
+            });
+        }
+
+        const normalizedCategory = category?.toLowerCase().trim();
+        if (!normalizedCategory) {
+            return res.status(400).json({
+                success: false,
+                message: "Project category is required",
             });
         }
 
@@ -146,6 +163,7 @@ export const updateProject = async (req, res) => {
             {
                 title,
                 description,
+                category: normalizedCategory,
                 technologies: techArray,
                 image: imageUrl,
                 liveLink,

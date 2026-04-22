@@ -18,6 +18,15 @@ const projectSchema = new mongoose.Schema(
             trim: true,          // Clean input
         },
 
+        // Category field
+        category: {
+            type: String,
+            required: [true, "Project category is required"],
+            enum: ["mern", "frontend", "backend"],
+            lowercase: true,
+            trim: true,
+        },
+
         // Technologies field (array of strings)
         technologies: [{
             type: String,        // Data type: String

@@ -7,38 +7,19 @@ import { useProjects } from '../context/ProjectContext';
 export const Projects = () => {
   const { projects, loading, error } = useProjects();
   const [filter, setFilter] = useState('All');
-  
+
   const filters = ['All', 'MERN', 'Frontend', 'Backend'];
 
   const getFilteredProjects = () => {
     if (!projects) return [];
-    if (filter === 'All') return projects;
+
+    const activeFilter = filter.toLowerCase();
 
     return projects.filter((project) => {
-      // Reconstruct tech stack to a lowercase string for easy matching
-      const techStackString = Array.isArray(project.technologies) 
-        ? project.technologies.join(' ').toLowerCase() 
-        : (project.technologies || project.techStack?.join(' ') || '').toLowerCase();
+      if (activeFilter === "all") return true;
 
-      if (filter === 'MERN') {
-        const mernKeywords = ['mongo', 'express', 'react', 'node', 'mongoose'];
-        return mernKeywords.some(kw => techStackString.includes(kw));
-      }
-      
-      if (filter === 'Frontend') {
-        const frontendKeywords = ['react', 'html', 'css', 'tailwind', 'javascript', 'vue', 'angular', 'next.js'];
-        return frontendKeywords.some(kw => techStackString.includes(kw));
-      }
-      
-      if (filter === 'Backend') {
-        const backendKeywords = ['node', 'express', 'mongodb', 'api', 'aws', 'server', 'python', 'java'];
-        return backendKeywords.some(kw => techStackString.includes(kw));
-      }
-
-      // If categories were supplied on legacy items:
-      if (project.category && project.category === filter) return true;
-
-      return false;
+      const category = project.category?.toLowerCase().trim();
+      return category === activeFilter;
     });
   };
 
@@ -80,7 +61,7 @@ export const Projects = () => {
           </div>
         )}
 
-{error && !loading && (
+        {error && !loading && (
           <div className="text-center py-20 space-y-4">
             <div className="text-yellow-600 dark:text-yellow-400">
               <div className="text-xl font-semibold mb-2">⚠️ Projects Temporarily Unavailable</div>
