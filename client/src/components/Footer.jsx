@@ -9,7 +9,7 @@ export const Footer = () => {
           <a href="#home" className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 tracking-wide">
             Esu<span className="text-gray-800 dark:text-white">balew</span>
           </a>
-          
+
           <SocialIconRow className="gap-5" />
         </div>
 

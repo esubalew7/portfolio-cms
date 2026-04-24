@@ -7,7 +7,7 @@ import { useProjects } from '../context/ProjectContext';
 export const Projects = () => {
   const { projects, loading, error } = useProjects();
   const [activeFilter, setActiveFilter] = useState('all');
-  
+
   const filters = [
     { label: 'All', value: 'all' },
     { label: 'MERN', value: 'mern' },

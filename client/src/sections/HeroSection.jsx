@@ -67,7 +67,7 @@ export const HeroSection = () => {
 
             <motion.p variants={itemVariants} className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-lg leading-relaxed">
               I am a Computer Science student and MERN Stack Developer with a passion for building dynamic web applications.
-               I specialize in creating seamless user experiences and robust backend systems. Let's build something amazing together!
+              I specialize in creating seamless user experiences and robust backend systems. Let's build something amazing together!
             </motion.p>
 
             {/* Call to Actions */}

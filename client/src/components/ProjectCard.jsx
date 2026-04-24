@@ -36,27 +36,45 @@ const ProjectCard = ({ project }) => {
           <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse z-10" />
         )}
 
-        <img
-          src={imageSrc}
-          alt={project.title || "Project Image"}
-          onLoad={() => setImageLoaded(true)}
-          className={`w-full h-full object-cover transform sm:-translate-x-1 group-hover:scale-105 transition-all duration-700 ease-out z-10 ${imageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-xl'}`}
-        />
+        <a 
+          href={liveUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block w-full h-full cursor-pointer relative group/image overflow-hidden"
+        >
+          {/* Zooming Image */}
+          <img
+            src={imageSrc}
+            alt={project.title || "Project Image"}
+            onLoad={() => setImageLoaded(true)}
+            className={`w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover/image:scale-110 ${imageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-xl'}`}
+          />
+          
+          {/* Hover Overlay */}
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/image:opacity-100 transition-all duration-300 flex items-center justify-center z-20">
+            <span className="text-white font-bold text-lg translate-y-4 group-hover/image:translate-y-0 transition-transform duration-300 flex items-center gap-2">
+              View Project 
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </span>
+          </div>
+        </a>
       </div>
-      <div className="p-8 flex flex-col flex-grow z-10 bg-gradient-to-b from-white/0 to-white/50 dark:to-gray-900/50">
+      <div className="p-6 sm:p-8 flex flex-col flex-grow z-10 bg-gradient-to-b from-white/0 to-white/50 dark:to-gray-900/50">
         {/* Category Badge */}
         <div className="mb-3">
           <span className="text-[10px] px-2.5 py-1 bg-gray-200/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-gray-300/30 dark:border-gray-700/30">
             {String(project.category || "frontend").toLowerCase().trim()}
           </span>
         </div>
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {project.title}
         </h3>
-        <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-300">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 flex-grow leading-relaxed line-clamp-3 sm:line-clamp-4 hover:line-clamp-none transition-all duration-300">
           {project.description}
         </p>
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
           {techStack.map((tech, index) => (
             <span key={`${tech}-${index}`} className="px-3 py-1 bg-blue-50/80 dark:bg-gray-800/80 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wider uppercase rounded-md border border-blue-100/50 dark:border-gray-700/50 shadow-sm backdrop-blur-sm">
               {tech}
