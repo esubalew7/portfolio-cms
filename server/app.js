@@ -5,6 +5,7 @@ import contactRoutes from "./routes/contactRoutes.js"; // Import contact routes
 import authRoutes from "./routes/authRoutes.js"; // Import auth routes
 import projectRoutes from "./routes/projectRoutes.js"; // Import project routes
 import uploadRoutes from "./routes/uploadRoutes.js"; // Import upload routes
+import dashboardRoutes from "./routes/dashboardRoutes.js"; // Import dashboard routes
 
 dotenv.config();                        // Load environment variables from .env
 
@@ -27,6 +28,7 @@ app.use("/api/contact", contactRoutes); // Use routes for contact
 app.use("/api/auth", authRoutes);       // Use routes for auth
 app.use("/api/projects", projectRoutes); // Use routes for projects
 app.use("/api/upload", uploadRoutes);   // Use routes for generic uploads
+app.use("/api/dashboard", dashboardRoutes); // Use routes for dashboard stats
 
 // Health check route
 app.get('/', (req, res) => {
