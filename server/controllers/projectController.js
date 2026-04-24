@@ -1,6 +1,7 @@
 // Import Project model (to interact with MongoDB)
 import Project from "../models/Project.js";
 import cloudinary from "../config/cloudinary.js";
+import Notification from "../models/Notification.js";
 
 // ===============================
 // @desc    Create new project
@@ -49,6 +50,15 @@ export const createProject = async (req, res) => {
             imagePublicId: imagePublicId || '',
             liveLink,
             githubLink,
+        });
+
+        // -------------------------------
+        // CREATE NOTIFICATION
+        // -------------------------------
+        await Notification.create({
+            type: "project",
+            title: "New project added",
+            description: title
         });
 
         res.status(201).json(newProject);

@@ -1,5 +1,6 @@
 // Import Contact model (to interact with MongoDB)
 import Contact from "../models/Contact.js";
+import Notification from "../models/Notification.js";
 
 // ===============================
 // @desc    Create new contact message
@@ -40,6 +41,15 @@ export const createContact = async (req, res) => {
             message,
         });
         await newContact.save();
+
+        // -------------------------------
+        // CREATE NOTIFICATION
+        // -------------------------------
+        await Notification.create({
+            type: "message",
+            title: "New message received",
+            description: name
+        });
 
         console.log("[contact:create] Message saved successfully", {
             id: newContact._id,

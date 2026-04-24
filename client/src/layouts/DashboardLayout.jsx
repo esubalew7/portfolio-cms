@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -11,15 +11,100 @@ import {
   Sun,
   User,
   Bell,
-  Settings
+  Settings,
+  RefreshCw,
+  Clock
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import api from '../utils/api';
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [open, setOpen] = useState(false);
+  
   const navigate = useNavigate();
   const location = useLocation();
   const { isDarkMode, toggleTheme } = useTheme();
+
+  // DEBUG LOG
+  useEffect(() => {
+    console.log("NOTIFICATIONS STATE:", { open, unreadCount, count: notifications.length });
+  }, [open, notifications, unreadCount]);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoadingNotifications(true);
+      const [notifRes, countRes] = await Promise.all([
+        api.get('/api/notifications'),
+        api.get('/api/notifications/unread-count')
+      ]);
+      
+      if (notifRes.success) setNotifications(notifRes.data);
+      if (countRes.success) setUnreadCount(countRes.count);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  const handleMarkAsRead = async (id, type) => {
+    try {
+      // Find the notification in state
+      const notif = notifications.find(n => n._id === id);
+      
+      // Navigate based on type
+      if (type === 'message') {
+        navigate('/dashboard/messages');
+      } else if (type === 'project') {
+        navigate('/dashboard/projects');
+      }
+
+      // Close dropdown
+      setOpen(false);
+
+      if (!notif || notif.isRead) return;
+
+      const res = await api.put(`/api/notifications/${id}/read`);
+      
+      if (res.success) {
+        // Update local state
+        setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  const formatRelativeTime = (date) => {
+    const now = new Date();
+    const diff = now - new Date(date);
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    // Refresh notifications every 2 minutes
+    const interval = setInterval(fetchNotifications, 120000);
+    return () => clearInterval(interval);
+  }, []);
 
   const menuItems = [
     {
@@ -181,10 +266,105 @@ const DashboardLayout = () => {
 
             <div className="flex items-center space-x-4">
               {/* Notifications */}
-              <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 relative transition-colors duration-200">
-                <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">3</span>
-              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => {
+                    console.log("Toggling notifications dropdown. Current state:", !open);
+                    setOpen(!open);
+                  }}
+                  className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 relative transition-colors duration-200 ${open ? 'bg-gray-100 dark:bg-gray-800' : ''}`}
+                  aria-label="Toggle notifications"
+                >
+                  <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center animate-pulse">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Notification Dropdown */}
+                {open && (
+                  <>
+                    {/* Backdrop to close dropdown */}
+                    <div 
+                      className="fixed inset-0 z-40 bg-transparent" 
+                      onClick={() => setOpen(false)}
+                    ></div>
+                    
+                    {/* Dropdown Menu */}
+                    <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden transform origin-top-right transition-all duration-200">
+                      <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                        <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
+                        <span className="text-xs font-medium px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
+                          {unreadCount} Unread
+                        </span>
+                      </div>
+                      
+                      <div className="max-h-[400px] overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
+                        {Array.isArray(notifications) && notifications.length > 0 ? (
+                          notifications.map((notif) => (
+                            <div 
+                              key={notif._id}
+                              onClick={() => {
+                                console.log("Notification clicked:", notif._id);
+                                handleMarkAsRead(notif._id, notif.type);
+                              }}
+                              className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all cursor-pointer relative ${
+                                !notif.isRead 
+                                  ? 'bg-blue-50/40 dark:bg-blue-900/10' 
+                                  : 'opacity-70 grayscale-[0.5]'
+                              }`}
+                            >
+                              {!notif.isRead && (
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 dark:bg-blue-400 shadow-[0_0_8px_rgba(37,99,235,0.5)]"></div>
+                              )}
+                              <div className="flex gap-3">
+                                <div className={`p-2 rounded-lg h-fit transition-colors ${
+                                  notif.type === 'message' 
+                                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                                    : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
+                                } ${!notif.isRead ? 'scale-110 shadow-sm' : ''}`}>
+                                  {notif.type === 'message' ? <MessageSquare className="h-4 w-4" /> : <FolderOpen className="h-4 w-4" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-sm transition-all truncate ${!notif.isRead ? 'font-extrabold text-gray-900 dark:text-white' : 'font-medium text-gray-700 dark:text-gray-300'}`}>
+                                    {notif.title}
+                                  </p>
+                                  <p className={`text-xs transition-all line-clamp-1 mb-1 ${!notif.isRead ? 'text-gray-800 dark:text-gray-200 font-medium' : 'text-gray-500 dark:text-gray-500'}`}>
+                                    {notif.description}
+                                  </p>
+                                  <div className="flex items-center text-[10px] font-medium text-gray-400 dark:text-gray-600">
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    {formatRelativeTime(notif.createdAt)}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                            <Bell className="h-8 w-8 mx-auto mb-2 opacity-20" />
+                            <p className="text-sm font-medium">No notifications yet</p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="p-3 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-800 text-center">
+                        <button 
+                          className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                          onClick={() => {
+                            setOpen(false);
+                            navigate('/dashboard/messages');
+                          }}
+                        >
+                          View all messages
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
 
               {/* Settings */}
               <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
