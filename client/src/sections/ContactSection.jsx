@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Send, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  Send,
+  CheckCircle2,
+  AlertCircle,
   Loader2,
   Mail,
   Phone,
@@ -69,26 +69,26 @@ export const ContactSection = () => {
   };
 
   const contactLinks = [
-    { 
-      icon: Mail, 
-      label: 'Email', 
-      value: 'your@email.com', 
-      href: 'mailto:your@email.com',
-      isClickable: true 
+    {
+      icon: Mail,
+      label: 'Email',
+      value: 'esubalew392@gmail.com',
+      href: 'mailto:esubalew392@gmail.com',
+      isClickable: true
     },
-    { 
-      icon: Phone, 
-      label: 'Phone', 
-      value: '+251 900 000 000', 
-      href: 'tel:+251900000000',
-      isClickable: true 
+    {
+      icon: Phone,
+      label: 'Phone',
+      value: '+251 915795794',
+      href: 'tel:+251915795794',
+      isClickable: true
     },
-    { 
-      icon: MapPin, 
-      label: 'Location', 
-      value: 'Addis Ababa, Ethiopia', 
+    {
+      icon: MapPin,
+      label: 'Location',
+      value: 'Bahir Dar, Ethiopia',
       href: '#',
-      isClickable: false 
+      isClickable: false
     }
   ];
 
@@ -102,9 +102,9 @@ export const ContactSection = () => {
 
       <div className="container mx-auto px-6 max-w-7xl relative z-10">
         <div className="flex flex-col lg:flex-row items-start justify-between gap-16 lg:gap-24">
-          
+
           {/* Left Column: Content & Contact Info */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -121,7 +121,7 @@ export const ContactSection = () => {
 
             <div className="space-y-6">
               {contactLinks.map((link, idx) => (
-                <div 
+                <div
                   key={idx}
                   className="flex items-center gap-5 p-2"
                 >
@@ -131,7 +131,7 @@ export const ContactSection = () => {
                   <div className="flex flex-col">
                     <span className="text-xs font-black uppercase tracking-[0.1em] text-gray-400 dark:text-gray-500 mb-0.5">{link.label}</span>
                     {link.isClickable ? (
-                      <a 
+                      <a
                         href={link.href}
                         className="text-lg font-bold text-gray-900 dark:text-gray-200 hover:text-blue-600 transition-colors"
                       >
@@ -157,7 +157,7 @@ export const ContactSection = () => {
           >
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 md:p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-                
+
                 {/* Status Messages */}
                 {submitStatus === 'success' && (
                   <motion.div
@@ -193,9 +193,8 @@ export const ContactSection = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 ${
-                        errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
-                      }`}
+                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                        }`}
                       placeholder="Your Name"
                     />
                     {errors.name && <p className="text-xs text-red-500 font-medium ml-1">{errors.name}</p>}
@@ -209,9 +208,8 @@ export const ContactSection = () => {
                       value={formData.email}
                       onChange={handleChange}
                       type="email"
-                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 ${
-                        errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
-                      }`}
+                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                        }`}
                       placeholder="you@example.com"
                     />
                     {errors.email && <p className="text-xs text-red-500 font-medium ml-1">{errors.email}</p>}
@@ -226,9 +224,8 @@ export const ContactSection = () => {
                     value={formData.message}
                     onChange={handleChange}
                     rows="5"
-                    className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 resize-none ${
-                      errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
-                    }`}
+                    className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 resize-none ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                      }`}
                     placeholder="Tell me about your project..."
                   />
                   {errors.message && <p className="text-xs text-red-500 font-medium ml-1">{errors.message}</p>}
