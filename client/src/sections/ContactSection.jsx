@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { fadeIn, staggerContainer } from '../animations/variants';
+import { 
+  Send, 
+  CheckCircle2, 
+  AlertCircle, 
+  Loader2,
+  Mail,
+  Phone,
+  MapPin,
+  ExternalLink
+} from 'lucide-react';
 import api from '../utils/api';
 
 export const ContactSection = () => {
@@ -59,134 +68,188 @@ export const ContactSection = () => {
     }
   };
 
+  const contactLinks = [
+    { 
+      icon: Mail, 
+      label: 'Email', 
+      value: 'your@email.com', 
+      href: 'mailto:your@email.com',
+      isClickable: true 
+    },
+    { 
+      icon: Phone, 
+      label: 'Phone', 
+      value: '+251 900 000 000', 
+      href: 'tel:+251900000000',
+      isClickable: true 
+    },
+    { 
+      icon: MapPin, 
+      label: 'Location', 
+      value: 'Addis Ababa, Ethiopia', 
+      href: '#',
+      isClickable: false 
+    }
+  ];
+
   return (
-    <section id="contact" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24 max-w-4xl relative z-10">
-      <motion.div
-        variants={staggerContainer(0.2, 0)}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <motion.div variants={fadeIn('up', 0.1)} className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">Get In Touch</h2>
-          <div className="w-20 h-1 bg-blue-600 dark:bg-blue-400 mx-auto rounded-full mb-8"></div>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            I'm currently looking for new opportunities. Whether you have a question or just want to say hi, my inbox is always open!
-          </p>
-        </motion.div>
+    <section id="contact" className="relative py-24 bg-white dark:bg-gray-950 overflow-hidden">
+      {/* Subtle Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-6xl pointer-events-none -z-10">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-600/10 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/5 dark:bg-purple-600/10 rounded-full blur-[100px]"></div>
+      </div>
 
-        <motion.form
-          onSubmit={handleSubmit}
-          variants={fadeIn('up', 0.3)}
-          className="bg-white dark:bg-gray-900 shadow-2xl rounded-3xl p-8 md:p-10 border border-gray-100 dark:border-gray-800 space-y-8"
-          noValidate
-        >
-          {submitStatus === 'success' && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl flex items-center gap-4"
-              role="alert"
-            >
-              <div className="flex-shrink-0">
-                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-green-800 dark:text-green-200">Message Sent Successfully!</h3>
-                <p className="text-sm text-green-700 dark:text-green-300 mt-1">Thank you for reaching out. I'll get back to you soon.</p>
-              </div>
-            </motion.div>
-          )}
-
-          {submitStatus === 'error' && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl flex items-center gap-4"
-              role="alert"
-            >
-              <div className="flex-shrink-0">
-                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-red-800 dark:text-red-200">Failed to Send Message</h3>
-                <p className="text-sm text-red-700 dark:text-red-300 mt-1">{errorMessage || 'Something went wrong. Please try again later.'}</p>
-              </div>
-            </motion.div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Name</label>
-              <input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                type="text"
-                className={`w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-gray-950 border-2 ${errors.name ? 'border-red-400 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-blue-500'} text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/20 outline-none transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500`}
-                placeholder="John Doe"
-              />
-              {errors.name && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.name}</p>}
-            </div>
-
-            <div className="space-y-3">
-              <label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
-              <input
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                type="email"
-                className={`w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-gray-950 border-2 ${errors.email ? 'border-red-400 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-blue-500'} text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/20 outline-none transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500`}
-                placeholder="john@example.com"
-              />
-              {errors.email && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.email}</p>}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <label htmlFor="message" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Message</label>
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              rows="6"
-              className={`w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-gray-950 border-2 ${errors.message ? 'border-red-400 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-blue-500'} text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/20 outline-none transition-all duration-300 resize-none placeholder-gray-400 dark:placeholder-gray-500`}
-              placeholder="How can I help you? Project details, timelines, etc."
-            />
-            {errors.message && <p className="text-red-500 text-xs font-medium animate-pulse">{errors.message}</p>}
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-blue-300 disabled:to-blue-400 dark:disabled:from-blue-800 dark:disabled:to-blue-900 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg flex justify-center items-center transform hover:scale-[1.02] active:scale-[0.98]"
+      <div className="container mx-auto px-6 max-w-7xl relative z-10">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-16 lg:gap-24">
+          
+          {/* Left Column: Content & Contact Info */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="w-full lg:w-[40%] space-y-10"
           >
-            {isSubmitting ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Sending...
-              </>
-            ) : (
-              <>
-                Send Message
-                <svg className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                </svg>
-              </>
-            )}
-          </button>
-        </motion.form>
-      </motion.div>
+            <div className="space-y-4">
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white tracking-tight">
+                Get in <span className="text-blue-600">touch</span>
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
+                I'm currently available for freelance work or full-time opportunities. Reach out via the form or any of the methods below.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              {contactLinks.map((link, idx) => (
+                <div 
+                  key={idx}
+                  className="flex items-center gap-5 p-2"
+                >
+                  <div className="flex-shrink-0 p-3.5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+                    <link.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-black uppercase tracking-[0.1em] text-gray-400 dark:text-gray-500 mb-0.5">{link.label}</span>
+                    {link.isClickable ? (
+                      <a 
+                        href={link.href}
+                        className="text-lg font-bold text-gray-900 dark:text-gray-200 hover:text-blue-600 transition-colors"
+                      >
+                        {link.value}
+                      </a>
+                    ) : (
+                      <span className="text-lg font-bold text-gray-900 dark:text-gray-200">
+                        {link.value}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Right Column: Form Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="w-full lg:w-[55%] pt-8 lg:pt-0"
+          >
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 md:p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                
+                {/* Status Messages */}
+                {submitStatus === 'success' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg flex items-start gap-3"
+                  >
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                      Thank you! Your message has been sent successfully.
+                    </p>
+                  </motion.div>
+                )}
+
+                {submitStatus === 'error' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg flex items-start gap-3"
+                  >
+                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5" />
+                    <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                      {errorMessage || 'Something went wrong. Please try again.'}
+                    </p>
+                  </motion.div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                    <input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 ${
+                        errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                      }`}
+                      placeholder="Your Name"
+                    />
+                    {errors.name && <p className="text-xs text-red-500 font-medium ml-1">{errors.name}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+                    <input
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      type="email"
+                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 ${
+                        errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                      }`}
+                      placeholder="you@example.com"
+                    />
+                    {errors.email && <p className="text-xs text-red-500 font-medium ml-1">{errors.email}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-sm font-medium text-gray-700 dark:text-gray-300">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows="5"
+                    className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50 resize-none ${
+                      errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                    }`}
+                    placeholder="Tell me about your project..."
+                  />
+                  {errors.message && <p className="text-xs text-red-500 font-medium ml-1">{errors.message}</p>}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                >
+                  {isSubmitting ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</>
+                  ) : (
+                    <><Send className="w-4 h-4" /> Send Message</>
+                  )}
+                </button>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 };

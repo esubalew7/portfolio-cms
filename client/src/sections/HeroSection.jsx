@@ -31,12 +31,12 @@ export const HeroSection = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center py-20 lg:py-24 overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center py-0 lg:py-10 overflow-hidden">
       {/* Background Particles limited to Hero boundaries */}
       <ParticlesBackground />
 
       {/* 2-Column Responsive Layout Wrapper */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full max-w-7xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-1 relative z-10 w-full max-w-7xl">
         <div className="flex flex-col md:flex-row items-center justify-center gap-16 lg:gap-28">
 
           {/* Left Column: Text Content */}

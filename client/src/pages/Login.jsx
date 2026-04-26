@@ -74,17 +74,19 @@ const Login = () => {
 
       // Save JWT token to localStorage
       const { token } = response;
+      
+      if (!token) {
+        throw new Error('No token received from server');
+      }
+
       localStorage.setItem('token', token);
 
       // Redirect to the intended page (or dashboard by default)
       navigate(from, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
-      if (error.response?.data?.message) {
-        setLoginError(error.response.data.message);
-      } else {
-        setLoginError('Login failed. Please try again.');
-      }
+      // Use the normalized message from our api utility
+      setLoginError(error.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
