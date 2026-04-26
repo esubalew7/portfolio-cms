@@ -7,7 +7,8 @@ import {
   Loader2,
   Inbox,
   Trash2,
-  Eye
+  Eye,
+  Search
 } from 'lucide-react';
 
 // UI Components
@@ -29,6 +30,8 @@ const Messages = () => {
     const [messageToDelete, setMessageToDelete] = useState(null);
     const [deleting, setDeleting] = useState(false);
     
+    const [searchTerm, setSearchTerm] = useState("");
+    
     const { showToast } = useToast();
     const unreadCount = messages.filter((msg) => !msg?.isRead).length;
 
@@ -36,6 +39,11 @@ const Messages = () => {
         if (!text) return '';
         return text.length > 50 ? `${text.slice(0, 50)}...` : text;
     };
+
+    // Filter messages based on search term
+    const filteredMessages = messages.filter((msg) =>
+        msg.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     // Fetch messages when dashboard page loads
     const fetchMessages = useCallback(async () => {
@@ -132,6 +140,9 @@ const Messages = () => {
             <PageHeader 
                 title="Messages"
                 subtitle={`${messages.length} total messages • ${unreadCount} unread`}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                searchPlaceholder="Search by name..."
             />
 
             {loading ? (
@@ -151,9 +162,26 @@ const Messages = () => {
                         <p className="text-sm">No one has reached out yet.</p>
                     </div>
                 </div>
+            ) : filteredMessages.length === 0 ? (
+                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3 text-gray-500">
+                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-full">
+                            <Search className="h-8 w-8 text-gray-300 dark:text-gray-600" />
+                        </div>
+                        <p className="font-semibold text-gray-900 dark:text-white">No messages found</p>
+                        <p className="text-sm">We couldn't find any messages matching "{searchTerm}"</p>
+                        <Button 
+                            variant="secondary" 
+                            className="mt-2"
+                            onClick={() => setSearchTerm("")}
+                        >
+                            Clear search
+                        </Button>
+                    </div>
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
-                    {messages.map((msg, idx) => (
+                    {filteredMessages.map((msg, idx) => (
                         <div
                             key={msg._id || msg.id || idx}
                             className={`group relative rounded-2xl border p-5 lg:p-6 cursor-pointer transition-all duration-300 ${
