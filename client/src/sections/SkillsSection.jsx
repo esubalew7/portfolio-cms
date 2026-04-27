@@ -1,5 +1,25 @@
 import { motion } from 'framer-motion';
 import { fadeIn, staggerContainer, itemVariant } from '../animations/variants';
+import {
+  FaHtml5,
+  FaCss3Alt,
+  FaJs,
+  FaBootstrap,
+  FaReact,
+  FaNodeJs,
+  FaDatabase,
+  FaGitAlt,
+  FaGithub,
+  FaJava,
+  FaPhp,
+} from 'react-icons/fa';
+import {
+  SiTailwindcss,
+  SiExpress,
+  SiMongodb,
+  SiCplusplus,
+  SiFlutter,
+} from 'react-icons/si';
 
 const skillCategories = [
   {
@@ -10,12 +30,12 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "HTML", level: 95 },
-      { name: "CSS", level: 90 },
-      { name: "JavaScript", level: 85 },
-      { name: "Bootstrap", level: 80 },
-      { name: "Tailwind CSS", level: 95 },
-      { name: "React", level: 90 }
+      { name: "HTML",        level: 95, icon: <FaHtml5    className="text-orange-500 text-lg flex-shrink-0" /> },
+      { name: "CSS",         level: 90, icon: <FaCss3Alt  className="text-blue-500   text-lg flex-shrink-0" /> },
+      { name: "JavaScript",  level: 85, icon: <FaJs       className="text-yellow-400 text-lg flex-shrink-0" /> },
+      { name: "Bootstrap",   level: 80, icon: <FaBootstrap className="text-purple-600 text-lg flex-shrink-0" /> },
+      { name: "Tailwind CSS",level: 95, icon: <SiTailwindcss className="text-cyan-400 text-lg flex-shrink-0" /> },
+      { name: "React",       level: 90, icon: <FaReact    className="text-blue-400   text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -26,8 +46,8 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "Node.js", level: 80 },
-      { name: "Express.js", level: 85 }
+      { name: "Node.js",   level: 80, icon: <FaNodeJs   className="text-green-500 text-lg flex-shrink-0" /> },
+      { name: "Express.js",level: 85, icon: <SiExpress  className="text-gray-400  text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -38,8 +58,8 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "MongoDB", level: 85 },
-      { name: "SQL", level: 75 }
+      { name: "MongoDB", level: 85, icon: <SiMongodb  className="text-green-600  text-lg flex-shrink-0" /> },
+      { name: "SQL",     level: 75, icon: <FaDatabase className="text-indigo-500 text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -50,10 +70,10 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "C++", level: 75 },
-      { name: "Java", level: 80 },
-      { name: "Flutter", level: 65 },
-      { name: "PHP", level: 70 }
+      { name: "C++",    level: 75, icon: <SiCplusplus className="text-blue-600   text-lg flex-shrink-0" /> },
+      { name: "Java",   level: 80, icon: <FaJava     className="text-red-600    text-lg flex-shrink-0" /> },
+      { name: "Flutter",level: 65, icon: <SiFlutter  className="text-cyan-500   text-lg flex-shrink-0" /> },
+      { name: "PHP",    level: 70, icon: <FaPhp      className="text-indigo-400 text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -64,8 +84,8 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "Git", level: 85 },
-      { name: "GitHub", level: 90 }
+      { name: "Git",    level: 85, icon: <FaGitAlt className="text-orange-600 text-lg flex-shrink-0" /> },
+      { name: "GitHub", level: 90, icon: <FaGithub  className="text-gray-900 dark:text-gray-100 text-lg flex-shrink-0" /> },
     ]
   }
 ];
@@ -109,16 +129,19 @@ export const SkillsSection = () => {
                 {category.skills.map((skill, i) => (
                   <div key={i} className="group cursor-default">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                        {skill.name}
-                      </span>
+                      {/* Icon + Name */}
+                      <div className="flex items-center gap-2">
+                        {skill.icon}
+                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                          {skill.name}
+                        </span>
+                      </div>
                       <span className="text-xs font-bold text-gray-500 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         {skill.level}%
                       </span>
                     </div>
                     {/* Background Bar */}
                     <div className="h-2.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                      {/* Animated Foreground component mapping exact widths dynamically */}
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${skill.level}%` }}
