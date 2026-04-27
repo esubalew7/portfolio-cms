@@ -28,24 +28,19 @@ export const AboutSection = () => {
           <motion.div variants={fadeIn('right', 0.3)} className="w-full lg:w-5/12">
             {/* Outer glow — ambient radial halo, blends into page background */}
             <div className="relative">
+              {/* Subtle neutral ambient — matches portfolio background */}
               <div className="absolute -inset-6
-                bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.12)_0%,_rgba(168,85,247,0.06)_55%,_transparent_80%)]
-                dark:bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.22)_0%,_rgba(168,85,247,0.12)_55%,_transparent_80%)]
+                bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.05)_0%,_transparent_75%)]
+                dark:bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.03)_0%,_transparent_75%)]
                 rounded-3xl blur-2xl pointer-events-none" />
-
-              {/* Inner glow — tighter ring for depth */}
-              <div className="absolute -inset-1
-                bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.08)_0%,_rgba(139,92,246,0.04)_60%,_transparent_100%)]
-                dark:bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.18)_0%,_rgba(139,92,246,0.08)_60%,_transparent_100%)]
-                rounded-3xl blur-lg pointer-events-none" />
 
               {/* Image — transparent PNG, no background container */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
                 className="relative aspect-[4/5] rounded-3xl overflow-hidden
-                  shadow-[0_12px_40px_-12px_rgba(59,130,246,0.2)]
-                  dark:shadow-[0_12px_56px_-12px_rgba(59,130,246,0.35)]
+                  shadow-[0_12px_40px_-12px_rgba(0,0,0,0.08)]
+                  dark:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.3)]
                   border border-white/10 dark:border-white/5"
               >
                 <img

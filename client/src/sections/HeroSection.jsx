@@ -108,25 +108,19 @@ export const HeroSection = () => {
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
               className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96"
             >
-              {/* Outermost ambient glow — large, very soft, far spread */}
+              {/* Subtle neutral ambient — matches portfolio background, no color cast */}
               <div className="absolute -inset-8 rounded-full
-                bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.15)_0%,_rgba(168,85,247,0.08)_50%,_transparent_80%)]
-                dark:bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.25)_0%,_rgba(168,85,247,0.15)_50%,_transparent_80%)]
+                bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.05)_0%,_transparent_75%)]
+                dark:bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.03)_0%,_transparent_75%)]
                 blur-2xl pointer-events-none" />
-
-              {/* Inner focused glow ring — tighter, gives depth */}
-              <div className="absolute -inset-2 rounded-full
-                bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.12)_0%,_rgba(139,92,246,0.06)_60%,_transparent_100%)]
-                dark:bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.22)_0%,_rgba(139,92,246,0.12)_60%,_transparent_100%)]
-                blur-xl pointer-events-none" />
 
               {/* Image container — no background, fully transparent */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="relative w-full h-full rounded-full overflow-hidden z-10
-                  shadow-[0_8px_32px_-8px_rgba(59,130,246,0.25)]
-                  dark:shadow-[0_8px_48px_-8px_rgba(59,130,246,0.4)]
+                  shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)]
+                  dark:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.25)]
                   border border-white/10 dark:border-white/5"
               >
                 <img
