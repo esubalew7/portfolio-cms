@@ -106,7 +106,7 @@ export const HeroSection = () => {
             <motion.div
               animate={{ y: [-8, 8, -8] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-              className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96"
+              className="relative w-80 h-80 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem]"
             >
               {/* Subtle neutral ambient — matches portfolio background, no color cast */}
               <div className="absolute -inset-8 rounded-full
