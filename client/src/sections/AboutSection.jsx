@@ -26,13 +26,42 @@ export const AboutSection = () => {
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           {/* Profile Image - Retained and styled */}
           <motion.div variants={fadeIn('right', 0.3)} className="w-full lg:w-5/12">
-            <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-800 relative group">
-              <img
-                src="/images/esu1.png"
-                alt="Esubale profile image"
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-0 border-4 border-transparent group-hover:border-blue-500/30 transition-colors duration-500 rounded-3xl pointer-events-none z-10"></div>
+            {/* Outer glow — ambient radial halo, blends into page background */}
+            <div className="relative">
+              <div className="absolute -inset-6
+                bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.12)_0%,_rgba(168,85,247,0.06)_55%,_transparent_80%)]
+                dark:bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.22)_0%,_rgba(168,85,247,0.12)_55%,_transparent_80%)]
+                rounded-3xl blur-2xl pointer-events-none" />
+
+              {/* Inner glow — tighter ring for depth */}
+              <div className="absolute -inset-1
+                bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.08)_0%,_rgba(139,92,246,0.04)_60%,_transparent_100%)]
+                dark:bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.18)_0%,_rgba(139,92,246,0.08)_60%,_transparent_100%)]
+                rounded-3xl blur-lg pointer-events-none" />
+
+              {/* Image — transparent PNG, no background container */}
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="relative aspect-[4/5] rounded-3xl overflow-hidden
+                  shadow-[0_12px_40px_-12px_rgba(59,130,246,0.2)]
+                  dark:shadow-[0_12px_56px_-12px_rgba(59,130,246,0.35)]
+                  border border-white/10 dark:border-white/5"
+              >
+                <img
+                  src="/images/esu1.png"
+                  alt="Esubale profile image"
+                  className="w-full h-full object-cover"
+                  style={{
+                    maskImage: 'radial-gradient(ellipse at 50% 45%, white 50%, rgba(255,255,255,0.55) 72%, transparent 100%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, white 50%, rgba(255,255,255,0.55) 72%, transparent 100%)',
+                  }}
+                />
+                {/* Bottom edge blend */}
+                <div className="absolute bottom-0 left-0 right-0 h-24
+                  bg-gradient-to-t from-white/20 dark:from-gray-950/20 to-transparent
+                  pointer-events-none blur-sm" />
+              </motion.div>
             </div>
           </motion.div>
 

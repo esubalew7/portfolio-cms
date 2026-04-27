@@ -94,45 +94,56 @@ export const HeroSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: Animated Profile Image */}
+          {/* Right Column: Seamlessly Blending Profile Image */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.85, y: 20 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
             viewport={{ once: true }}
             className="w-full md:w-1/2 lg:w-2/5 flex justify-center md:justify-end pointer-events-auto mt-8 md:mt-0"
           >
-            {/* Infinite floating wrapper */}
+            {/* Floating animation wrapper */}
             <motion.div
-              animate={{ y: [-15, 15, -15] }}
-              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              animate={{ y: [-8, 8, -8] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
               className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96"
             >
-              {/* Massive glowing blurred halo behind the avatar */}
-              <div className="absolute inset-0 bg-blue-500/20 dark:bg-blue-400/20 rounded-full blur-3xl transform scale-110"></div>
+              {/* Outermost ambient glow — large, very soft, far spread */}
+              <div className="absolute -inset-8 rounded-full
+                bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.15)_0%,_rgba(168,85,247,0.08)_50%,_transparent_80%)]
+                dark:bg-[radial-gradient(ellipse_at_center,_rgba(96,165,250,0.25)_0%,_rgba(168,85,247,0.15)_50%,_transparent_80%)]
+                blur-2xl pointer-events-none" />
 
-              {/* Infinite spinning vibrant gradient border */}
+              {/* Inner focused glow ring — tighter, gives depth */}
+              <div className="absolute -inset-2 rounded-full
+                bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.12)_0%,_rgba(139,92,246,0.06)_60%,_transparent_100%)]
+                dark:bg-[radial-gradient(ellipse_at_center,_rgba(59,130,246,0.22)_0%,_rgba(139,92,246,0.12)_60%,_transparent_100%)]
+                blur-xl pointer-events-none" />
+
+              {/* Image container — no background, fully transparent */}
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-                className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-indigo-500 shadow-[0_0_40px_rgba(59,130,246,0.3)] dark:shadow-[0_0_60px_rgba(59,130,246,0.3)]"
-              ></motion.div>
-
-              {/* Actual Avatar Frame (layered over the spin so the spin only shows as a rim) */}
-              <div className="absolute inset-[5px] md:inset-[6px] rounded-full overflow-hidden bg-gray-50 dark:bg-gray-900 border-4 border-white dark:border-gray-800 pointer-events-none z-10 flex items-center justify-center">
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="relative w-full h-full rounded-full overflow-hidden z-10
+                  shadow-[0_8px_32px_-8px_rgba(59,130,246,0.25)]
+                  dark:shadow-[0_8px_48px_-8px_rgba(59,130,246,0.4)]
+                  border border-white/10 dark:border-white/5"
+              >
                 <img
                   src="/images/esu2.png"
                   alt="Esubalew"
-                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700 ease-out shadow-inner"
+                  className="w-full h-full object-cover object-top"
+                  style={{
+                    maskImage: 'radial-gradient(circle at 50% 50%, white 55%, rgba(255,255,255,0.6) 75%, transparent 100%)',
+                    WebkitMaskImage: 'radial-gradient(circle at 50% 50%, white 55%, rgba(255,255,255,0.6) 75%, transparent 100%)',
+                  }}
                 />
+              </motion.div>
 
-                {/* Empty state fallback SVG (sits behind the image, only visible if image fails or path is wrong) */}
-                <div className="absolute inset-0 flex items-center justify-center text-gray-300 dark:text-gray-700 -z-10">
-                  <svg className="w-1/2 h-1/2" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                  </svg>
-                </div>
-              </div>
+              {/* Bottom fade — blends base of image into the section background */}
+              <div className="absolute bottom-0 left-0 right-0 h-16 rounded-b-full
+                bg-gradient-to-t from-white/30 dark:from-gray-950/30 to-transparent
+                pointer-events-none z-20 blur-sm" />
             </motion.div>
           </motion.div>
 
