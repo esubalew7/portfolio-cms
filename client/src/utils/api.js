@@ -5,15 +5,9 @@ const API_BASE_URL =
     ? "http://localhost:5000"
     : "https://portfolio-backend-gxhv.onrender.com";
 
-console.log("API BASE URL:", API_BASE_URL);
-
 const api = axios.create({
   baseURL: API_BASE_URL,
-timeout: 30000, // 30s for Render cold starts
-  // NOTE: Do NOT set Content-Type here.
-  // Axios auto-sets 'application/json' for objects and
-  // 'multipart/form-data' (with boundary) for FormData.
-  // Overriding it breaks file uploads.
+  timeout: 30000,
 });
 
 const getAuthToken = () => localStorage.getItem('token');

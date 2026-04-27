@@ -59,7 +59,6 @@ export const ContactSection = () => {
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
-      console.error('Submission error:', error);
       const message = error?.response?.data?.message || error.message || 'Unable to send message. Please try again later.';
       setErrorMessage(message);
       setSubmitStatus('error');

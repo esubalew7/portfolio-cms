@@ -19,7 +19,6 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial loading time for components/assets to mount (2 seconds)
     const timeout = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -31,32 +30,31 @@ const App = () => {
       <ProjectProvider>
         <BrowserRouter>
           <ToastProvider>
-          {/* Loader layered on top gracefully transitions out while React roots render underneath */}
-        <AnimatePresence>
-          {isLoading && <Loader key="loader" />}
-        </AnimatePresence>
+            <AnimatePresence>
+              {isLoading && <Loader key="loader" />}
+            </AnimatePresence>
 
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-          </Route>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route element={<MainLayout />}>
+                <Route path="/" element={<Home />} />
+              </Route>
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Dashboard />} />
-            <Route path="projects" element={<DashboardProjects />} />
-            <Route path="messages" element={<Messages />} />
-          </Route>
-        </Routes>
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Dashboard />} />
+                <Route path="projects" element={<DashboardProjects />} />
+                <Route path="messages" element={<Messages />} />
+              </Route>
+            </Routes>
 
-        <ScrollToTop />
+            <ScrollToTop />
           </ToastProvider>
         </BrowserRouter>
       </ProjectProvider>

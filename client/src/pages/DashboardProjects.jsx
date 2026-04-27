@@ -143,17 +143,10 @@ const DashboardProjects = () => {
       let imageUrl = editingProject?.image || '';
       let imagePublicId = editingProject?.imagePublicId || '';
       if (imageFile) {
-        // DEBUG: verify file is valid before sending
-        console.log('[Upload] Selected file:', imageFile.name, imageFile.type, imageFile.size + 'B');
-
         const imgFormData = new FormData();
         imgFormData.append('image', imageFile);
 
-        // DEBUG: confirm FormData has the 'image' key
-        console.log('[Upload] FormData keys:', [...imgFormData.keys()]);
-
         const uploadRes = await api.post('/api/upload', imgFormData);
-        console.log('[Upload] Response:', uploadRes);
         imageUrl = uploadRes.imageUrl;
         imagePublicId = uploadRes.imagePublicId;
       }

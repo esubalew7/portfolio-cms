@@ -25,29 +25,18 @@ app.use(express.json());                // Parse incoming JSON requests
 
 
 // Routes
-app.use("/api/contact", contactRoutes); // Use routes for contact
-app.use("/api/auth", authRoutes);       // Use routes for auth
-app.use("/api/projects", projectRoutes); // Use routes for projects
-app.use("/api/upload", uploadRoutes);   // Use routes for generic uploads
-app.use("/api/dashboard", dashboardRoutes); // Use routes for dashboard stats
-app.use("/api/notifications", notificationRoutes); // Use routes for notifications
+app.use("/api/contact", contactRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
   res.status(200).json({ 
     status: 'ok', 
-    timestamp: new Date().toISOString(),
-    endpoints: {
-      projects: '/api/projects',
-      health: '/'
-    }
-  });
-});
-
-// Test Route
-app.get("/api/test", (req, res) => {    // Define GET route
-  res.status(200).json({                // Send response with status 200
-    message: "API working"              // Response data
+    timestamp: new Date().toISOString()
   });
 });
 

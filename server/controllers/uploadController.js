@@ -1,8 +1,5 @@
 export const uploadImage = async (req, res) => {
     try {
-        // DEBUG: confirm multer received the file
-        console.log('[Upload] req.file:', req.file);
-        console.log('[Upload] req.body keys:', Object.keys(req.body));
 
         if (!req.file) {
             return res.status(400).json({
