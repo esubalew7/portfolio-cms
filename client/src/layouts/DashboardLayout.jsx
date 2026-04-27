@@ -11,7 +11,6 @@ import {
   Sun,
   User,
   Bell,
-  Settings,
   RefreshCw,
   Clock
 } from 'lucide-react';
@@ -24,6 +23,8 @@ const DashboardLayout = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [open, setOpen] = useState(false);
+  const [admin, setAdmin] = useState(null);
+  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,8 +100,24 @@ const DashboardLayout = () => {
     });
   };
 
+  const fetchAdminInfo = async () => {
+    try {
+      const res = await api.get('/api/auth/me');
+      if (res.success) {
+        setAdmin(res.data);
+      }
+    } catch (error) {
+      console.error('Error fetching admin info:', error);
+      // If unauthorized, logout
+      if (error.status === 401) {
+        handleLogout();
+      }
+    }
+  };
+
   useEffect(() => {
     fetchNotifications();
+    fetchAdminInfo();
     // Refresh notifications every 2 minutes
     const interval = setInterval(fetchNotifications, 120000);
     return () => clearInterval(interval);
@@ -366,24 +383,67 @@ const DashboardLayout = () => {
                 )}
               </div>
 
-              {/* Settings */}
-              <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
-                <Settings className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-
               {/* Admin info */}
-              <div className="flex items-center space-x-3 pl-4 border-l border-gray-200 dark:border-gray-700">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                    Admin User
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    admin@portfolio.com
-                  </p>
-                </div>
-                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-lg">
-                  <User className="h-5 w-5 text-white" />
-                </div>
+              <div className="relative flex items-center pl-4 border-l border-gray-200 dark:border-gray-700">
+                <button 
+                  onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
+                  className="flex items-center space-x-3 focus:outline-none group"
+                >
+                  <div className="text-right hidden sm:block">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {admin ? 'Admin' : 'Loading...'}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {admin?.email || 'admin@portfolio.com'}
+                    </p>
+                  </div>
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-all">
+                    <User className="h-5 w-5 text-white" />
+                  </div>
+                </button>
+
+                {/* Admin Dropdown */}
+                {adminDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40 bg-transparent" 
+                      onClick={() => setAdminDropdownOpen(false)}
+                    ></div>
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
+                      <div className="p-5 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 text-center">
+                        <div className="h-16 w-16 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-md mb-3">
+                          <User className="h-8 w-8 text-white" />
+                        </div>
+                        <h4 className="font-bold text-gray-900 dark:text-white">Portfolio Admin</h4>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{admin?.email}</p>
+                      </div>
+                      
+                      <div className="p-2">
+                        <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Account Info</div>
+                        <div className="px-4 py-2 space-y-3">
+                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                            <Clock className="h-4 w-4 mr-3 text-blue-500" />
+                            <span>Joined {admin ? new Date(admin.createdAt).toLocaleDateString() : '...'}</span>
+                          </div>
+                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                            <RefreshCw className="h-4 w-4 mr-3 text-purple-500" />
+                            <span>Last login: Today</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+                          <button 
+                            onClick={handleLogout}
+                            className="w-full flex items-center px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all font-medium"
+                          >
+                            <LogOut className="h-4 w-4 mr-3" />
+                            Sign out
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

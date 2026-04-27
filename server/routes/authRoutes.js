@@ -2,7 +2,8 @@
 import express from "express";
 
 // Import controller functions
-import { register, login } from "../controllers/authController.js";
+import { register, login, getMe } from "../controllers/authController.js";
+import protect from "../middleware/authMiddleware.js";
 
 // Create router
 const router = express.Router();
@@ -19,6 +20,12 @@ router.post("/register", register);
 // @desc    Login admin
 // ===============================
 router.post("/login", login);
+
+// ===============================
+// @route   GET /api/auth/me
+// @desc    Get current user profile
+// ===============================
+router.get("/me", protect, getMe);
 
 // Export router
 export default router;
