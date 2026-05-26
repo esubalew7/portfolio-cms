@@ -12,7 +12,8 @@ export const ProjectsSection = () => {
     { label: 'All', value: 'all' },
     { label: 'MERN', value: 'mern' },
     { label: 'Frontend', value: 'frontend' },
-    { label: 'Backend', value: 'backend' }
+    { label: 'Backend', value: 'backend' },
+    { label: 'Mobile App', value: 'mobile' }
   ];
 
   // STRICT FILTER LOGIC

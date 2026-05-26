@@ -55,7 +55,7 @@ const DashboardProjects = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category: 'mern',
+      category: 'mern',
     technologies: '',
     liveLink: '',
     githubLink: '',
@@ -127,7 +127,7 @@ const DashboardProjects = () => {
     const errors = {};
     if (!formData.title.trim()) errors.title = 'Title is required';
     if (!formData.description.trim()) errors.description = 'Description is required';
-    if (!['mern', 'frontend', 'backend'].includes(formData.category)) errors.category = 'Valid category is required';
+    if (!['mern', 'frontend', 'backend', 'mobile'].includes(formData.category)) errors.category = 'Valid category is required';
     if (!editingProject && !imageFile) errors.image = 'A project image is required';
 
     if (Object.keys(errors).length > 0) {
@@ -326,6 +326,7 @@ const DashboardProjects = () => {
                     <option value="mern">MERN</option>
                     <option value="frontend">Frontend</option>
                     <option value="backend">Backend</option>
+                  <option value="mobile">Mobile App</option>
                 </select>
                 {formErrors.category && <p className="text-xs font-semibold text-red-500">{formErrors.category}</p>}
             </div>
@@ -347,6 +348,7 @@ const DashboardProjects = () => {
                 onChange={(e) => setFormData({...formData, technologies: e.target.value})}
                 placeholder="React, Tailwind, Node.js"
             />
+            {/* Quick tech additions removed per request */}
             
             {/* Image Upload Area */}
             <div className="space-y-2">

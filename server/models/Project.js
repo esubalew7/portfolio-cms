@@ -22,7 +22,8 @@ const projectSchema = new mongoose.Schema(
         category: {
             type: String,
             required: [true, "Project category is required"],
-            enum: ["mern", "frontend", "backend"],
+            // Added 'mobile' category to support Mobile App projects
+            enum: ["mern", "frontend", "backend", "mobile"],
             lowercase: true,
             trim: true,
         },
