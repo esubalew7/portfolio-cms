@@ -4,6 +4,8 @@ import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProjectProvider } from './context/ProjectContext';
 import { ToastProvider } from './context/ToastContext';
+import { CursorProvider } from './context/CursorContext';
+import { CustomCursor } from './components/CustomCursor';
 import { MainLayout } from './layouts/MainLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -26,6 +28,7 @@ const App = () => {
   }, []);
 
   return (
+    <CursorProvider>
     <ThemeProvider>
       <ProjectProvider>
         <BrowserRouter>
@@ -59,6 +62,8 @@ const App = () => {
         </BrowserRouter>
       </ProjectProvider>
     </ThemeProvider>
+    <CustomCursor />
+    </CursorProvider>
   );
 };
 

@@ -13,3 +13,12 @@ body {
   font-family: 'Outfit', sans-serif;
   @apply bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-100;
 }
+
+/* ── Custom Cursor: hide native cursor on desktop ── */
+@media (pointer: fine) {
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
+}
