@@ -33,11 +33,7 @@ export const Navbar = () => {
 
     return () => {
       window.removeEventListener('scroll', handleScrollState);
-      try {
-        observer.disconnect();
-      } catch (e) {
-        sections.forEach((section) => observer.unobserve(section));
-      }
+      sections.forEach((section) => observer.unobserve(section));
     };
   }, []);
 
@@ -61,16 +57,12 @@ export const Navbar = () => {
     }
   };
 
-  // Close mobile menu automatically when route changes
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
-
   const navLinks = [
     { name: 'Home', id: 'home' },
     { name: 'About', id: 'about' },
     { name: 'Skills', id: 'skills' },
     { name: 'Projects', id: 'projects' },
+    { name: 'Experience', id: 'experience' },
     { name: 'Contact', id: 'contact' },
   ];
 
@@ -105,10 +97,14 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-1 bg-neutral-200/30 dark:bg-neutral-900/40 p-1 rounded-full border border-neutral-200/50 dark:border-neutral-800/40">
           {navLinks.map((link, index) => {
             const isActive = activeSection === link.id && location.pathname === '/';
+            const href = link.id === 'experience'
+              ? (location.pathname === '/' ? `#${link.id}` : `/${link.id}`)
+              : (location.pathname === '/' ? `#${link.id}` : `/#${link.id}`);
+
             return (
               <a
                 key={link.id}
-                href={location.pathname === '/' ? `#${link.id}` : `/#${link.id}`}
+                href={href}
                 onClick={(e) => scrollToSection(e, link.id)}
                 onPointerEnter={() => setHoveredIndex(index)}
                 onPointerLeave={() => setHoveredIndex(null)}
@@ -121,7 +117,7 @@ export const Navbar = () => {
                 {isActive && (
                   <motion.span
                     layoutId="active-nav-pill"
-                    className="absolute inset-0 bg-blue dark:bg-neutral-800 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] z-0 pointer-events-none"
+                    className="absolute inset-0 bg-white dark:bg-neutral-800 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] z-0"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -129,12 +125,12 @@ export const Navbar = () => {
                 {/* Hover indicator */}
                 {!isActive && hoveredIndex === index && (
                   <motion.span
-                    layoutId={`hover-nav-pill-${index}`}
-                    className="absolute inset-0 bg-neutral-300/40 dark:bg-neutral-800/30 rounded-full z-0 pointer-events-none"
+                    layoutId="hover-nav-pill"
+                    className="absolute inset-0 bg-neutral-300/40 dark:bg-neutral-800/30 rounded-full z-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.12, ease: 'easeOut' }}
+                    transition={{ duration: 0.15 }}
                   />
                 )}
 
@@ -149,7 +145,7 @@ export const Navbar = () => {
           {/* Theme Toggle Button */}
           <motion.button
             onClick={toggleTheme}
-            whileHover={{ scale: 1.05, rotate: 10 }}
+            whileHover={{ scale: 1.05, rotate: 15 }}
             whileTap={{ scale: 0.95 }}
             className="relative p-2.5 rounded-full border border-neutral-200/80 dark:border-neutral-800/80 bg-white/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-sm dark:shadow-[0_0_12px_rgba(255,255,255,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 overflow-hidden group cursor-pointer"
             aria-label="Toggle Theme"
@@ -258,10 +254,14 @@ export const Navbar = () => {
             <div className="flex flex-col space-y-1.5 pb-3">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id && location.pathname === '/';
+                const href = link.id === 'experience'
+                  ? (location.pathname === '/' ? `#${link.id}` : `/${link.id}`)
+                  : (location.pathname === '/' ? `#${link.id}` : `/#${link.id}`);
+
                 return (
                   <a
                     key={link.id}
-                    href={location.pathname === '/' ? `#${link.id}` : `/#${link.id}`}
+                    href={href}
                     onClick={(e) => scrollToSection(e, link.id)}
                     className={`block py-3 px-5 rounded-full text-[15px] font-medium tracking-wide transition-all ${isActive
                       ? 'bg-blue-600 text-white shadow-[0_4px_12px_rgba(59,130,246,0.3)]'

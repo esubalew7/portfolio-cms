@@ -2,6 +2,7 @@ import { HeroSection } from '../sections/HeroSection';
 import { AboutSection } from '../sections/AboutSection';
 import { SkillsSection } from '../sections/SkillsSection';
 import { ProjectsSection } from '../sections/ProjectsSection';
+import ExperienceSection from '../sections/ExperienceSection';
 import { ContactSection } from '../sections/ContactSection';
 
 export const Home = () => {
@@ -29,6 +30,10 @@ export const Home = () => {
       </div>
 
       <ProjectsSection />
+
+      <div className="relative bg-gradient-to-t from-gray-50 dark:from-gray-950/80 to-transparent pt-8">
+        <ExperienceSection />
+      </div>
 
       <div className="relative bg-gradient-to-t from-gray-50 dark:from-gray-950/80 to-transparent pt-10">
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-800 to-transparent"></div>
