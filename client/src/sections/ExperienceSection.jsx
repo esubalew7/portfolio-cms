@@ -2,6 +2,19 @@ import React from 'react';
 import TimelineItem from '../components/ui/TimelineItem';
 
 const ExperienceSection = () => {
+
+  const education = [
+    {
+      role: 'Computer Science Student',
+      company: 'Bahir Dar University',
+      duration: '2024 — Present',
+      location: 'Bahir Dar, Ethiopia',
+      tags: ['Algorithms', 'Data Structures', 'Databases'],
+      bullets: ['Relevant coursework: Web Dev, Mobile Dev, Databases, Algorithms, Software Engineering'],
+      logo: 'images/bdu.jpg',
+    },
+  ];
+
   const internship = [
     {
       role: 'Full Stack Developer Intern',
@@ -12,19 +25,7 @@ const ExperienceSection = () => {
       bullets: [
         'as a Software Engineer Intern working on multiple web applications'
       ],
-      logo: '',
-    },
-  ];
-
-  const education = [
-    {
-      role: 'Computer Science Student',
-      company: 'Bahir Dar University',
-      duration: '2024 — Present',
-      location: 'Bahir Dar, Ethiopia',
-      tags: ['Algorithms', 'Data Structures', 'Databases'],
-      bullets: ['Relevant coursework: Web Dev, Databases, Algorithms, Software Engineering'],
-      logo: '',
+      logo: 'images/askuala.jpg',
     },
   ];
 

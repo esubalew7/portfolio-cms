@@ -19,6 +19,8 @@ import {
   SiMongodb,
   SiCplusplus,
   SiFlutter,
+  SiPostman,
+  SiFirebase
 } from 'react-icons/si';
 
 const skillCategories = [
@@ -30,12 +32,12 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "HTML",        level: 95, icon: <FaHtml5    className="text-orange-500 text-lg flex-shrink-0" /> },
-      { name: "CSS",         level: 90, icon: <FaCss3Alt  className="text-blue-500   text-lg flex-shrink-0" /> },
-      { name: "JavaScript",  level: 85, icon: <FaJs       className="text-yellow-400 text-lg flex-shrink-0" /> },
-      { name: "Bootstrap",   level: 80, icon: <FaBootstrap className="text-purple-600 text-lg flex-shrink-0" /> },
-      { name: "Tailwind CSS",level: 95, icon: <SiTailwindcss className="text-cyan-400 text-lg flex-shrink-0" /> },
-      { name: "React",       level: 90, icon: <FaReact    className="text-blue-400   text-lg flex-shrink-0" /> },
+      { name: "HTML", level: 95, icon: <FaHtml5 className="text-orange-500 text-lg flex-shrink-0" /> },
+      { name: "CSS", level: 90, icon: <FaCss3Alt className="text-blue-500   text-lg flex-shrink-0" /> },
+      { name: "JavaScript", level: 85, icon: <FaJs className="text-yellow-400 text-lg flex-shrink-0" /> },
+      { name: "Bootstrap", level: 80, icon: <FaBootstrap className="text-purple-600 text-lg flex-shrink-0" /> },
+      { name: "Tailwind CSS", level: 95, icon: <SiTailwindcss className="text-cyan-400 text-lg flex-shrink-0" /> },
+      { name: "React", level: 90, icon: <FaReact className="text-blue-400   text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -46,8 +48,8 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "Node.js",   level: 80, icon: <FaNodeJs   className="text-green-500 text-lg flex-shrink-0" /> },
-      { name: "Express.js",level: 85, icon: <SiExpress  className="text-gray-400  text-lg flex-shrink-0" /> },
+      { name: "Node.js", level: 80, icon: <FaNodeJs className="text-green-500 text-lg flex-shrink-0" /> },
+      { name: "Express.js", level: 85, icon: <SiExpress className="text-gray-400  text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -58,8 +60,9 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "MongoDB", level: 85, icon: <SiMongodb  className="text-green-600  text-lg flex-shrink-0" /> },
-      { name: "SQL",     level: 75, icon: <FaDatabase className="text-indigo-500 text-lg flex-shrink-0" /> },
+      { name: "MongoDB", level: 85, icon: <SiMongodb className="text-green-600  text-lg flex-shrink-0" /> },
+      { name: "mySQL", level: 50, icon: <FaDatabase className="text-indigo-500 text-lg flex-shrink-0" /> },
+      { name: "Firebase", level: 60, icon: <SiFirebase className="text-orange-600 text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -70,10 +73,10 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "C++",    level: 75, icon: <SiCplusplus className="text-blue-600   text-lg flex-shrink-0" /> },
-      { name: "Java",   level: 80, icon: <FaJava     className="text-red-600    text-lg flex-shrink-0" /> },
-      { name: "Flutter",level: 65, icon: <SiFlutter  className="text-cyan-500   text-lg flex-shrink-0" /> },
-      { name: "PHP",    level: 70, icon: <FaPhp      className="text-indigo-400 text-lg flex-shrink-0" /> },
+      { name: "C++", level: 55, icon: <SiCplusplus className="text-blue-600   text-lg flex-shrink-0" /> },
+      { name: "Java", level: 55, icon: <FaJava className="text-red-600    text-lg flex-shrink-0" /> },
+      { name: "Flutter", level: 65, icon: <SiFlutter className="text-cyan-500   text-lg flex-shrink-0" /> },
+      { name: "PHP", level: 55, icon: <FaPhp className="text-indigo-400 text-lg flex-shrink-0" /> },
     ]
   },
   {
@@ -84,8 +87,9 @@ const skillCategories = [
       </svg>
     ),
     skills: [
-      { name: "Git",    level: 85, icon: <FaGitAlt className="text-orange-600 text-lg flex-shrink-0" /> },
-      { name: "GitHub", level: 90, icon: <FaGithub  className="text-gray-900 dark:text-gray-100 text-lg flex-shrink-0" /> },
+      { name: "Git", level: 85, icon: <FaGitAlt className="text-orange-600 text-lg flex-shrink-0" /> },
+      { name: "GitHub", level: 90, icon: <FaGithub className="text-gray-900 dark:text-gray-100 text-lg flex-shrink-0" /> },
+      { name: "Postman", level: 85, icon: <SiPostman className="text-orange-600 text-lg flex-shrink-0" /> },
     ]
   }
 ];
