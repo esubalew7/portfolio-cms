@@ -2,21 +2,19 @@ import React from 'react';
 import TimelineItem from '../components/ui/TimelineItem';
 
 const ExperienceSection = () => {
-  /*const internship = [
+  const internship = [
     {
-      role: 'MERN Stack Developer Intern',
-      company: 'Alyah Software Company',
-      duration: 'Jun 2024 — Sep 2024',
+      role: 'Full Stack Developer Intern',
+      company: 'Askuala Link',
+      duration: 'Jun 2026 — Aug 2026',
       location: 'Bahir Dar/ Ethiopia',
-      tags: ['React', 'Node.js', 'Express', 'MongoDB', 'Tailwind'],
+      tags: [],
       bullets: [
-        'Built responsive UI components and implemented REST APIs for internal tools.',
-        'Optimized frontend performance and reduced bundle size for faster load times.',
-        'Collaborated closely with product and QA to ship production-ready features.',
+        'as a Software Engineer Intern working on multiple web applications'
       ],
       logo: '',
     },
-  ]; */
+  ];
 
   const education = [
     {
@@ -37,7 +35,7 @@ const ExperienceSection = () => {
       duration: '2025',
       location: '',
       tags: ['React', 'JavaScript', 'CSS', 'HTML'],
-      bullets: [''],
+      bullets: ['Web Development Certificate @ coddy.tech', 'Advanced Programming (React)  @ BiT Career Development Center', 'CCNA: Introduction to Networks @ Cisco Networking Academy'],
       logo: '',
     },
   ];
@@ -66,20 +64,21 @@ const ExperienceSection = () => {
         </div>
       </div>
 
-     <div className="mt-10 grid gap-10">
-      {/*   <div>
-          <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-4">Internship Experience</h3>
-          <div className="space-y-6">
-            {internship.map((item, idx) => (
-              <TimelineItem key={idx} {...item} />
-            ))}
-          </div>
-        </div> */}
+      <div className="mt-10 grid gap-10">
 
         <div>
           <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-4">Education</h3>
           <div className="space-y-6">
             {education.map((item, idx) => (
+              <TimelineItem key={idx} {...item} />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-4">Internship Experience</h3>
+          <div className="space-y-6">
+            {internship.map((item, idx) => (
               <TimelineItem key={idx} {...item} />
             ))}
           </div>
@@ -94,7 +93,7 @@ const ExperienceSection = () => {
           </div>
         </div>
 
-       {/* <div>
+        {/* <div>
           <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-4">Freelance / Projects</h3>
           <div className="space-y-6">
             {projects.map((item, idx) => (
