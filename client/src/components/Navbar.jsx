@@ -63,7 +63,7 @@ export const Navbar = () => {
     { name: 'Skills', id: 'skills' },
     { name: 'Projects', id: 'projects' },
     { name: 'Experience', id: 'experience' },
-    { name: 'Contact', id: 'contact' },
+    { name: 'Contact', id: 'contact' }, 
   ];
 
   return (
