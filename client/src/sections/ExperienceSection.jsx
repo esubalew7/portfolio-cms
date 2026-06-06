@@ -22,9 +22,7 @@ const ExperienceSection = () => {
       duration: 'Jun 2026 — Aug 2026',
       location: 'Bahir Dar/ Ethiopia',
       tags: [],
-      bullets: [
-        'as a Software Engineer Intern working on multiple web applications'
-      ],
+      bullets: ['as a Software Engineer Intern working on multiple web applications'],
       logo: 'images/askuala.jpg',
     },
   ];

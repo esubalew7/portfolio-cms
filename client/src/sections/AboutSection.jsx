@@ -44,7 +44,7 @@ export const AboutSection = () => {
                   border border-white/10 dark:border-white/5"
               >
                 <img
-                  src="/images/esu1.png"
+                  src="/images/esu3.png"
                   alt="Esubale profile image"
                   className="w-full h-full object-cover"
                   style={{
@@ -65,16 +65,15 @@ export const AboutSection = () => {
             <div className="space-y-6">
               <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
                 Computer Science Student & <br className="hidden md:block" />
-                <span className="text-blue-600 dark:text-blue-400">MERN Stack Developer</span>
+                <span className="text-blue-600 dark:text-blue-400">MERN Stack</span> Developer
               </h3>
 
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
-                I am a third-year Computer Science student at Bahir Dar University, where I combine rigorous academic theory with hands-on, practical engineering. My true passion lies in architecting full-stack web applications that bridge the gap between complex backend data models and elegant front-end user interfaces.
+                I am a third-year Computer Science student passionate about full-stack development.
+                My expertise lies in the MERN stack, where I focus on building robust applications with clean architecture and scalable design patterns.
+                I thrive on solving complex problems and turning ideas into seamless digital experiences.
               </p>
 
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
-                As a developer, I am deeply committed to writing clean, modular code and designing robust, scalable systems. My approach prioritizes modern UI/UX principles, ensuring that my software is not just powerful under the hood, but intuitive for every end-user. Backed by an aggressive learning mindset, I constantly explore emerging technologies to stay ahead of the curve.
-              </p>
             </div>
 
             {/* Animated Counters Grid */}
