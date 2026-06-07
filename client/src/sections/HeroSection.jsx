@@ -119,25 +119,14 @@ export const HeroSection = () => {
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="relative w-full h-full rounded-full overflow-hidden z-10
-                  shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)]
-                  dark:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.25)]
                   border border-white/10 dark:border-white/5"
               >
                 <img
                   src="/images/esu2.png"
                   alt="Esubalew"
                   className="w-full h-full object-cover object-top"
-                  style={{
-                    maskImage: 'radial-gradient(circle at 50% 50%, white 55%, rgba(255,255,255,0.6) 75%, transparent 100%)',
-                    WebkitMaskImage: 'radial-gradient(circle at 50% 50%, white 55%, rgba(255,255,255,0.6) 75%, transparent 100%)',
-                  }}
                 />
               </motion.div>
-
-              {/* Bottom fade — blends base of image into the section background */}
-              <div className="absolute bottom-0 left-0 right-0 h-16 rounded-b-full
-                bg-gradient-to-t from-white/30 dark:from-gray-950/30 to-transparent
-                pointer-events-none z-20 blur-sm" />
             </motion.div>
           </motion.div>
 
