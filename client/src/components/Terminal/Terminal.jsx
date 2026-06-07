@@ -62,11 +62,11 @@ const Terminal = ({
   }, [history]);
 
   // Auto-focus input on mount
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isMinimized]);
+  /* useEffect(() => {
+     if (inputRef.current) {
+       inputRef.current.focus();
+     }
+   }, [isMinimized]); */
 
   /**
    * Handle command execution with parser

@@ -118,8 +118,7 @@ export const HeroSection = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="relative w-full h-full rounded-full overflow-hidden z-10
-                  border border-white/10 dark:border-white/5"
+                className="relative w-full h-full rounded-full overflow-hidden z-10"
               >
                 <img
                   src="/images/esu2.png"

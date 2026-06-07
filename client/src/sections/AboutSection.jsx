@@ -38,24 +38,13 @@ export const AboutSection = () => {
               <motion.div
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="relative aspect-[4/5] rounded-3xl overflow-hidden
-                  shadow-[0_12px_40px_-12px_rgba(0,0,0,0.08)]
-                  dark:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.3)]
-                  border border-white/10 dark:border-white/5"
+                className="relative aspect-[4/5] rounded-3xl overflow-hidden"
               >
                 <img
                   src="/images/esu3.png"
                   alt="Esubale profile image"
                   className="w-full h-full object-cover"
-                  style={{
-                    maskImage: 'radial-gradient(ellipse at 50% 45%, white 50%, rgba(255,255,255,0.55) 72%, transparent 100%)',
-                    WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, white 50%, rgba(255,255,255,0.55) 72%, transparent 100%)',
-                  }}
                 />
-                {/* Bottom edge blend */}
-                <div className="absolute bottom-0 left-0 right-0 h-24
-                  bg-gradient-to-t from-white/20 dark:from-gray-950/20 to-transparent
-                  pointer-events-none blur-sm" />
               </motion.div>
             </div>
           </motion.div>

@@ -255,7 +255,7 @@ export const CustomCursor = () => {
 
       {/* Inner dot */}
       <motion.div
-        className="fixed top-0 left-0 rounded-full pointer-events-none"
+        className="top-0 left-0 rounded-full pointer-events-none"
         style={{
           x: dotX,
           y: dotY,

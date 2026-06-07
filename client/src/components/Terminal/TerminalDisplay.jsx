@@ -91,7 +91,7 @@ TerminalDisplay.displayName = "TerminalDisplay";
  * Welcome Message Component
  */
 const TerminalWelcome = ({ content }) => (
-  <div className="text-cyan-400 text-xs font-mono whitespace-pre-wrap break-words leading-relaxed animate-pulse">
+  <div className="text-cyan-400 text-xs font-mono whitespace-pre-wrap break-words leading-relaxed ">
     {content}
   </div>
 );

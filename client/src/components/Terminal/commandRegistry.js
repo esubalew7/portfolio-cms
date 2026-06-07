@@ -206,7 +206,7 @@ College Website
  • featuring clean navigation and structured pages for academic information and campus content.
  • Tech: HTML, CSS, JavaScript ,Node.js & Express
 
-💡 All projects feature:
+ All projects feature:
    ✓ Responsive design (mobile, tablet, desktop)
    ✓ Performance optimized
    ✓ Accessibility compliant
