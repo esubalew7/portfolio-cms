@@ -17,6 +17,7 @@ const app = express();                  // Create Express app instance
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'http://localhost:5174',
     'https://portfolio-mern-one-rho.vercel.app'
   ],
   credentials: true
