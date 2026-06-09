@@ -42,5 +42,4 @@ app.get('/', (req, res) => {
 });
 
 // Export app
-
 export default app;                     // Export app for use in server.js

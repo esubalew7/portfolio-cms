@@ -51,11 +51,10 @@ const TypingEffect = ({
         {!isComplete && (
           <motion.span
             animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.6, repeat: Infinity }}
-            className="text-cyan-400"
-          >
-            ▊
-          </motion.span>
+            transition={{ duration: 0.55, repeat: Infinity, ease: 'linear' }}
+            className="inline-block w-[7px] h-[14px] bg-[#33ff33] align-[-2px] ml-px"
+            aria-hidden
+          />
         )}
       </pre>
     </motion.div>

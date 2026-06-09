@@ -1,9 +1,16 @@
-import { useState, useEffect, useMemo, useCallback, memo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Menu, X, ArrowRight } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { socialLinks } from './SocialLinks';
+import {
+  SECTION_IDS,
+  MOBILE_MENU_CLOSE_MS,
+  getSectionHref,
+  scrollToSectionById,
+  isValidSectionId,
+} from '../utils/sectionNavigation';
 
 const NAV_LINKS = [
   { name: 'Home', id: 'home' },
@@ -17,22 +24,10 @@ const NAV_LINKS = [
 const ACTIVE_LAYOUT_ID = 'nav-active-pill';
 const ACTIVE_SPRING = { type: 'spring', stiffness: 400, damping: 34, mass: 0.8 };
 
-const getNavHref = (linkId, pathname) => {
-  if (linkId === 'experience') {
-    return pathname === '/' ? `#${linkId}` : `/${linkId}`;
-  }
-  return pathname === '/' ? `#${linkId}` : `/#${linkId}`;
-};
-
-/**
- * Desktop nav link — two fully decoupled layers:
- *  1. Active pill  → Framer Motion layoutId (route change only)
- *  2. Hover tint   → pure CSS (zero React state, zero layout animation)
- */
 const DesktopNavLink = memo(function DesktopNavLink({ link, isActive, pathname, onNavigate }) {
   return (
     <a
-      href={getNavHref(link.id, pathname)}
+      href={getSectionHref(link.id, pathname)}
       onClick={(e) => onNavigate(e, link.id)}
       aria-current={isActive ? 'page' : undefined}
       className={[
@@ -59,12 +54,31 @@ const DesktopNavLink = memo(function DesktopNavLink({ link, isActive, pathname, 
   );
 });
 
+const MobileNavLink = memo(function MobileNavLink({ link, isActive, onNavigate }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate(link.id)}
+      aria-current={isActive ? 'page' : undefined}
+      className={`w-full text-left py-3 px-5 rounded-full text-[15px] font-medium tracking-wide transition-colors duration-200 ${
+        isActive
+          ? 'bg-blue-600 text-white shadow-[0_4px_12px_rgba(59,130,246,0.3)]'
+          : 'text-neutral-700 dark:text-neutral-300 active:bg-neutral-100 dark:active:bg-neutral-900/60'
+      }`}
+    >
+      {link.name}
+    </button>
+  );
+});
+
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
+  const scrollTimeoutRef = useRef(null);
 
   const isHomePage = location.pathname === '/';
 
@@ -73,45 +87,136 @@ export const Navbar = () => {
     return NAV_LINKS.findIndex((link) => link.id === activeSection);
   }, [activeSection, isHomePage]);
 
+  const runScroll = useCallback((sectionId, delay = 0) => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    const scroll = () => {
+      if (scrollToSectionById(sectionId)) {
+        setActiveSection(sectionId);
+      }
+    };
+
+    if (delay > 0) {
+      scrollTimeoutRef.current = setTimeout(scroll, delay);
+    } else {
+      scroll();
+    }
+  }, []);
+
+  /** Central navigation — desktop (immediate scroll) & mobile (scroll after menu closes) */
+  const navigateToSection = useCallback(
+    (e, sectionId, { isMobile = false } = {}) => {
+      e?.preventDefault();
+      if (!isValidSectionId(sectionId)) return;
+
+      setIsMenuOpen(false);
+      setActiveSection(sectionId);
+
+      if (!isHomePage) {
+        navigate('/', { state: { scrollTo: sectionId } });
+        return;
+      }
+
+      runScroll(sectionId, isMobile ? MOBILE_MENU_CLOSE_MS : 0);
+    },
+    [isHomePage, navigate, runScroll]
+  );
+
+  const handleMobileNavigate = useCallback(
+    (sectionId) => navigateToSection(null, sectionId, { isMobile: true }),
+    [navigateToSection]
+  );
+
+  // Scroll after cross-route navigation (e.g. /experience → Home section)
   useEffect(() => {
+    const pending = location.state?.scrollTo;
+    if (!isHomePage || !pending || !isValidSectionId(pending)) return;
+
+    const timer = setTimeout(() => {
+      scrollToSectionById(pending);
+      setActiveSection(pending);
+      navigate(location.pathname, { replace: true, state: {} });
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [isHomePage, location.pathname, location.state, navigate]);
+
+  // Handle direct hash URLs: /#projects
+  useEffect(() => {
+    if (!isHomePage || !location.hash) return;
+
+    const sectionId = location.hash.replace('#', '');
+    if (!isValidSectionId(sectionId)) return;
+
+    const timer = setTimeout(() => {
+      scrollToSectionById(sectionId);
+      setActiveSection(sectionId);
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [isHomePage, location.hash]);
+
+  // Active section tracking via IntersectionObserver (re-bind when home mounts)
+  useEffect(() => {
+    if (!isHomePage) return undefined;
+
     const handleScrollState = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScrollState, { passive: true });
 
-    const sections = document.querySelectorAll('section[id]');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-20% 0px -70% 0px' }
-    );
+    let observer;
+    const setupObserver = () => {
+      const sections = document.querySelectorAll(
+        SECTION_IDS.map((id) => `#${id}`).join(',')
+      );
 
-    sections.forEach((section) => observer.observe(section));
+      if (sections.length === 0) return;
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+          if (visible[0]?.target?.id) {
+            setActiveSection(visible[0].target.id);
+          }
+        },
+        { rootMargin: '-30% 0px -55% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    };
+
+    const timer = setTimeout(setupObserver, 50);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('scroll', handleScrollState);
-      sections.forEach((section) => observer.unobserve(section));
+      observer?.disconnect();
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
+  }, [isHomePage]);
+
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setIsMenuOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const scrollToSection = useCallback(
-    (e, id) => {
-      setIsMenuOpen(false);
-
-      if (!isHomePage) return;
-
-      e.preventDefault();
-      const element = document.getElementById(id);
-      if (element) {
-        const offsetTop = element.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-      }
-    },
-    [isHomePage]
-  );
+  // Lock body scroll while mobile menu is open
+  useEffect(() => {
+    if (!isMenuOpen) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isMenuOpen]);
 
   return (
     <motion.header
@@ -127,7 +232,11 @@ export const Navbar = () => {
       <div className="flex justify-between items-center w-full">
         <motion.a
           href={isHomePage ? '#home' : '/'}
-          onClick={(e) => scrollToSection(e, 'home')}
+          onClick={(e) =>
+            navigateToSection(e, 'home', {
+              isMobile: window.matchMedia('(max-width: 767px)').matches,
+            })
+          }
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="text-[22px] font-extrabold tracking-tight flex items-center gap-2 group cursor-pointer select-none"
@@ -147,7 +256,7 @@ export const Navbar = () => {
               link={link}
               isActive={activeIndex === index}
               pathname={location.pathname}
-              onNavigate={scrollToSection}
+              onNavigate={navigateToSection}
             />
           ))}
         </nav>
@@ -217,10 +326,11 @@ export const Navbar = () => {
           </motion.button>
 
           <motion.button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMenuOpen((open) => !open)}
             whileTap={{ scale: 0.92 }}
             className="p-2.5 rounded-full border border-neutral-200/80 dark:border-neutral-800/80 bg-white/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
             aria-label="Toggle Menu"
+            aria-expanded={isMenuOpen}
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -239,34 +349,24 @@ export const Navbar = () => {
 
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+          <motion.nav
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden md:hidden w-full flex flex-col mt-3"
+            aria-label="Mobile navigation"
           >
             <div className="h-[1px] bg-neutral-200/50 dark:bg-neutral-800/50 w-full my-2.5" />
             <div className="flex flex-col space-y-1.5 pb-3">
-              {NAV_LINKS.map((link) => {
-                const isActive = activeSection === link.id && isHomePage;
-
-                return (
-                  <a
-                    key={link.id}
-                    href={getNavHref(link.id, location.pathname)}
-                    onClick={(e) => scrollToSection(e, link.id)}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={`block py-3 px-5 rounded-full text-[15px] font-medium tracking-wide transition-colors duration-200 ${
-                      isActive
-                        ? 'bg-blue-600 text-white shadow-[0_4px_12px_rgba(59,130,246,0.3)]'
-                        : 'text-neutral-700 dark:text-neutral-300 active:bg-neutral-100 dark:active:bg-neutral-900/60'
-                    }`}
-                  >
-                    {link.name}
-                  </a>
-                );
-              })}
+              {NAV_LINKS.map((link) => (
+                <MobileNavLink
+                  key={link.id}
+                  link={link}
+                  isActive={activeSection === link.id && isHomePage}
+                  onNavigate={handleMobileNavigate}
+                />
+              ))}
 
               <div className="h-[1px] bg-neutral-200/50 dark:bg-neutral-800/50 w-full my-2" />
 
@@ -295,7 +395,7 @@ export const Navbar = () => {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </motion.header>

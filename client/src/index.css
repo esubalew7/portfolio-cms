@@ -6,7 +6,24 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px;
+  /* Offset for fixed floating navbar — used by scrollIntoView & hash links */
+  scroll-padding-top: 6.5rem;
+}
+
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: 5.5rem;
+  }
+}
+
+section[id] {
+  scroll-margin-top: 6.5rem;
+}
+
+@media (min-width: 768px) {
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
 }
 
 body {
