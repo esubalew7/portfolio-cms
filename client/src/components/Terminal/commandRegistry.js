@@ -159,7 +159,7 @@ Mobile App
   Flutter
 
 DATABASES 
-   MongoDB & Mongoose                             
+   MongoDB                            
    MySQL                            
    Firebase & Firestore                          
 

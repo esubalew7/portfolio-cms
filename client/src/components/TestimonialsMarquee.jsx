@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, useMotionValue, useAnimationFrame } from 'framer-motion';
 import TestimonialCard from './TestimonialCard';
 
-const SPEED = 5; // Adjust this value to make the marquee faster or slower
+const SPEED = 1; // Adjust this value to make the marquee faster or slower
 
 const TestimonialsMarquee = ({ testimonials = [] }) => {
   const x = useMotionValue(0);
