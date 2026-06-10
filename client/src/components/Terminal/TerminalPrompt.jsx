@@ -1,4 +1,4 @@
-import { forwardRef, useEffect } from 'react';
+import { forwardRef } from 'react';
 import { formatPrompt } from './terminalConstants';
 
 const TerminalPrompt = forwardRef(
@@ -12,10 +12,6 @@ const TerminalPrompt = forwardRef(
     },
     ref
   ) => {
-    useEffect(() => {
-      ref?.current?.focus();
-    }, [ref]);
-
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();

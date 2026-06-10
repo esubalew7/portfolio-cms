@@ -4,7 +4,7 @@ import TerminalViewport from './TerminalViewport';
 import { useTerminal } from './useTerminal';
 
 const Terminal = ({
-  isOpen = true,
+  isOpen = true, 
   onClose,
   position = { x: 40, y: 60 },
   className = '',
