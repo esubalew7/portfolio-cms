@@ -1,5 +1,9 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import TimelineItem from '../components/ui/TimelineItem';
+import TestimonialsMarquee from '../components/TestimonialsMarquee';
+import testimonials from '../data/testimonials';
+import { fadeIn } from '../animations/variants';
 
 const ExperienceSection = () => {
 
@@ -92,14 +96,24 @@ const ExperienceSection = () => {
           </div>
         </div>
 
-        {/* <div>
-          <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-4">Freelance / Projects</h3>
-          <div className="space-y-6">
-            {projects.map((item, idx) => (
-              <TimelineItem key={idx} {...item} />
-            ))}
-          </div>
-        </div> */}
+        <div>
+          <motion.div
+            variants={fadeIn('up', 0)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            className="mb-6"
+          >
+            <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+              Client Feedback
+            </h3>
+            <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+              What people say about working with me.
+            </p>
+          </motion.div>
+
+          <TestimonialsMarquee testimonials={testimonials} />
+        </div>
 
       </div>
     </section>
