@@ -16,11 +16,10 @@ const userSchema = new mongoose.Schema(
             lowercase: true,     // Convert to lowercase
         },
 
-        // Password field
+        // Password field (optional for Google-authenticated users)
         password: {
             type: String,        // Stored as hashed string
-            required: true,
-            minlength: 6,        // Minimum length
+            required: false,     // Google users may not have a password
         },
     },
     {
@@ -33,8 +32,8 @@ const userSchema = new mongoose.Schema(
 // 🔐 HASH PASSWORD BEFORE SAVING
 // ========================================
 userSchema.pre("save", async function () {
-    // Only hash if password is modified
-    if (!this.isModified("password")) {
+    // Only hash if password is present and modified
+    if (!this.password || !this.isModified("password")) {
         return;
     }
 

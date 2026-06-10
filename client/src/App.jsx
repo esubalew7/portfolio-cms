@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProjectProvider } from './context/ProjectContext';
 import { ToastProvider } from './context/ToastContext';
@@ -30,6 +31,7 @@ const App = () => {
     <ThemeProvider>
       <ProjectProvider>
         <BrowserRouter>
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
           <ToastProvider>
             <AnimatePresence>
               {isLoading && <Loader key="loader" />}
@@ -58,6 +60,7 @@ const App = () => {
 
             <ScrollToTop />
           </ToastProvider>
+          </GoogleOAuthProvider>
         </BrowserRouter>
       </ProjectProvider>
     </ThemeProvider>

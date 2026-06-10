@@ -43,10 +43,16 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response ? error.response.status : null;
-    if (status === 401) {
+
+    // Only redirect to login on 401 if the user had a token
+    // (meaning they were authenticated, but their token expired).
+    // Public auth endpoints may return 403 for authorization failures;
+    // those should NOT trigger a redirect.
+    if (status === 401 && getAuthToken()) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+
     return Promise.reject(normalizeError(error));
   }
 );

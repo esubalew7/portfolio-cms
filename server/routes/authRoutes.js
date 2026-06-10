@@ -2,7 +2,7 @@
 import express from "express";
 
 // Import controller functions
-import { register, login, getMe } from "../controllers/authController.js";
+import { register, login, googleLogin, getMe } from "../controllers/authController.js";
 import protect from "../middleware/authMiddleware.js";
 
 // Create router
@@ -20,6 +20,12 @@ router.post("/register", register);
 // @desc    Login admin
 // ===============================
 router.post("/login", login);
+
+// ===============================
+// @route   POST /api/auth/google
+// @desc    Google OAuth login
+// ===============================
+router.post("/google", googleLogin);
 
 // ===============================
 // @route   GET /api/auth/me

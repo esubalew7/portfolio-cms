@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import api from '../utils/api';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -10,6 +11,7 @@ const Login = () => {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
@@ -56,6 +58,39 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleLoginSuccess = (token) => {
+    localStorage.setItem('token', token);
+    navigate(from, { replace: true });
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setIsGoogleLoading(true);
+    setLoginError('');
+
+    try {
+      const response = await api.post('/api/auth/google', {
+        credential: credentialResponse.credential,
+      });
+
+      const { token } = response;
+
+      if (!token) {
+        throw new Error('No token received from server');
+      }
+
+      handleLoginSuccess(token);
+    } catch (error) {
+      console.error('Google login error:', error);
+      setLoginError(error.message || 'Google login failed. Please try again.');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setLoginError('Google sign-in was cancelled or failed. Please try again.');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -79,10 +114,7 @@ const Login = () => {
         throw new Error('No token received from server');
       }
 
-      localStorage.setItem('token', token);
-
-      // Redirect to the intended page (or dashboard by default)
-      navigate(from, { replace: true });
+      handleLoginSuccess(token);
     } catch (error) {
       console.error('Login error:', error);
       // Use the normalized message from our api utility
@@ -110,6 +142,42 @@ const Login = () => {
 
         {/* Login Form */}
         <div className="bg-white dark:bg-gray-800 py-8 px-6 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
+          {/* Google Login Button */}
+          <div className="mb-6">
+            <div className="flex justify-center">
+              {isGoogleLoading ? (
+                <div className="w-full flex justify-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Connecting...</span>
+                  </div>
+                </div>
+              ) : (
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  size="large"
+                  text="continue_with"
+                  shape="rectangular"
+                  width={300}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200 dark:border-gray-600" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-3 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                OR
+              </span>
+            </div>
+          </div>
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
