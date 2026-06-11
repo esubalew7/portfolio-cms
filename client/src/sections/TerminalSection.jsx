@@ -19,7 +19,7 @@ export const TerminalSection = () => {
           </h2>
           <div className="w-20 h-1 bg-blue-600 dark:bg-blue-400 mx-auto rounded-full mb-8"></div>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium text-lg leading-relaxed">
-            Use this Mac-style developer sandbox to query my skills, experience, projects, or download my resume. Type{" "}
+            Use this interactive terminal to explore my skills, experience, projects, or download my resume. Type{" "}
             <span className="font-mono text-blue-600 dark:text-blue-400 font-bold bg-blue-500/10 dark:bg-blue-500/20 px-2.5 py-1 rounded">
               help
             </span>{" "}

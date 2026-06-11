@@ -1,63 +1,51 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from 'react';
 
-/**
- * Typing Animation Component
- * Animates text character by character for terminal responses
- */
 const TypingEffect = ({
   text,
-  speed = 10,
-  onComplete = null,
-  className = "",
+  speed = 12,
+  onComplete,
+  className = '',
 }) => {
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayed, setDisplayed] = useState('');
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    if (!text) {
-      setIsComplete(true);
-      return;
-    }
+    if (!text) return;
 
-    let currentIndex = 0;
-    let timeoutId;
+    setDisplayed('');
+    setIsComplete(false);
 
-    const typeNextCharacter = () => {
-      if (currentIndex < text.length) {
-        setDisplayedText(text.substring(0, currentIndex + 1));
-        currentIndex++;
-        timeoutId = setTimeout(typeNextCharacter, speed);
+    let index = 0;
+    let rafId;
+
+    const type = () => {
+      const step = Math.max(1, Math.round(speed / 8));
+      const next = Math.min(index + step, text.length);
+      setDisplayed(text.substring(0, next));
+      index = next;
+
+      if (index < text.length) {
+        rafId = requestAnimationFrame(type);
       } else {
         setIsComplete(true);
-        if (onComplete) onComplete();
+        onComplete?.();
       }
     };
 
-    timeoutId = setTimeout(typeNextCharacter, speed);
-
-    return () => clearTimeout(timeoutId);
+    rafId = requestAnimationFrame(type);
+    return () => cancelAnimationFrame(rafId);
   }, [text, speed, onComplete]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
-      className={className}
-    >
-      <pre className="font-mono text-xs whitespace-pre-wrap break-words">
-        {displayedText}
-        {!isComplete && (
-          <motion.span
-            animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.55, repeat: Infinity, ease: 'linear' }}
-            className="inline-block w-[7px] h-[14px] bg-[#33ff33] align-[-2px] ml-px"
-            aria-hidden
-          />
-        )}
-      </pre>
-    </motion.div>
+    <span className={className}>
+      <span className="whitespace-pre-wrap break-words">{displayed}</span>
+      {!isComplete && (
+        <span
+          className="inline-block w-[7px] h-[14px] bg-[#c0c0c0] align-[-2px] ml-px"
+          style={{ animation: 'blink-cursor 530ms step-end infinite' }}
+        />
+      )}
+    </span>
   );
 };
 

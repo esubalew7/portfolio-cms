@@ -7,7 +7,3 @@ export { default as CommandParser } from './commandParser';
 export { useTerminal } from './useTerminal';
 export { COMMAND_REGISTRY, WELCOME_MESSAGE } from './commandRegistry';
 export { TERMINAL_PROMPT, formatPrompt } from './terminalConstants';
-
-// Legacy exports — kept for backward compatibility
-export { default as TerminalDisplay } from './TerminalDisplay';
-export { default as TerminalInput } from './TerminalInput';

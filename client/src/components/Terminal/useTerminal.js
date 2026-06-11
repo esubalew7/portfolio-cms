@@ -27,7 +27,7 @@ export function useTerminal({ welcomeMessage = WELCOME_MESSAGE } = {}) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [lines, input, scrollToBottom]);
+  }, [lines, scrollToBottom]);
 
   const appendLine = useCallback((line) => {
     setLines((prev) => [...prev, { id: createLineId(), ...line }]);

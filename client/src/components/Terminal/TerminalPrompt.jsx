@@ -1,5 +1,4 @@
-import { forwardRef } from 'react';
-import { formatPrompt } from './terminalConstants';
+import { forwardRef, useState, useEffect } from 'react';
 
 const TerminalPrompt = forwardRef(
   (
@@ -12,6 +11,13 @@ const TerminalPrompt = forwardRef(
     },
     ref
   ) => {
+    const [showCursor, setShowCursor] = useState(true);
+
+    useEffect(() => {
+      const id = setInterval(() => setShowCursor((v) => !v), 530);
+      return () => clearInterval(id);
+    }, []);
+
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -38,21 +44,32 @@ const TerminalPrompt = forwardRef(
     };
 
     return (
-      <div className="flex items-start min-h-[1.5rem] mt-1">
+      <div className="flex items-stretch">
         <PromptPrefix />
-        <input
-          ref={ref}
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          spellCheck={false}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          aria-label="Terminal command input"
-          className="flex-1 min-w-0 bg-transparent text-[#e8e8e8] outline-none border-none p-0 m-0 font-mono text-[13px] leading-6 caret-[#33ff33] selection:bg-[#264f78]"
-        />
+        <div className="relative flex-1 min-w-0">
+          <input
+            ref={ref}
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            spellCheck={false}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            aria-label="Terminal command input"
+            className="w-full bg-transparent text-transparent outline-none border-none p-0 m-0 font-mono text-[13px] leading-[1.5rem] caret-transparent selection:bg-[#264f78]"
+          />
+          <span
+            className="absolute inset-0 pointer-events-none font-mono text-[13px] leading-[1.5rem] text-[#d4d4d4] whitespace-pre"
+            aria-hidden
+          >
+            {value}
+            {showCursor && (
+              <span className="inline-block w-[7px] h-[15px] bg-[#d4d4d4] align-[-2px] ml-px" />
+            )}
+          </span>
+        </div>
       </div>
     );
   }
@@ -61,15 +78,13 @@ const TerminalPrompt = forwardRef(
 TerminalPrompt.displayName = 'TerminalPrompt';
 
 export function PromptPrefix() {
-  const prompt = formatPrompt();
-  const [userHost, pathAndSig] = prompt.split(':');
-
   return (
-    <span className="shrink-0 select-none font-mono text-[13px] leading-6">
-      <span className="text-[#33ff33]">{userHost}</span>
-      <span className="text-[#9ca3af]">:</span>
-      <span className="text-[#5ea8ff]">{pathAndSig.replace('$', '')}</span>
-      <span className="text-[#e8e8e8]">$ </span>
+    <span className="shrink-0 select-none font-mono text-[13px] leading-[1.5rem] whitespace-nowrap">
+      <span className="text-[#569cd6]">PS</span>
+      <span className="text-[#888]"> </span>
+      <span className="text-[#d4d4d4]">C:\Users\esubalew\portfolio</span>
+      <span className="text-[#569cd6]">&gt;</span>
+      <span className="text-[#888]"> </span>
     </span>
   );
 }
