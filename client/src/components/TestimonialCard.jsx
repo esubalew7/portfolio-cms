@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 
@@ -16,7 +17,7 @@ const getInitials = (name) =>
     .join('')
     .toUpperCase();
 
-const TestimonialCard = ({ name, role, company, image, rating, feedback, id }) => {
+const TestimonialCard = memo(({ name, role, company, image, rating, feedback, id }) => {
   const gradient = AVATAR_COLORS[(id - 1) % AVATAR_COLORS.length];
 
   return (
@@ -85,6 +86,6 @@ const TestimonialCard = ({ name, role, company, image, rating, feedback, id }) =
       </div>
     </motion.div>
   );
-};
+});
 
 export default TestimonialCard;

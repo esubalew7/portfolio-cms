@@ -1,87 +1,76 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion, useMotionValue, useAnimationFrame } from 'framer-motion';
+import { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import TestimonialCard from './TestimonialCard';
 
-const SPEED = 3; // Adjust this value to make the marquee faster or slower
+let instanceId = 0;
+
+const PX_PER_SEC = 80;
 
 const TestimonialsMarquee = ({ testimonials = [] }) => {
-  const x = useMotionValue(0);
   const trackRef = useRef(null);
   const containerRef = useRef(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [dur, setDur] = useState(30);
 
-  const marqueeWidthRef = useRef(0);
-  const isPausedRef = useRef(false);
+  const animName = useRef(`mq-${instanceId++}`);
 
-  useEffect(() => {
-    isPausedRef.current = isPaused;
-  }, [isPaused]);
-
-  const measure = useCallback(() => {
-    if (trackRef.current) {
-      marqueeWidthRef.current = trackRef.current.scrollWidth / 2;
-    }
-  }, []);
-
-  useEffect(() => {
-    measure();
-  }, [measure]);
-
-  useEffect(() => {
-    const handleResize = () => measure();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [measure]);
+  const items = useMemo(
+    () => [...testimonials, ...testimonials, ...testimonials],
+    [testimonials]
+  );
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
+    const ob = new IntersectionObserver(
+      ([e]) => setVisible(e.isIntersecting),
       { threshold: 0 }
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    ob.observe(el);
+    return () => ob.disconnect();
   }, []);
 
-  useAnimationFrame((delta) => {
-    if (!isVisible || isPausedRef.current) return;
-    const mw = marqueeWidthRef.current;
-    if (!mw) return;
+  const measure = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const w = el.scrollWidth / 3;
+    setDur(Math.max(w / PX_PER_SEC, 1));
+  }, []);
 
-    const step = (SPEED * delta) / 100000;
-    let newX = x.get() - step; // - step used to make it scroll from right to left, use + step for left to right
-
-    if (Math.abs(newX) >= mw) {
-      newX += mw;
-    }
-
-    x.set(newX);
-  });
+  useEffect(() => {
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [measure]);
 
   if (!testimonials.length) return null;
 
-  const allItems = [...testimonials, ...testimonials];
-
   return (
-    <div
-      ref={containerRef}
-      className="overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      <motion.div
-        ref={trackRef}
-        style={{ x }}
-        className="flex gap-5 w-max will-change-transform"
+    <>
+      <style>{`@keyframes ${animName.current}{from{transform:translateX(0)}to{transform:translateX(-33.33333%)}}`}</style>
+      <div
+        ref={containerRef}
+        className="overflow-hidden"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
       >
-        {allItems.map((t, i) => (
-          <TestimonialCard key={`${t.id}-${i}`} {...t} />
-        ))}
-      </motion.div>
-    </div>
+        <div
+          ref={trackRef}
+          className="flex gap-5 w-max will-change-transform"
+          style={{
+            animationName: animName.current,
+            animationDuration: `${dur}s`,
+            animationTimingFunction: 'linear',
+            animationIterationCount: 'infinite',
+            animationPlayState: !visible || paused ? 'paused' : 'running',
+          }}
+        >
+          {items.map((t, i) => (
+            <TestimonialCard key={`${t.id}-${i}`} {...t} />
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 
