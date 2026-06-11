@@ -14,6 +14,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Messages from './pages/Messages';
 import DashboardProjects from './pages/DashboardProjects';
+import Analytics from './pages/dashboard/Analytics';
 import { Loader } from './components/Loader';
 import { ScrollToTop } from './components/ScrollToTop';
 
@@ -41,7 +42,6 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/experience" element={<Experience />} />
               </Route>
 
               <Route
@@ -55,6 +55,7 @@ const App = () => {
                 <Route index element={<Dashboard />} />
                 <Route path="projects" element={<DashboardProjects />} />
                 <Route path="messages" element={<Messages />} />
+                <Route path="analytics" element={<Analytics />} />
               </Route>
             </Routes>
 

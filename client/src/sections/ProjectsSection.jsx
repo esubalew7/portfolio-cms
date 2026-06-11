@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../animations/variants';
 import ProjectCard from '../components/ProjectCard';
 import { useProjects } from '../context/ProjectContext';
+import { useTrackSection } from '../hooks/useVisitorTracking';
 
 export const ProjectsSection = () => {
   const { projects, loading, error } = useProjects();
+  useTrackSection('projects');
   const [activeFilter, setActiveFilter] = useState('all');
 
   const filters = [

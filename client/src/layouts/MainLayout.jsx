@@ -1,9 +1,11 @@
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { useVisitorTracking } from '../hooks/useVisitorTracking';
 
 
 export const MainLayout = () => {
+  useVisitorTracking();
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
       <Navbar />

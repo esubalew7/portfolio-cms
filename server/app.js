@@ -7,6 +7,7 @@ import projectRoutes from "./routes/projectRoutes.js"; // Import project routes
 import uploadRoutes from "./routes/uploadRoutes.js"; // Import upload routes
 import dashboardRoutes from "./routes/dashboardRoutes.js"; // Import dashboard routes
 import notificationRoutes from "./routes/notificationRoutes.js"; // Import notification routes
+import analyticsRoutes from "./routes/analyticsRoutes.js"; // Import analytics routes
 
 dotenv.config();                        // Load environment variables from .env
 
@@ -32,6 +33,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

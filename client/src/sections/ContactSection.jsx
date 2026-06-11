@@ -11,8 +11,10 @@ import {
   ExternalLink
 } from 'lucide-react';
 import api from '../utils/api';
+import { useTrackSection } from '../hooks/useVisitorTracking';
 
 export const ContactSection = () => {
+  useTrackSection('contact');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);

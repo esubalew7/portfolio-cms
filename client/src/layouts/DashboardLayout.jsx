@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   FolderOpen,
+  BarChart3,
   LogOut,
   Menu,
   X,
@@ -129,6 +130,12 @@ const DashboardLayout = () => {
       label: 'Dashboard',
       icon: LayoutDashboard,
       description: 'Overview & Analytics'
+    },
+    {
+      path: '/dashboard/analytics',
+      label: 'Analytics',
+      icon: BarChart3,
+      description: 'Visitor Analytics'
     },
     {
       path: '/dashboard/projects',

@@ -160,7 +160,7 @@ const Login = () => {
                   size="large"
                   text="continue_with"
                   shape="rectangular"
-                  width={300}
+                  width={200}
                 />
               )}
             </div>
