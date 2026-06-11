@@ -37,21 +37,21 @@ export const COMMAND_REGISTRY = {
      AVAILABLE COMMANDS                
 
 INFORMATION  
- about, whoami, info      → Learn about me              
- experience, exp          → My professional experience  
- education, edu           → My educational background   
- techstack, tech, skills  → Technical skills & tools    
+ about, whoami, info     → Learn about me              
+ experience, exp         → My professional experience  
+ education, edu          → My educational background   
+ techstack, tech, skills → Technical skills & tools    
 
 PORTFOLIO & LINKS 
- projects, proj           → View my projects            
- resume, cv               → Download my CV/Resume       
- github, gh               → Visit GitHub profile        
- linkedin, in             → Visit LinkedIn profile      
- contact, mail, email     → Contact information         
+ projects, proj         → View my projects            
+ resume, cv             → Download my CV/Resume       
+ github, gh             → Visit GitHub profile        
+ linkedin, in           → Visit LinkedIn profile      
+ contact, mail, email   → Contact information         
 
 SYSTEM 
- help, h, ?               → Show this help message       
- clear, cls, rm           → Clear terminal history    
+ help, h, ?         → Show this help message       
+ clear, cls, rm     → Clear terminal history    
 
 Tip: Type any command to execute it. Use Arrow Keys to 
    navigate through your command history.
@@ -66,7 +66,6 @@ Tip: Type any command to execute it. Use Arrow Keys to
         animated: true,
       },
       response: `
-
                       ABOUT ME                            
 
 Hello! I'm a Full Stack Developer with a passion for creating
@@ -102,11 +101,9 @@ Let's build something amazing together!
         animated: true,
       },
       response: `
-
               PROFESSIONAL EXPERIENCE                        
 
 Full Stack Developer internship ─  Askuala Link (present) 
-
         `,
     },
 
@@ -117,7 +114,6 @@ Full Stack Developer internship ─  Askuala Link (present)
         animated: true,
       },
       response: `
-
                     EDUCATIONAL BACKGROUND                  
 
 Computer Science Student  → at Bahir Dar University  (2024 - Present) 
@@ -134,7 +130,6 @@ Certifications
  • Web Development Certificate @ coddy.tech
  • Advanced Programming (React)  @ BiT Career Development Center
  • CCNA: Introduction to Networks @ Cisco Networking Academy         
-
         `,
     },
 
@@ -145,7 +140,6 @@ Certifications
         animated: true,
       },
       response: `
-
                     TECHNICAL SKILLS                        
 
 FRONTEND 
@@ -177,7 +171,6 @@ TOOLS & PLATFORMS
         animated: true,
       },
       response: `
-
                 FEATURED PROJECTS                       
 
 Portfolio Website (MERN Stack) 
@@ -241,7 +234,6 @@ Your resume has been downloaded. Please check your Downloads folder.
         animated: true,
       },
       response: `
-
                     GET IN TOUCH                            
 
 I'd love to hear from you! Feel free to reach out through any

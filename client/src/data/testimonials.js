@@ -25,7 +25,7 @@ const testimonials = [
     role: 'Professor',
     company: 'Bahir Dar University',
     image: 'images/p3.jpg',
-    rating: 3,
+    rating: 5,
     feedback:
       'One of the brightest students I have mentored. His ability to grasp complex concepts and implement them into working solutions is truly impressive.',
   },
