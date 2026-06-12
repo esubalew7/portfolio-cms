@@ -1,6 +1,6 @@
 # MERN Portfolio — System Documentation
 
-> **Full-Stack MERN Application | Internship Presentation & Technical Reference**  
+> **Full-Stack MERN Application** 
 > **Author:** Esubalew Molla  
 > **Version:** 1.0.0  
 > **Last Updated:** June 2026
