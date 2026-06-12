@@ -80,9 +80,9 @@ TerminalPrompt.displayName = 'TerminalPrompt';
 export function PromptPrefix() {
   return (
     <span className="shrink-0 select-none font-mono text-[13px] leading-[1.5rem] whitespace-nowrap">
-      <span className="text-[#569cd6]">PS</span>
+      <span className="text-[#569cd6]">E</span>
       <span className="text-[#888]"> </span>
-      <span className="text-[#d4d4d4]">C:\Users\esubalew\portfolio</span>
+      <span className="text-[#d4d4d4]">C:\esubalew\portfolio</span>
       <span className="text-[#569cd6]">&gt;</span>
       <span className="text-[#888]"> </span>
     </span>
