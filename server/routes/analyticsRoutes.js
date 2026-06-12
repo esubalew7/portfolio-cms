@@ -6,8 +6,6 @@ import {
   getCharts,
   getLocations,
   getPortfolioAnalytics,
-  getTopPages,
-  getCountries,
   getRecentVisitors,
 } from "../controllers/analyticsController.js";
 
@@ -21,8 +19,6 @@ router.get("/overview", getOverview);
 router.get("/charts", getCharts);
 router.get("/locations", getLocations);
 router.get("/portfolio", getPortfolioAnalytics);
-router.get("/top-pages", getTopPages);
-router.get("/countries", getCountries);
 router.get("/recent", getRecentVisitors);
 
 export default router;

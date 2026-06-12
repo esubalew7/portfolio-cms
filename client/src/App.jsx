@@ -9,7 +9,6 @@ import { MainLayout } from './layouts/MainLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Home } from './pages/Home';
-import Experience from './pages/Experience';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Messages from './pages/Messages';

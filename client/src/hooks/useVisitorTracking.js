@@ -43,6 +43,3 @@ export const useTrackSection = (sectionName) => {
   }, [sectionName]);
 };
 
-export const resetTrackedSections = () => {
-  trackedSections.clear();
-};

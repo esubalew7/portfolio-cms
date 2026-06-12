@@ -6,8 +6,6 @@ import protect from "../middleware/authMiddleware.js"; // Import auth middleware
 import {
     createContact,
     getAllContacts,
-    toggleReadStatus,
-    updateReadStatus,
     markMessageAsRead,
     deleteContact,
 } from "../controllers/contactController.js";
@@ -28,20 +26,6 @@ router.post("/", createContact);
 // @access  Public
 // ===============================
 router.get("/", getAllContacts);
-
-// ===============================
-// @route   PATCH /api/contact/:id
-// @desc    Toggle read status
-// @access  Admin
-// ===============================
-router.patch("/:id", protect, toggleReadStatus);
-
-// ===============================
-// @route   PATCH /api/contact/:id/read
-// @desc    Set read status
-// @access  Public
-// ===============================
-router.patch("/:id/read", updateReadStatus);
 
 // ===============================
 // @route   PUT /api/contact/:id/read

@@ -26,27 +26,4 @@ export const normalizedText = (value, fallback = 'No data available') => {
   return value;
 };
 
-/**
- * Validates if a string is a properly formatted URL.
- * @param {string} value - The URL string to validate.
- * @returns {boolean} - True if valid, false otherwise.
- */
-export const isValidUrl = (value) => {
-  if (!value) return false;
-  try {
-    new URL(value);
-    return true;
-  } catch {
-    return false;
-  }
-};
 
-/**
- * Generates initials from a name string.
- * @param {string} name - The full name.
- * @returns {string} - Up to 2 characters of initials.
- */
-export const getInitials = (name) => {
-  if (!name) return 'U';
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-};

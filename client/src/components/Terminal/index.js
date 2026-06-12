@@ -1,5 +1,4 @@
 export { default as Terminal } from './Terminal';
-export { default as TerminalViewport } from './TerminalViewport';
 export { default as TerminalLine } from './TerminalLine';
 export { default as TerminalPrompt } from './TerminalPrompt';
 export { default as TypingEffect } from './TypingEffect';

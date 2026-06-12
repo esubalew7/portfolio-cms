@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { fadeIn, staggerContainer } from "../animations/variants";
 import { Terminal } from "../components/Terminal";

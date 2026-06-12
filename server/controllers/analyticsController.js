@@ -294,41 +294,6 @@ export const getPortfolioAnalytics = async (req, res) => {
   }
 };
 
-export const getTopPages = async (req, res) => {
-  try {
-    const topPages = await Visitor.aggregate([
-      { $group: { _id: "$page", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 },
-    ]);
-
-    res.status(200).json({
-      success: true,
-      data: topPages.map((p) => ({ page: p._id, visits: p.count })),
-    });
-  } catch (error) {
-    console.error("Get top pages error:", error);
-    res.status(500).json({ success: false, message: "Server Error", error: error.message });
-  }
-};
-
-export const getCountries = async (req, res) => {
-  try {
-    const countries = await Visitor.aggregate([
-      { $group: { _id: "$country", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-    ]);
-
-    res.status(200).json({
-      success: true,
-      data: countries.map((c) => ({ country: c._id, visitors: c.count })),
-    });
-  } catch (error) {
-    console.error("Get countries error:", error);
-    res.status(500).json({ success: false, message: "Server Error", error: error.message });
-  }
-};
-
 export const getRecentVisitors = async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);

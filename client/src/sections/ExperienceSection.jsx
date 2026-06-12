@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import TimelineItem from '../components/ui/TimelineItem';
 import TestimonialsMarquee from '../components/TestimonialsMarquee';
