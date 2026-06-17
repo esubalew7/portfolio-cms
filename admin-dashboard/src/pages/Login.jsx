@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import api from '../utils/api';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
@@ -287,15 +287,7 @@ const Login = () => {
             </div>
           </form>
 
-          {/* Back to Home Link */}
-          <div className="mt-6 text-center">
-            <Link
-              to="/"
-              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors duration-200"
-            >
-              ← Back to Home
-            </Link>
-          </div>
+
         </div>
       </div>
     </div>

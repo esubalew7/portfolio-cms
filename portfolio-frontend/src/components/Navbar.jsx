@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, ArrowRight } from 'lucide-react';
+import { Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { socialLinks } from './SocialLinks';
 import {
@@ -289,16 +289,7 @@ export const Navbar = () => {
             </div>
           </motion.button>
 
-          <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-            <Link
-              to="/dashboard"
-              className="relative overflow-hidden px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-neutral-900 dark:bg-white dark:text-neutral-950 flex items-center gap-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_12px_rgba(255,255,255,0.15)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.25)] border border-neutral-800 dark:border-neutral-200/80 group transition-all duration-300"
-            >
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <span className="relative z-10">Dashboard</span>
-              <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-0.5 transition-transform duration-300" />
-            </Link>
-          </motion.div>
+
         </div>
 
         <div className="md:hidden flex items-center gap-2">
@@ -370,14 +361,7 @@ export const Navbar = () => {
 
               <div className="h-[1px] bg-neutral-200/50 dark:bg-neutral-800/50 w-full my-2" />
 
-              <Link
-                to="/dashboard"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-center gap-2 py-3 px-5 rounded-full text-[15px] font-semibold tracking-wide bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_12px_rgba(255,255,255,0.1)] transition-colors"
-              >
-                <span>Dashboard</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+
             </div>
 
             <div className="flex justify-center items-center py-4.5 border-t border-neutral-200/30 dark:border-neutral-800/30">
