@@ -5,6 +5,7 @@ import {
   MessageSquare,
   FolderOpen,
   BarChart3,
+  FileText,
   LogOut,
   Menu,
   X,
@@ -148,6 +149,12 @@ const DashboardLayout = () => {
       label: 'Messages',
       icon: MessageSquare,
       description: 'Contact Messages'
+    },
+    {
+      path: '/dashboard/content',
+      label: 'Content',
+      icon: FileText,
+      description: 'Manage Portfolio Content'
     }
   ];
 

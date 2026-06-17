@@ -17,8 +17,9 @@ const getInitials = (name) =>
     .join('')
     .toUpperCase();
 
-const TestimonialCard = memo(({ name, role, company, image, rating, feedback, id }) => {
-  const gradient = AVATAR_COLORS[(id - 1) % AVATAR_COLORS.length];
+const TestimonialCard = memo(({ name, role, company, image, rating, feedback }, index) => {
+  const colorIndex = (index || 0) % AVATAR_COLORS.length;
+  const gradient = AVATAR_COLORS[colorIndex];
 
   return (
     <motion.div

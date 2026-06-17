@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { socialLinks } from './SocialLinks';
+import { useContent } from '../context/ContentContext';
+import { platformIcons } from './SocialLinks';
 import {
   SECTION_IDS,
   MOBILE_MENU_CLOSE_MS,
@@ -80,6 +81,8 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const scrollTimeoutRef = useRef(null);
 
+  const { content } = useContent();
+  const socialLinks = content?.socialLinks || [];
   const isHomePage = location.pathname === '/';
 
   const activeIndex = useMemo(() => {
@@ -368,13 +371,17 @@ export const Navbar = () => {
               <div className="flex gap-6">
                 {socialLinks.map((link) => (
                   <a
-                    key={link.name}
+                    key={link.platform}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-neutral-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
                   >
-                    {link.icon}
+                    {platformIcons[link.platform] || (
+                      <span className="w-5 h-5 flex items-center justify-center text-xs font-bold bg-neutral-200 dark:bg-neutral-700 rounded">
+                        {link.platform[0]}
+                      </span>
+                    )}
                   </a>
                 ))}
               </div>

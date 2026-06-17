@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Messages from './pages/Messages';
 import DashboardProjects from './pages/DashboardProjects';
 import Analytics from './pages/dashboard/Analytics';
+import ContentEditor from './pages/ContentEditor';
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
                 <Route path="projects" element={<DashboardProjects />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="analytics" element={<Analytics />} />
+                <Route path="content" element={<ContentEditor />} />
               </Route>
 
               <Route path="/" element={<Navigate to="/dashboard" replace />} />

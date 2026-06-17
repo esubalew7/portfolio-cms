@@ -66,7 +66,7 @@ const TestimonialsMarquee = ({ testimonials = [] }) => {
           }}
         >
           {items.map((t, i) => (
-            <TestimonialCard key={`${t.id}-${i}`} {...t} />
+            <TestimonialCard key={`${t.id || t._id || i}`} index={i} {...t} />
           ))}
         </div>
       </div>

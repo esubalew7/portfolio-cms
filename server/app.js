@@ -8,6 +8,7 @@ import uploadRoutes from "./routes/uploadRoutes.js"; // Import upload routes
 import dashboardRoutes from "./routes/dashboardRoutes.js"; // Import dashboard routes
 import notificationRoutes from "./routes/notificationRoutes.js"; // Import notification routes
 import analyticsRoutes from "./routes/analyticsRoutes.js"; // Import analytics routes
+import contentRoutes from "./routes/contentRoutes.js"; // Import content routes
 
 dotenv.config();                        // Load environment variables from .env
 
@@ -22,7 +23,8 @@ app.use(cors({
       'http://localhost:5174',
       'http://localhost:5175',
       'http://localhost:3000',
-      'https://portfolio-mern-one-rho.vercel.app'
+      'https://portfolio-mern-one-rho.vercel.app',
+      "https://portfolio-mern-bicw.vercel.app"
     ];
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin || allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
@@ -44,6 +46,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/content", contentRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

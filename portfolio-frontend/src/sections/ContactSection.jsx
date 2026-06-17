@@ -8,13 +8,16 @@ import {
   Mail,
   Phone,
   MapPin,
-  ExternalLink
 } from 'lucide-react';
 import api from '../utils/api';
 import { useTrackSection } from '../hooks/useVisitorTracking';
+import { useContent } from '../context/ContentContext';
 
 export const ContactSection = () => {
   useTrackSection('contact');
+  const { content } = useContent();
+  const { contactInfo } = content;
+
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,32 +73,31 @@ export const ContactSection = () => {
   };
 
   const contactLinks = [
-    {
+    ...(contactInfo?.email ? [{
       icon: Mail,
       label: 'Email',
-      value: 'esubalew392@gmail.com',
-      href: 'mailto:esubalew392@gmail.com',
+      value: contactInfo.email,
+      href: `mailto:${contactInfo.email}`,
       isClickable: true
-    },
-    {
+    }] : []),
+    ...(contactInfo?.phone ? [{
       icon: Phone,
       label: 'Phone',
-      value: '+251 915795794',
-      href: 'tel:+251915795794',
+      value: contactInfo.phone,
+      href: `tel:${contactInfo.phone.replace(/\s/g, '')}`,
       isClickable: true
-    },
-    {
+    }] : []),
+    ...(contactInfo?.location ? [{
       icon: MapPin,
       label: 'Location',
-      value: 'Bahir Dar, Ethiopia',
+      value: contactInfo.location,
       href: '#',
       isClickable: false
-    }
+    }] : [])
   ];
 
   return (
     <section id="contact" className="relative py-24 bg-white dark:bg-gray-950 overflow-hidden">
-      {/* Subtle Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-6xl pointer-events-none -z-10">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-600/10 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/5 dark:bg-purple-600/10 rounded-full blur-[100px]"></div>
@@ -104,7 +106,6 @@ export const ContactSection = () => {
       <div className="container mx-auto px-6 max-w-7xl relative z-10">
         <div className="flex flex-col lg:flex-row items-start justify-between gap-16 lg:gap-24">
 
-          {/* Left Column: Content & Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -113,10 +114,10 @@ export const ContactSection = () => {
           >
             <div className="space-y-4">
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white tracking-tight">
-                Get in <span className="text-blue-600">touch</span>
+                {contactInfo?.formTitle || "Get in"} <span className="text-blue-600">touch</span>
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
-                I'm currently available for freelance work or full-time opportunities. Reach out via the form or any of the methods below.
+                {contactInfo?.formDescription || ""}
               </p>
             </div>
 
@@ -149,7 +150,6 @@ export const ContactSection = () => {
             </div>
           </motion.div>
 
-          {/* Right Column: Form Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -159,7 +159,6 @@ export const ContactSection = () => {
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 md:p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <form onSubmit={handleSubmit} className="space-y-6" noValidate>
 
-                {/* Status Messages */}
                 {submitStatus === 'success' && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
@@ -168,7 +167,7 @@ export const ContactSection = () => {
                   >
                     <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
                     <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                      Thank you! Your message has been sent successfully.
+                      {contactInfo?.successMessage || "Thank you! Your message has been sent successfully."}
                     </p>
                   </motion.div>
                 )}
@@ -240,7 +239,7 @@ export const ContactSection = () => {
                   {isSubmitting ? (
                     <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</>
                   ) : (
-                    <><Send className="w-4 h-4" /> Send Message</>
+                    <><Send className="w-4 h-4" /> {contactInfo?.formButtonText || "Send Message"}</>
                   )}
                 </button>
               </form>
