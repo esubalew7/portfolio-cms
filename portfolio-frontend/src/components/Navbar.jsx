@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { useContent } from '../context/ContentContext';
+import { useContentStore } from '../store/contentStore';
 import { platformIcons } from './SocialLinks';
 import {
   SECTION_IDS,
@@ -81,7 +81,7 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const scrollTimeoutRef = useRef(null);
 
-  const { content } = useContent();
+  const content = useContentStore((s) => s.content);
   const socialLinks = content?.socialLinks || [];
   const isHomePage = location.pathname === '/';
 

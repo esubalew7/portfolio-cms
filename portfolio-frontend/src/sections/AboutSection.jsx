@@ -1,11 +1,24 @@
 import { motion } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../animations/variants';
 import { AnimatedCounter } from '../components/AnimatedCounter';
-import { useContent } from '../context/ContentContext';
+import { useContentStore } from '../store/contentStore';
+import { AboutSkeleton } from '../components/SkeletonLoader';
 
 export const AboutSection = () => {
-  const { content } = useContent();
+  const { content, loading, error, retry } = useContentStore();
   const { about } = content;
+
+  if (loading) return <AboutSkeleton />;
+  if (error) return (
+    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24 max-w-6xl">
+      <div className="text-center space-y-4">
+        <p className="text-red-500 dark:text-red-400 font-medium">{error}</p>
+        <button onClick={retry} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+          Retry
+        </button>
+      </div>
+    </section>
+  );
 
   const stats = about?.stats || [];
 

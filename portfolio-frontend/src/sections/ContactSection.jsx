@@ -11,11 +11,13 @@ import {
 } from 'lucide-react';
 import api from '../utils/api';
 import { useTrackSection } from '../hooks/useVisitorTracking';
-import { useContent } from '../context/ContentContext';
+import { useContentStore } from '../store/contentStore';
+import { ContactSkeleton } from '../components/SkeletonLoader';
 
 export const ContactSection = () => {
+  // ── All hooks must be declared before any early return ──
   useTrackSection('contact');
-  const { content } = useContent();
+  const { content, loading, error, retry } = useContentStore();
   const { contactInfo } = content;
 
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -23,6 +25,21 @@ export const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Early returns after all hooks — ensures every render calls the same
+  // number of hooks, preventing "Rendered more hooks than during the
+  // previous render" errors.
+  if (loading) return <ContactSkeleton />;
+  if (error) return (
+    <section className="relative py-24 bg-white dark:bg-gray-950 overflow-hidden">
+      <div className="container mx-auto px-6 max-w-7xl text-center space-y-4">
+        <p className="text-red-500 dark:text-red-400 font-medium">{error}</p>
+        <button onClick={retry} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+          Retry
+        </button>
+      </div>
+    </section>
+  );
 
   const validate = () => {
     const newErrors = {};

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { fadeIn, staggerContainer, itemVariant } from '../animations/variants';
-import { useContent } from '../context/ContentContext';
+import { useContentStore } from '../store/contentStore';
+import { SkillsSkeleton } from '../components/SkeletonLoader';
 import {
   FaHtml5, FaCss3Alt, FaJs, FaBootstrap, FaReact, FaNodeJs,
   FaDatabase, FaGitAlt, FaGithub, FaJava, FaPhp,
@@ -60,10 +61,22 @@ const categoryIcons = {
 };
 
 export const SkillsSection = () => {
-  const { content } = useContent();
+  const { content, loading, error, retry } = useContentStore();
   const { skills } = content;
 
   const categories = skills?.categories || [];
+
+  if (loading) return <SkillsSkeleton />;
+  if (error) return (
+    <section className="container mx-auto px-4 py-10 md:py-20 max-w-7xl">
+      <div className="text-center space-y-4">
+        <p className="text-red-500 dark:text-red-400 font-medium">{error}</p>
+        <button onClick={retry} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+          Retry
+        </button>
+      </div>
+    </section>
+  );
 
   return (
     <section id="skills" className="container mx-auto px-4 py-10 md:py-20 max-w-7xl">

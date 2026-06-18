@@ -2,12 +2,13 @@ import { motion } from 'framer-motion';
 import { useTypewriter } from '../hooks/useTypewriter';
 import { SocialIconRow } from '../components/SocialLinks';
 import { ParticlesBackground } from '../components/ParticlesBackground';
-import { useContent } from '../context/ContentContext';
+import { useContentStore } from '../store/contentStore';
+import { HeroSkeleton } from '../components/SkeletonLoader';
 
 export const HeroSection = () => {
-  const { content } = useContent();
+  // ── All hooks must be declared before any early return ──
+  const { content, loading, error, retry } = useContentStore();
   const { hero, resume } = content;
-
   const typedText = useTypewriter(hero?.titles || []);
 
   const containerVariants = {
@@ -26,6 +27,21 @@ export const HeroSection = () => {
       transition: { duration: 0.8, ease: "easeOut" }
     }
   };
+
+  // Early returns after all hooks — ensures every render calls the same
+  // number of hooks, preventing "Rendered more hooks than during the
+  // previous render" errors.
+  if (loading) return <HeroSkeleton />;
+  if (error) return (
+    <section className="relative min-h-screen flex items-center justify-center">
+      <div className="text-center space-y-4">
+        <p className="text-red-500 dark:text-red-400 font-medium">{error}</p>
+        <button onClick={retry} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+          Retry
+        </button>
+      </div>
+    </section>
+  );
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center py-0 lg:py-10 overflow-hidden">

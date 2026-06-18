@@ -1,4 +1,4 @@
-import { useContent } from '../context/ContentContext';
+import { useContentStore } from '../store/contentStore';
 
 const platformIcons = {
   GitHub: (
@@ -36,7 +36,7 @@ const platformIcons = {
 export { platformIcons };
 
 export const SocialIconRow = ({ className = "" }) => {
-  const { content } = useContent();
+  const content = useContentStore((s) => s.content);
   const links = content?.socialLinks || [];
 
   return (

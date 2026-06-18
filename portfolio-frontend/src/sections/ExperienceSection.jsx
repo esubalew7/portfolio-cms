@@ -2,14 +2,27 @@ import { motion } from 'framer-motion';
 import TimelineItem from '../components/ui/TimelineItem';
 import TestimonialsMarquee from '../components/TestimonialsMarquee';
 import { fadeIn } from '../animations/variants';
-import { useContent } from '../context/ContentContext';
+import { useContentStore } from '../store/contentStore';
+import { ExperienceSkeleton } from '../components/SkeletonLoader';
 
 const ExperienceSection = () => {
-  const { content } = useContent();
+  const { content, loading, error, retry } = useContentStore();
   const { experience, testimonials } = content;
 
   const categories = experience?.categories || [];
   const testimonialItems = testimonials?.items || [];
+
+  if (loading) return <ExperienceSkeleton />;
+  if (error) return (
+    <section className="max-w-5xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <div className="text-center space-y-4">
+        <p className="text-red-500 dark:text-red-400 font-medium">{error}</p>
+        <button onClick={retry} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+          Retry
+        </button>
+      </div>
+    </section>
+  );
 
   return (
     <section id="experience" className="max-w-5xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
