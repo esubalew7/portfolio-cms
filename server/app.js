@@ -1,5 +1,6 @@
 import express from "express";          // Import Express framework
 import cors from "cors";                // Import CORS middleware
+import cookieParser from "cookie-parser"; // Import cookie-parser for HttpOnly cookie auth
 import dotenv from "dotenv";            // Import dotenv for env variables
 import contactRoutes from "./routes/contactRoutes.js"; // Import contact routes
 import authRoutes from "./routes/authRoutes.js"; // Import auth routes
@@ -35,6 +36,7 @@ app.use(cors({
   },
   credentials: true
 }));                        // Secure CORS for dev/prod
+app.use(cookieParser());                // Parse cookies for HttpOnly JWT auth
 app.use(express.json());                // Parse incoming JSON requests
 
 

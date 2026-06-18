@@ -58,27 +58,18 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLoginSuccess = (token) => {
-    localStorage.setItem('token', token);
-    navigate(from, { replace: true });
-  };
-
+  // Token is now stored in an HttpOnly cookie by the server.
+  // On success we simply navigate — no localStorage calls needed.
   const handleGoogleSuccess = async (credentialResponse) => {
     setIsGoogleLoading(true);
     setLoginError('');
 
     try {
-      const response = await api.post('/api/auth/google', {
+      await api.post('/api/auth/google', {
         credential: credentialResponse.credential,
       });
 
-      const { token } = response;
-
-      if (!token) {
-        throw new Error('No token received from server');
-      }
-
-      handleLoginSuccess(token);
+      navigate(from, { replace: true });
     } catch (error) {
       console.error('Google login error:', error);
       setLoginError(error.message || 'Google login failed. Please try again.');
@@ -102,22 +93,15 @@ const Login = () => {
     setLoginError('');
 
     try {
-      const response = await api.post('/api/auth/login', {
+      await api.post('/api/auth/login', {
         email: formData.email,
         password: formData.password
       });
 
-      // Save JWT token to localStorage
-      const { token } = response;
-      
-      if (!token) {
-        throw new Error('No token received from server');
-      }
-
-      handleLoginSuccess(token);
+      // Server has set the HttpOnly cookie; navigate to the intended destination.
+      navigate(from, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
-      // Use the normalized message from our api utility
       setLoginError(error.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);

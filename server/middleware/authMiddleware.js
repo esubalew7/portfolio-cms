@@ -4,22 +4,15 @@ import jwt from "jsonwebtoken";
 // ========================================
 // 🔐 AUTH MIDDLEWARE
 // ========================================
-// Middleware signature is (req, res, next).
-// Only middleware should call next().
+// Reads the JWT from the HttpOnly cookie ("token") instead of the
+// Authorization header.  This prevents XSS-based token theft since
+// the cookie is not accessible to JavaScript.
 const protect = (req, res, next) => {
     try {
-        let token;
-
         // -------------------------------
-        // GET TOKEN FROM HEADER
+        // GET TOKEN FROM HTTPONLY COOKIE
         // -------------------------------
-        if (
-            req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer")
-        ) {
-            // Extract token from "Bearer TOKEN"
-            token = req.headers.authorization.split(" ")[1];
-        }
+        const token = req.cookies?.token;
 
         // -------------------------------
         // IF TOKEN NOT FOUND

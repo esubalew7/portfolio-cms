@@ -6,12 +6,13 @@ const API_BASE_URL =
     ? "http://localhost:5000"
     : "https://portfolio-backend-gxhv.onrender.com");
 
+// Axios instance configured for HttpOnly cookie auth.
+// withCredentials: true ensures the cookie is sent cross-origin.
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
+  withCredentials: true,
 });
-
-const getAuthToken = () => localStorage.getItem('token');
 
 const normalizeError = (error) => {
   const message = error.response?.data?.message || error.message || 'An unexpected API error occurred';
@@ -23,13 +24,10 @@ const normalizeError = (error) => {
   };
 };
 
-// Add request interceptor to include auth token and handle FormData correctly
+// Request interceptor — no longer attaches a Bearer token from localStorage.
+// The JWT is sent automatically via the HttpOnly cookie.
 api.interceptors.request.use(
   (config) => {
-    const token = getAuthToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
     // If sending FormData, let axios set the correct Content-Type with boundary
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
@@ -45,12 +43,9 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response ? error.response.status : null;
 
-    // Only redirect to login on 401 if the user had a token
-    // (meaning they were authenticated, but their token expired).
-    // Public auth endpoints may return 403 for authorization failures;
-    // those should NOT trigger a redirect.
-    if (status === 401 && getAuthToken()) {
-      localStorage.removeItem('token');
+    // On 401, redirect to login (token missing, expired, or invalid).
+    // The HttpOnly cookie is managed entirely by the server.
+    if (status === 401) {
       window.location.href = '/login';
     }
 

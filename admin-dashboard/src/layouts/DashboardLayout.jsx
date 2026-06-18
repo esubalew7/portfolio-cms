@@ -158,10 +158,12 @@ const DashboardLayout = () => {
     }
   ];
 
-  const handleLogout = () => {
-    // Clear the JWT token from localStorage
-    localStorage.removeItem('token');
-    // Redirect to login page
+  const handleLogout = async () => {
+    try {
+      await api.post('/api/auth/logout');
+    } catch {
+      // Even if the API call fails, navigate away
+    }
     navigate('/login');
   };
 

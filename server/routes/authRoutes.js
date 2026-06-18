@@ -2,7 +2,7 @@
 import express from "express";
 
 // Import controller functions
-import { register, login, googleLogin, getMe } from "../controllers/authController.js";
+import { register, login, googleLogin, getMe, logout } from "../controllers/authController.js";
 import protect from "../middleware/authMiddleware.js";
 
 // Create router
@@ -32,6 +32,12 @@ router.post("/google", googleLogin);
 // @desc    Get current user profile
 // ===============================
 router.get("/me", protect, getMe);
+
+// ===============================
+// @route   POST /api/auth/logout
+// @desc    Logout (clears HttpOnly cookie)
+// ===============================
+router.post("/logout", logout);
 
 // Export router
 export default router;

@@ -97,6 +97,31 @@ export const register = async (req, res) => {
 };
 
 
+// ── Cookie helpers ──────────────────────────────────────────
+const TOKEN_COOKIE = 'token';
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  path: '/',
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches JWT expiry)
+};
+
+const setTokenCookie = (res, token) => {
+  res.cookie(TOKEN_COOKIE, token, COOKIE_OPTIONS);
+};
+
+const clearTokenCookie = (res) => {
+  res.cookie(TOKEN_COOKIE, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+  });
+};
+// ─────────────────────────────────────────────────────────────
+
 // ========================================
 // @desc    Login admin
 // @route   POST /api/auth/login
@@ -152,13 +177,15 @@ export const login = async (req, res) => {
             { expiresIn: "7d" }
         );
 
+        // Set HttpOnly cookie (secure, SameSite=Lax)
+        setTokenCookie(res, token);
+
         // -------------------------------
         // RESPONSE
         // -------------------------------
         res.status(200).json({
             success: true,
             message: "Login successful",
-            token,
         });
 
     } catch (error) {
@@ -214,10 +241,12 @@ export const googleLogin = async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    // Set HttpOnly cookie (secure, SameSite=Lax)
+    setTokenCookie(res, token);
+
     res.status(200).json({
       success: true,
       message: 'Google login successful',
-      token,
     });
   } catch (error) {
     console.error('Google login error:', error);
@@ -274,4 +303,17 @@ export const getMe = async (req, res) => {
             error: error.message,
         });
     }
+};
+
+// ========================================
+// @desc    Logout admin (clear cookie)
+// @route   POST /api/auth/logout
+// @access  Public
+// ========================================
+export const logout = async (req, res) => {
+  clearTokenCookie(res);
+  res.status(200).json({
+    success: true,
+    message: 'Logged out successfully',
+  });
 };
