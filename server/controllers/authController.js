@@ -101,8 +101,8 @@ export const register = async (req, res) => {
 const TOKEN_COOKIE = 'token';
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  secure: true, // secure: true ensures cookies are sent over HTTPS only
+  sameSite: 'none', // sameSite: 'none' used to allow cross-site cookies for Google OAuth in production
   path: '/',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (matches JWT expiry)
 };
@@ -114,8 +114,8 @@ const setTokenCookie = (res, token) => {
 const clearTokenCookie = (res) => {
   res.cookie(TOKEN_COOKIE, '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true,
+    sameSite: 'none',
     path: '/',
     maxAge: 0,
   });
