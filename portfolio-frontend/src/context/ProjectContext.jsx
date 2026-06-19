@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import api from '../utils/api';
+import useRealtimeProjects from '../hooks/useRealtimeProjects';
 
 const ProjectContext = createContext(undefined);
 
@@ -7,10 +8,10 @@ export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const debounceRef = useRef(null);
 
   const fetchProjects = useCallback(async () => {
     try {
-      // Don't override the "Server is waking up..." message if it's retrying
       setLoading(true);
       const res = await api.get('/api/projects');
       setProjects(Array.isArray(res) ? res : []);
@@ -18,15 +19,15 @@ export const ProjectProvider = ({ children }) => {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching projects:', err);
-      
-      const isNetworkError = err.code === 'ECONNABORTED' || 
-                            err.message.includes('Network Error') || 
+
+      const isNetworkError = err.code === 'ECONNABORTED' ||
+                            err.message.includes('Network Error') ||
                             err.message.includes('Failed to fetch') ||
                             !err.response;
-      
+
       if (isNetworkError) {
         setError('Server is waking up, please wait...');
-        setTimeout(fetchProjects, 3000); // retry after 3 sec
+        setTimeout(fetchProjects, 3000);
       } else {
         setError(err.message || 'Failed to fetch projects');
         setLoading(false);
@@ -38,12 +39,20 @@ export const ProjectProvider = ({ children }) => {
     fetchProjects();
   }, [fetchProjects]);
 
-  // Listen for manual retry events
-  useEffect(() => {
-    const handleRetry = () => fetchProjects();
-    window.addEventListener('retryProjects', handleRetry);
-    return () => window.removeEventListener('retryProjects', handleRetry);
+  const refreshProjects = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(fetchProjects, 300);
   }, [fetchProjects]);
+
+  useRealtimeProjects(() => {
+    refreshProjects();
+  });
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const addProject = async (projectData) => {
     try {
@@ -90,6 +99,7 @@ export const ProjectProvider = ({ children }) => {
         loading,
         error,
         fetchProjects,
+        refreshProjects,
         addProject,
         updateProject,
         deleteProject

@@ -1,6 +1,7 @@
 import Visitor from "../models/Visitor.js";
 import geoip from "geoip-lite";
 import requestIp from "request-ip";
+import { emitVisitorNew, emitAnalyticsUpdate } from "../socket/emitters.js";
 
 const DEDUP_WINDOW_MS = 60 * 1000;
 
@@ -50,7 +51,20 @@ export const trackVisit = async (req, res) => {
       return res.status(200).json({ success: true, message: "Visit already recorded recently", deduplicated: true });
     }
 
-    await Visitor.create({ page, ip, country, city, device, browser, userAgent });
+    const visitor = await Visitor.create({ page, ip, country, city, device, browser, userAgent });
+
+    const visitorPayload = {
+      _id: visitor._id,
+      page: visitor.page,
+      country: visitor.country,
+      city: visitor.city,
+      device: visitor.device,
+      browser: visitor.browser,
+      createdAt: visitor.createdAt,
+    };
+
+    emitVisitorNew(visitorPayload);
+    emitAnalyticsUpdate({ type: 'new_visit', data: visitorPayload });
 
     res.status(201).json({ success: true, message: "Visit tracked" });
   } catch (error) {

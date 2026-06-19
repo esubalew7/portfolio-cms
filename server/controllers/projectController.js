@@ -1,7 +1,7 @@
-// Import Project model (to interact with MongoDB)
 import Project from "../models/Project.js";
 import cloudinary from "../config/cloudinary.js";
 import Notification from "../models/Notification.js";
+import { emitProjectCreated, emitProjectUpdated, emitProjectDeleted } from "../socket/emitters.js";
 
 // ===============================
 // @desc    Create new project
@@ -52,14 +52,13 @@ export const createProject = async (req, res) => {
             githubLink,
         });
 
-        // -------------------------------
-        // CREATE NOTIFICATION
-        // -------------------------------
         await Notification.create({
             type: "project",
             title: "New project added",
             description: title
         });
+
+        emitProjectCreated(newProject);
 
         res.status(201).json(newProject);
     } catch (error) {
@@ -182,9 +181,7 @@ export const updateProject = async (req, res) => {
             }
         );
 
-        // -------------------------------
-        // SUCCESS RESPONSE
-        // -------------------------------
+        emitProjectUpdated(updatedProject);
 
         res.status(200).json(updatedProject);
     } catch (error) {
@@ -225,10 +222,9 @@ export const deleteProject = async (req, res) => {
             }
         }
 
-        // -----------------------------------------------
-        // DELETE PROJECT FROM MONGODB
-        // -----------------------------------------------
         await Project.findByIdAndDelete(req.params.id);
+
+        emitProjectDeleted(req.params.id);
 
         res.status(200).json({
             success: true,

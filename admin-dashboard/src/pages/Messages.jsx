@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
 import { useToast } from '../context/ToastContext';
+import { useSocketContext } from '../context/SocketContext';
 import { 
   Mail, 
   Clock, 
@@ -67,6 +68,20 @@ const Messages = () => {
     useEffect(() => {
         fetchMessages();
     }, [fetchMessages]);
+
+    const { socket } = useSocketContext();
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleNewMessage = (message) => {
+            setMessages((prev) => [message, ...prev]);
+            showToast(`New message from ${message.name}`, 'info');
+        };
+
+        socket.on('message:new', handleNewMessage);
+        return () => socket.off('message:new', handleNewMessage);
+    }, [socket, showToast]);
 
     const handleViewMessage = (message) => {
         setSelectedMessage(message);

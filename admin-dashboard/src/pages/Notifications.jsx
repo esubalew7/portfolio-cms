@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, MessageSquare, FolderOpen, Clock, RefreshCw } from 'lucide-react';
 import Card from '../components/ui/Card';
+import { useSocketContext } from '../context/SocketContext';
 import api from '../utils/api';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { socket } = useSocketContext();
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
       const res = await api.get('/api/notifications');
@@ -19,11 +21,24 @@ const Notifications = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [fetchNotifications]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const refresh = () => fetchNotifications();
+    socket.on('message:new', refresh);
+    socket.on('project:create', refresh);
+
+    return () => {
+      socket.off('message:new', refresh);
+      socket.off('project:create', refresh);
+    };
+  }, [socket, fetchNotifications]);
 
   const handleMarkAsRead = async (id, type) => {
     try {

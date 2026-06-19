@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Users,
@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Card from '../components/ui/Card';
+import { useSocketContext } from '../context/SocketContext';
 import api from '../utils/api';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { socket } = useSocketContext();
   const [stats, setStats] = useState({
     totalProjects: 0,
     totalMessages: 0,
@@ -30,8 +32,9 @@ const Dashboard = () => {
   const [countries, setCountries] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     try {
       const [statsRes, activityRes, messagesRes, analyticsRes] = await Promise.all([
@@ -53,11 +56,45 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [fetchDashboardData]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const refresh = () => {
+      fetchDashboardData();
+      setLastUpdated(new Date().toLocaleTimeString());
+    };
+
+    socket.on('message:new', refresh);
+    socket.on('project:create', refresh);
+    socket.on('project:update', refresh);
+    socket.on('project:delete', refresh);
+    socket.on('content:update', refresh);
+    socket.on('visitor:new', refresh);
+    socket.on('analytics:update', refresh);
+    const contentSections = ['hero', 'about', 'skills', 'experience', 'testimonials', 'contact', 'terminal'];
+    contentSections.forEach((section) => {
+      socket.on(`content:${section}:update`, refresh);
+    });
+
+    return () => {
+      socket.off('message:new', refresh);
+      socket.off('project:create', refresh);
+      socket.off('project:update', refresh);
+      socket.off('project:delete', refresh);
+      socket.off('content:update', refresh);
+      socket.off('visitor:new', refresh);
+      socket.off('analytics:update', refresh);
+      contentSections.forEach((section) => {
+        socket.off(`content:${section}:update`, refresh);
+      });
+    };
+  }, [socket, fetchDashboardData]);
 
   const statCards = [
     { title: 'Total Visitors', value: stats.totalVisitors, icon: Eye, color: 'blue', trend: '+12%', up: true },
@@ -93,13 +130,18 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Dashboard</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Overview of your portfolio performance.</p>
         </div>
-        <button
-          onClick={fetchDashboardData}
-          className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors"
-          title="Refresh"
-        >
-          <RefreshCw className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-3">
+          {lastUpdated && (
+            <span className="text-xs text-gray-400 dark:text-gray-500">Updated {lastUpdated}</span>
+          )}
+          <button
+            onClick={fetchDashboardData}
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors"
+            title="Refresh"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Stats grid */}

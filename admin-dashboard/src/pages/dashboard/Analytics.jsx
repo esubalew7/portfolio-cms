@@ -9,6 +9,7 @@ import {
   ResponsiveContainer, Tooltip, CartesianGrid, XAxis, YAxis,
 } from 'recharts';
 import api from '../../utils/api';
+import { useSocketContext } from '../../context/SocketContext';
 import AnalyticsStatCard from '../../components/dashboard/AnalyticsStatCard';
 import ChartCard from '../../components/dashboard/ChartCard';
 
@@ -63,6 +64,7 @@ const PeriodToggle = ({ periods, active, onChange }) => (
 );
 
 const Analytics = () => {
+  const { socket } = useSocketContext();
   const [overview, setOverview] = useState(null);
   const [charts, setCharts] = useState(null);
   const [locations, setLocations] = useState(null);
@@ -96,6 +98,17 @@ const Analytics = () => {
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    if (!socket) return;
+    const refresh = () => fetchData();
+    socket.on('visitor:new', refresh);
+    socket.on('analytics:update', refresh);
+    return () => {
+      socket.off('visitor:new', refresh);
+      socket.off('analytics:update', refresh);
+    };
+  }, [socket, fetchData]);
 
   if (error) {
     return (

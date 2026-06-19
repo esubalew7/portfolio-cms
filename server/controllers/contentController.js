@@ -1,4 +1,5 @@
 import PortfolioContent from "../models/PortfolioContent.js";
+import { emitContentSectionUpdated } from "../socket/emitters.js";
 
 const getDefaultContent = () => ({
   hero: {
@@ -246,13 +247,20 @@ export const updateContent = async (req, res) => {
       "testimonials", "socialLinks", "resume", "contactInfo",
     ];
 
+    const updatedFields = [];
+
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
         content[field] = req.body[field];
+        updatedFields.push(field);
       }
     }
 
     await content.save();
+
+    for (const section of updatedFields) {
+      emitContentSectionUpdated(section, content[section]);
+    }
 
     res.status(200).json({ success: true, data: content });
   } catch (error) {

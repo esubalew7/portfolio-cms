@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProjectProvider } from './context/ProjectContext';
-import { useContentStore } from './store/contentStore';
+import { ContentProvider } from './context/ContentContext';
 import { MainLayout } from './layouts/MainLayout';
 import { Home } from './pages/Home';
 import { Loader } from './components/Loader';
@@ -11,11 +11,6 @@ import { ScrollToTop } from './components/ScrollToTop';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const fetchContent = useContentStore((s) => s.fetchContent);
-
-  useEffect(() => {
-    fetchContent();
-  }, [fetchContent]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -27,6 +22,7 @@ const App = () => {
   return (
     <ThemeProvider>
       <ProjectProvider>
+        <ContentProvider>
         <BrowserRouter>
           <AnimatePresence>
             {isLoading && <Loader key="loader" />}
@@ -40,6 +36,7 @@ const App = () => {
 
           <ScrollToTop />
         </BrowserRouter>
+        </ContentProvider>
       </ProjectProvider>
     </ThemeProvider>
   );

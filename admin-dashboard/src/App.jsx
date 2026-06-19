@@ -41,7 +41,7 @@ const App = () => {
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<Dashboard />} />
+                <Route index element={<Dashboard />} /> 
                 <Route path="messages" element={<Messages />} />
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="notifications" element={<Notifications />} />
