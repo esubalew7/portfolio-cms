@@ -306,6 +306,63 @@ export const getMe = async (req, res) => {
 };
 
 // ========================================
+// @desc    Update profile
+// @route   PUT /api/auth/profile
+// @access  Private
+// ========================================
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, role, email } = req.body;
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (role !== undefined) updates.role = role;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      updates,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// ========================================
+// @desc    Upload profile image
+// @route   POST /api/auth/profile/image
+// @access  Private
+// ========================================
+export const uploadProfileImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image uploaded' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { profileImage: req.file.path },
+      { new: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    console.error('Upload profile image error:', error);
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// ========================================
 // @desc    Logout admin (clear cookie)
 // @route   POST /api/auth/logout
 // @access  Public

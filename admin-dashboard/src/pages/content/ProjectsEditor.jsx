@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useProjects } from '../context/ProjectContext';
-import { useToast } from '../context/ToastContext';
+import { useProjects } from '../../context/ProjectContext';
+import { useToast } from '../../context/ToastContext';
 import { 
   Plus, 
   Edit, 
@@ -15,19 +15,19 @@ import {
 } from 'lucide-react';
 
 // UI Components
-import Button from '../components/ui/Button';
-import Modal from '../components/ui/Modal';
-import FormInput from '../components/ui/FormInput';
-import ConfirmationModal from '../components/ui/ConfirmationModal';
+import Button from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import FormInput from '../../components/ui/FormInput';
+import ConfirmationModal from '../../components/ui/ConfirmationModal';
 
 // Dashboard Components
-import PageHeader from '../components/dashboard/PageHeader';
-import DashboardTable from '../components/dashboard/DashboardTable';
-import DashboardProjectCard from '../components/dashboard/DashboardProjectCard';
+import PageHeader from '../../components/dashboard/PageHeader';
+import DashboardTable from '../../components/dashboard/DashboardTable';
+import DashboardProjectCard from '../../components/dashboard/DashboardProjectCard';
 
 // Utils
-import { formatDate, normalizedText } from '../utils/dashboardUtils';
-import api from '../utils/api';
+import { formatDate, normalizedText } from '../../utils/dashboardUtils';
+import api from '../../utils/api';
 
 const DashboardProjects = () => {
   const {

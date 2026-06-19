@@ -21,6 +21,22 @@ const userSchema = new mongoose.Schema(
             type: String,        // Stored as hashed string
             required: false,     // Google users may not have a password
         },
+
+        // Profile fields
+        name: {
+            type: String,
+            trim: true,
+            default: '',
+        },
+        role: {
+            type: String,
+            trim: true,
+            default: '',
+        },
+        profileImage: {
+            type: String,
+            default: '',
+        },
     },
     {
         timestamps: true, // adds createdAt & updatedAt automatically

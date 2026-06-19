@@ -2,8 +2,9 @@
 import express from "express";
 
 // Import controller functions
-import { register, login, googleLogin, getMe, logout } from "../controllers/authController.js";
+import { register, login, googleLogin, getMe, updateProfile, uploadProfileImage, logout } from "../controllers/authController.js";
 import protect from "../middleware/authMiddleware.js";
+import upload from "../middleware/upload.js";
 
 // Create router
 const router = express.Router();
@@ -32,6 +33,18 @@ router.post("/google", googleLogin);
 // @desc    Get current user profile
 // ===============================
 router.get("/me", protect, getMe);
+
+// ===============================
+// @route   PUT /api/auth/profile
+// @desc    Update profile (name, role)
+// ===============================
+router.put("/profile", protect, updateProfile);
+
+// ===============================
+// @route   POST /api/auth/profile/image
+// @desc    Upload profile image to Cloudinary
+// ===============================
+router.post("/profile/image", protect, upload.single('image'), uploadProfileImage);
 
 // ===============================
 // @route   POST /api/auth/logout
