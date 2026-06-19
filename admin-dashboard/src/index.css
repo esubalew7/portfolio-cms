@@ -62,3 +62,23 @@ body {
 .slide-in-from-bottom-4 {
   animation-name: slide-in-from-bottom-4;
 }
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59,130,246,0.7);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59,130,246,1);
+}
