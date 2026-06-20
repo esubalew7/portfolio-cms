@@ -1,4 +1,4 @@
-import { MessageSquare, FolderOpen, FileText, Clock, Check, Trash2, Eye, EyeOff } from 'lucide-react';
+import { MessageSquare, FolderOpen, FileText, Clock, Check, Trash2 } from 'lucide-react';
 
 const TYPE_CONFIG = {
   message: {

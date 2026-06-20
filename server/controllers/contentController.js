@@ -253,7 +253,7 @@ export const updateContent = async (req, res) => {
     const allowedFields = [
       "hero", "about", "skills", "experience",
       "testimonials", "socialLinks", "resume", "contactInfo",
-      "seo",
+      "terminal", "seo",
     ];
 
     const updatedFields = [];

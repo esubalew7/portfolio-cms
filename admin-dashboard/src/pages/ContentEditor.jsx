@@ -5,9 +5,7 @@ import {
   ChevronUp,
   Plus,
   Trash2,
-  GripVertical,
   RefreshCw,
-  Image as ImageIcon,
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import FormInput from '../components/ui/FormInput';

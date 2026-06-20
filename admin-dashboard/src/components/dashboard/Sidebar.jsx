@@ -17,7 +17,6 @@ import {
   Star,
   MessageSquare as MessageSquareIcon,
   Monitor,
-  Search,
   User as UserIcon,
 } from 'lucide-react';
 import api from '../../utils/api';

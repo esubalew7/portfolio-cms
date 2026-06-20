@@ -240,7 +240,7 @@ I'd love to hear from you! Feel free to reach out through any
 of these channels:
 
 EMAIL
-   esubalew392@gmail.co
+   esubalew392@gmail.com
 
 AVAILABILITY
    Status: Open for full-time opportunities and internship
