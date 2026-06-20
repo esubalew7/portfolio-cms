@@ -17,13 +17,14 @@ const Terminal = ({
     clearTerminal,
     navigateHistory,
     autocomplete,
+    handleInterrupt,
     viewportRef,
     commandCount,
   } = useTerminal();
 
   return (
     <>
-      <style>{'@keyframes blink-cursor{50%{opacity:0}}'}</style>
+      <style>{'@keyframes blink-cursor{50%{opacity:0}}@keyframes dotPulse{0%,20%{opacity:0.3}40%{opacity:1}60%,100%{opacity:0.3}}.processing-dots{animation:dotPulse 1.2s ease-in-out infinite}'}</style>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -81,6 +82,7 @@ const Terminal = ({
           onSubmit={executeCommand}
           onNavigateHistory={navigateHistory}
           onAutocomplete={autocomplete}
+          onInterrupt={handleInterrupt}
           inputRef={inputRef}
         />
       </div>

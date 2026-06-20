@@ -30,7 +30,7 @@ export const COMMAND_REGISTRY = {
       description: "Show all available commands",
       metadata: {
         category: "System",
-        animated: true,
+        processTime: 200,
       },
       response: (args, input) => {
         return `
@@ -63,7 +63,7 @@ Tip: Type any command to execute it. Use Arrow Keys to
       description: "Information about me",
       metadata: {
         category: "Information",
-        animated: true,
+        processTime: 200,
       },
       response: `
                       ABOUT ME                            
@@ -98,7 +98,7 @@ Let's build something amazing together!
       description: "My professional experience",
       metadata: {
         category: "Information",
-        animated: true,
+        processTime: 150,
       },
       response: `
               PROFESSIONAL EXPERIENCE                        
@@ -111,7 +111,7 @@ Full Stack Developer internship ─  Askuala Link (present)
       description: "My educational background",
       metadata: {
         category: "Information",
-        animated: true,
+        processTime: 150,
       },
       response: `
                     EDUCATIONAL BACKGROUND                  
@@ -137,7 +137,7 @@ Certifications
       description: "View technical skills and tools",
       metadata: {
         category: "Information",
-        animated: true,
+        processTime: 200,
       },
       response: `
                     TECHNICAL SKILLS                        
@@ -168,7 +168,7 @@ TOOLS & PLATFORMS
       description: "View my portfolio projects",
       metadata: {
         category: "Portfolio",
-        animated: true,
+        processTime: 300,
       },
       response: `
                 FEATURED PROJECTS                       
@@ -215,9 +215,9 @@ Type 'github' to see more projects on GitHub!
       metadata: {
         category: "Portfolio",
         type: "download",
-        fileUrl: "/resume.pdf", // Update with your actual resume path
+        fileUrl: "/resume.pdf",
         fileName: "Esubalew_Molla_Resume.pdf",
-        animated: false,
+        processTime: 200,
       },
       response: `
 Downloading resume...
@@ -231,7 +231,7 @@ Your resume has been downloaded. Please check your Downloads folder.
       description: "Get contact information",
       metadata: {
         category: "Links",
-        animated: true,
+        processTime: 150,
       },
       response: `
                     GET IN TOUCH                            
@@ -260,7 +260,6 @@ Let's create something amazing together!
         category: "Links",
         type: "link",
         url: "https://github.com/esubalew7",
-        animated: false,
       },
       response: `
 Opening GitHub profile...
@@ -277,7 +276,6 @@ https://github.com/esubalew7
         category: "Links",
         type: "link",
         url: "https://www.linkedin.com/in/esubalew-molla-7a584739b",
-        animated: false,
       },
       response: `
 Opening LinkedIn profile...
@@ -293,7 +291,6 @@ https://www.linkedin.com/in/esubalew-molla-7a584739b
       metadata: {
         category: "System",
         type: "clear",
-        animated: false,
       },
       response: null, // Special handling - clears history
     },

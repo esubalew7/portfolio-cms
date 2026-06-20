@@ -1,6 +1,11 @@
 import { memo } from 'react';
-import TypingEffect from './TypingEffect';
 import { PromptPrefix } from './TerminalPrompt';
+
+const ProcessingDots = () => (
+  <span>
+    Processing<span className="processing-dots">...</span>
+  </span>
+);
 
 const TerminalLine = memo(({ line }) => {
   if (line.type === 'welcome') {
@@ -28,14 +33,26 @@ const TerminalLine = memo(({ line }) => {
     );
   }
 
-  if (line.animated) {
+  if (line.type === 'processing') {
     return (
-      <div className="text-[#c0c0c0] leading-[1.4]">
-        <TypingEffect
-          text={line.content}
-          speed={12}
-          className="whitespace-pre-wrap break-words"
-        />
+      <div className="text-[#888] leading-[1.4]">
+        <ProcessingDots />
+      </div>
+    );
+  }
+
+  if (line.type === 'interrupt') {
+    return (
+      <div className="text-[#d4d4d4] leading-[1.4]">
+        {line.content}
+      </div>
+    );
+  }
+
+  if (line.type === 'abort') {
+    return (
+      <div className="text-[#f48771] leading-[1.4]">
+        {line.content}
       </div>
     );
   }

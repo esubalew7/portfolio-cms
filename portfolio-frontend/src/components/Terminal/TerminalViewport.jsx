@@ -11,6 +11,7 @@ const TerminalViewport = forwardRef(
       onSubmit,
       onNavigateHistory,
       onAutocomplete,
+      onInterrupt,
       inputRef,
     },
     viewportRef
@@ -42,6 +43,7 @@ const TerminalViewport = forwardRef(
             onSubmit={onSubmit}
             onNavigateHistory={onNavigateHistory}
             onAutocomplete={onAutocomplete}
+            onInterrupt={onInterrupt}
           />
         </div>
       </div>

@@ -118,7 +118,7 @@ class CommandParser {
         output: response,
         type: "response",
         command: parsed.command,
-        animated: command.metadata?.animated !== false, // Default to true
+        processTime: command.metadata?.processTime || 0,
       };
     } catch (error) {
       return {

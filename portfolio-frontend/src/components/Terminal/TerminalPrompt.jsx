@@ -8,6 +8,7 @@ const TerminalPrompt = forwardRef(
       onSubmit,
       onNavigateHistory,
       onAutocomplete,
+      onInterrupt,
     },
     ref
   ) => {
@@ -19,6 +20,12 @@ const TerminalPrompt = forwardRef(
     }, []);
 
     const handleKeyDown = (e) => {
+      if (e.key === 'c' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        onInterrupt();
+        return;
+      }
+
       if (e.key === 'Enter') {
         e.preventDefault();
         onSubmit(value);
