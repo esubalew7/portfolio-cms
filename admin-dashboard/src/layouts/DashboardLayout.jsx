@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/dashboard/Sidebar';
 import Topbar from '../components/dashboard/Topbar';
 import { SocketProvider } from '../context/SocketContext';
+import { NotificationProvider } from '../context/NotificationContext';
 import { useSocketContext } from '../context/SocketContext';
 import api from '../utils/api';
 
@@ -14,19 +15,9 @@ const STATUS_CONFIG = {
 
 const DashboardInner = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [admin, setAdmin] = useState(null);
   const { socket, status } = useSocketContext();
   const statusStyle = STATUS_CONFIG[status] || STATUS_CONFIG.disconnected;
-
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const countRes = await api.get('/api/notifications/unread-count');
-      if (countRes.success) setUnreadCount(countRes.count);
-    } catch {
-      // silently fail
-    }
-  }, []);
 
   const fetchAdminInfo = async () => {
     try {
@@ -38,26 +29,8 @@ const DashboardInner = () => {
   };
 
   useEffect(() => {
-    fetchNotifications();
     fetchAdminInfo();
-  }, [fetchNotifications]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on('message:new', () => {
-      setUnreadCount((prev) => prev + 1);
-    });
-
-    socket.on('project:create', () => {
-      setUnreadCount((prev) => prev + 1);
-    });
-
-    return () => {
-      socket.off('message:new');
-      socket.off('project:create');
-    };
-  }, [socket]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
@@ -70,7 +43,6 @@ const DashboardInner = () => {
       <div className="lg:pl-72 flex flex-col min-h-screen">
         <Topbar
           onMenuClick={() => setSidebarOpen(true)}
-          unreadCount={unreadCount}
           admin={admin}
         />
 
@@ -96,7 +68,9 @@ const DashboardInner = () => {
 const DashboardLayout = () => {
   return (
     <SocketProvider>
-      <DashboardInner />
+      <NotificationProvider>
+        <DashboardInner />
+      </NotificationProvider>
     </SocketProvider>
   );
 };

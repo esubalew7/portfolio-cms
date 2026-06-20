@@ -1,6 +1,6 @@
 import Contact from "../models/Contact.js";
-import Notification from "../models/Notification.js";
 import { emitMessageNew } from "../socket/emitters.js";
+import { createNotification } from "../services/notificationService.js";
 
 // ===============================
 // @desc    Create new contact message
@@ -36,10 +36,13 @@ export const createContact = async (req, res) => {
         });
         await newContact.save();
 
-        await Notification.create({
+        await createNotification({
             type: "message",
             title: "New message received",
-            description: name
+            description: `From: ${name}`,
+            message,
+            relatedId: newContact._id,
+            relatedModel: "Contact",
         });
 
         emitMessageNew({

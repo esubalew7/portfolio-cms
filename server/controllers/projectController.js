@@ -1,7 +1,7 @@
 import Project from "../models/Project.js";
 import cloudinary from "../config/cloudinary.js";
-import Notification from "../models/Notification.js";
 import { emitProjectCreated, emitProjectUpdated, emitProjectDeleted } from "../socket/emitters.js";
+import { createNotification } from "../services/notificationService.js";
 
 // ===============================
 // @desc    Create new project
@@ -52,10 +52,13 @@ export const createProject = async (req, res) => {
             githubLink,
         });
 
-        await Notification.create({
+        await createNotification({
             type: "project",
             title: "New project added",
-            description: title
+            description: title,
+            message: description,
+            relatedId: newProject._id,
+            relatedModel: "Project",
         });
 
         emitProjectCreated(newProject);
@@ -182,6 +185,15 @@ export const updateProject = async (req, res) => {
         );
 
         emitProjectUpdated(updatedProject);
+
+        await createNotification({
+            type: "project",
+            title: "Project updated",
+            description: title,
+            message: description,
+            relatedId: updatedProject._id,
+            relatedModel: "Project",
+        });
 
         res.status(200).json(updatedProject);
     } catch (error) {

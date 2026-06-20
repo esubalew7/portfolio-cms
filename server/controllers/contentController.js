@@ -1,5 +1,6 @@
 import PortfolioContent from "../models/PortfolioContent.js";
 import { emitContentSectionUpdated } from "../socket/emitters.js";
+import { createNotification } from "../services/notificationService.js";
 
 const getDefaultContent = () => ({
   hero: {
@@ -260,6 +261,18 @@ export const updateContent = async (req, res) => {
 
     for (const section of updatedFields) {
       emitContentSectionUpdated(section, content[section]);
+    }
+
+    if (updatedFields.length > 0) {
+      const sectionNames = updatedFields.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ');
+      await createNotification({
+        type: "content",
+        title: "Content updated",
+        description: `${updatedFields.length} section(s) updated`,
+        message: sectionNames,
+        relatedId: content._id,
+        relatedModel: "PortfolioContent",
+      });
     }
 
     res.status(200).json({ success: true, data: content });

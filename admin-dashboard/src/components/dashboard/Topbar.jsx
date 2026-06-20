@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Bell, Search, LogOut, User as UserIcon, ChevronRight, Menu } from 'lucide-react';
+import { Sun, Moon, Bell, Search, LogOut, User as UserIcon, ChevronRight, Menu, CheckCheck, Trash2, ExternalLink } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useNotificationContext } from '../../context/NotificationContext';
 import api from '../../utils/api';
+import NotificationCard from '../notifications/NotificationCard';
 
 const BREADCRUMB_LABELS = {
   dashboard: 'Dashboard',
@@ -22,13 +24,23 @@ const BREADCRUMB_LABELS = {
   seo: 'SEO',
 };
 
-const Topbar = ({ onMenuClick, unreadCount, admin }) => {
+const Topbar = ({ onMenuClick, unreadCount: propUnreadCount, admin }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
+  const {
+    unreadCount,
+    notifications: recentNotifications,
+    fetchNotifications,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotificationContext();
   const [profileOpen, setProfileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const bellRef = useRef(null);
 
   const paths = location.pathname.split('/').filter(Boolean);
   const breadcrumbs = paths.map((p, i) => ({
@@ -36,8 +48,18 @@ const Topbar = ({ onMenuClick, unreadCount, admin }) => {
     path: '/' + paths.slice(0, i + 1).join('/'),
   }));
 
+  const effectiveUnread = propUnreadCount !== undefined ? propUnreadCount : unreadCount;
+
   useEffect(() => {
     const handleClick = (e) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target) &&
+        bellRef.current &&
+        !bellRef.current.contains(e.target)
+      ) {
+        setBellOpen(false);
+      }
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setProfileOpen(false);
       }
@@ -45,6 +67,12 @@ const Topbar = ({ onMenuClick, unreadCount, admin }) => {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  useEffect(() => {
+    if (bellOpen) {
+      fetchNotifications({ limit: 5 });
+    }
+  }, [bellOpen, fetchNotifications]);
 
   const handleLogout = async () => {
     try {
@@ -125,17 +153,68 @@ const Topbar = ({ onMenuClick, unreadCount, admin }) => {
             {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
 
-          <button
-            onClick={() => navigate('/dashboard/notifications')}
-            className="relative p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
-          >
-            <Bell className="w-5 h-5" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-white dark:ring-gray-950">
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </span>
+          {/* Notification Bell */}
+          <div className="relative" ref={bellRef}>
+            <button
+              onClick={() => setBellOpen(!bellOpen)}
+              className="relative p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
+            >
+              <Bell className="w-5 h-5" />
+              {effectiveUnread > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-white dark:ring-gray-950">
+                  {effectiveUnread > 9 ? '9+' : effectiveUnread}
+                </span>
+              )}
+            </button>
+
+            {bellOpen && (
+              <div className="absolute right-0 top-10 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white">Notifications</h3>
+                  <div className="flex items-center gap-1">
+                    {effectiveUnread > 0 && (
+                      <button
+                        onClick={() => { markAllAsRead(); }}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        title="Mark all as read"
+                      >
+                        <CheckCheck className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
+                  {recentNotifications.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <Bell className="w-8 h-8 text-gray-300 dark:text-gray-600 mb-2" />
+                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">No notifications</p>
+                    </div>
+                  ) : (
+                    recentNotifications.map((notif) => (
+                      <NotificationCard
+                        key={notif._id}
+                        notification={notif}
+                        onMarkRead={markAsRead}
+                        onDelete={deleteNotification}
+                        compact={true}
+                      />
+                    ))
+                  )}
+                </div>
+
+                <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-2.5">
+                  <button
+                    onClick={() => { navigate('/dashboard/notifications'); setBellOpen(false); }}
+                    className="w-full flex items-center justify-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    View all notifications
+                  </button>
+                </div>
+              </div>
             )}
-          </button>
+          </div>
 
           {/* Profile avatar dropdown */}
           <div className="relative ml-1" ref={dropdownRef}>

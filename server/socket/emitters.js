@@ -46,3 +46,7 @@ export function emitAnalyticsUpdate(data) {
 export function emitNotification(notification) {
   emitToAdmin('notification', notification);
 }
+
+export function emitNotificationCreated(notification) {
+  emitToAdmin('notification:new', notification);
+}
