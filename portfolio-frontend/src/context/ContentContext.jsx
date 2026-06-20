@@ -23,6 +23,10 @@ export function ContentProvider({ children }) {
   });
 
   useEffect(() => {
+    fetchContent();
+  }, [fetchContent]);
+
+  useEffect(() => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
