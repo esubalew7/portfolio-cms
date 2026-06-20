@@ -17,6 +17,7 @@ const heroSchema = new mongoose.Schema({
   titles: [{ type: String }],
   description: { type: String, default: "" },
   image: { type: String, default: "" },
+  backgroundImage: { type: String, default: "" },
   cta: {
     primary: { type: ctaSchema, default: () => ({}) },
     secondary: { type: ctaSchema, default: () => ({}) },
@@ -105,6 +106,13 @@ const contactInfoSchema = new mongoose.Schema({
   successMessage: { type: String, default: "Thank you! Your message has been sent successfully." },
 }, { _id: false });
 
+const seoSchema = new mongoose.Schema({
+  title: { type: String, default: "" },
+  description: { type: String, default: "" },
+  ogImage: { type: String, default: "" },
+  keywords: { type: String, default: "" },
+}, { _id: false });
+
 const portfolioContentSchema = new mongoose.Schema({
   hero: { type: heroSchema, default: () => ({}) },
   about: { type: aboutSchema, default: () => ({}) },
@@ -114,6 +122,7 @@ const portfolioContentSchema = new mongoose.Schema({
   socialLinks: [socialLinkSchema],
   resume: { type: resumeSchema, default: () => ({}) },
   contactInfo: { type: contactInfoSchema, default: () => ({}) },
+  seo: { type: seoSchema, default: () => ({}) },
 }, {
   timestamps: true,
 });

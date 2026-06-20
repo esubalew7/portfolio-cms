@@ -15,6 +15,7 @@ const getDefaultContent = () => ({
     description:
       "I am a Computer Science student and MERN Stack Developer with a passion for building dynamic web applications. I specialize in creating seamless user experiences and robust backend systems. Let's build something amazing together!",
     image: "/images/esu2.png",
+    backgroundImage: "",
     cta: {
       primary: { text: "View Projects", link: "#projects" },
       secondary: { text: "Download Resume", link: "/resume.pdf" },
@@ -215,6 +216,12 @@ const getDefaultContent = () => ({
     successMessage:
       "Thank you! Your message has been sent successfully.",
   },
+  seo: {
+    title: "",
+    description: "",
+    ogImage: "",
+    keywords: "",
+  },
 });
 
 export const getContent = async (req, res) => {
@@ -246,6 +253,7 @@ export const updateContent = async (req, res) => {
     const allowedFields = [
       "hero", "about", "skills", "experience",
       "testimonials", "socialLinks", "resume", "contactInfo",
+      "seo",
     ];
 
     const updatedFields = [];

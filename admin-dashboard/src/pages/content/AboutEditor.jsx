@@ -3,6 +3,7 @@ import { useContentSection } from '../../hooks/useContentSection';
 import Card from '../../components/ui/Card';
 import SectionHeader from '../../components/ui/SectionHeader';
 import FormInput from '../../components/ui/FormInput';
+import ImageUploader from '../../components/ui/ImageUploader';
 
 const AboutEditor = () => {
   const { data, loading, saving, error, update, save, refetch } = useContentSection('about');
@@ -77,10 +78,10 @@ const AboutEditor = () => {
           value={about.description || ''}
           onChange={(e) => update({ ...about, description: e.target.value })}
         />
-        <FormInput
-          label="Image URL"
+        <ImageUploader
+          label="Profile Image"
           value={about.image || ''}
-          onChange={(e) => update({ ...about, image: e.target.value })}
+          onChange={(url) => update({ ...about, image: url })}
         />
 
         <div className="space-y-3">

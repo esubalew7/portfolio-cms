@@ -3,6 +3,7 @@ import { RefreshCw, Plus, Trash2 } from 'lucide-react';
 import SectionHeader from '../../components/ui/SectionHeader';
 import Card from '../../components/ui/Card';
 import FormInput from '../../components/ui/FormInput';
+import ImageUploader from '../../components/ui/ImageUploader';
 
 const TestimonialsEditor = () => {
   const { data, loading, saving, error, update, save, refetch } = useContentSection('testimonials');
@@ -110,10 +111,10 @@ const TestimonialsEditor = () => {
                   value={item.company}
                   onChange={(e) => setItemField(i, 'company', e.target.value)}
                 />
-                <FormInput
-                  label="Image URL"
-                  value={item.image}
-                  onChange={(e) => setItemField(i, 'image', e.target.value)}
+                <ImageUploader
+                  label="Avatar"
+                  value={item.image || ''}
+                  onChange={(url) => setItemField(i, 'image', url)}
                 />
               </div>
 

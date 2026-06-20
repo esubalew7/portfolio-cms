@@ -3,6 +3,7 @@ import { RefreshCw, Plus, Trash2 } from 'lucide-react';
 import SectionHeader from '../../components/ui/SectionHeader';
 import Card from '../../components/ui/Card';
 import FormInput from '../../components/ui/FormInput';
+import ImageUploader from '../../components/ui/ImageUploader';
 
 const emptyItem = {
   role: '', company: '', duration: '', location: '',
@@ -205,10 +206,10 @@ const ExperienceEditor = () => {
                     />
                   </div>
 
-                  <FormInput
-                    label="Logo URL"
-                    value={item.logo}
-                    onChange={(e) => setItemField(ci, ii, 'logo', e.target.value)}
+                  <ImageUploader
+                    label="Logo"
+                    value={item.logo || ''}
+                    onChange={(url) => setItemField(ci, ii, 'logo', url)}
                   />
                 </div>
               ))}

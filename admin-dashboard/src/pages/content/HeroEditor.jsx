@@ -3,6 +3,7 @@ import { useContentSection } from '../../hooks/useContentSection';
 import Card from '../../components/ui/Card';
 import SectionHeader from '../../components/ui/SectionHeader';
 import FormInput from '../../components/ui/FormInput';
+import ImageUploader from '../../components/ui/ImageUploader';
 
 const HeroEditor = () => {
   const { data, loading, saving, error, update, save, refetch } = useContentSection('hero');
@@ -78,11 +79,16 @@ const HeroEditor = () => {
           value={hero.name || ''}
           onChange={(e) => update({ ...hero, name: e.target.value })}
         />
-        <FormInput
-          label="Image URL"
+        <ImageUploader
+          label="Profile Image"
           value={hero.image || ''}
-          onChange={(e) => update({ ...hero, image: e.target.value })}
+          onChange={(url) => update({ ...hero, image: url })}
         />
+       {/* <ImageUploader
+          label="Background Image"
+          value={hero.backgroundImage || ''}
+          onChange={(url) => update({ ...hero, backgroundImage: url })}
+        /> */}
         <FormInput
           label="Description"
           textarea
