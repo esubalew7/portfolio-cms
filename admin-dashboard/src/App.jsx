@@ -58,7 +58,7 @@ const App = () => {
                 <Route path="content/seo" element={<SEOEditor />} />
               </Route>
 
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
             </Routes>
           </ToastProvider>
           </GoogleOAuthProvider>
