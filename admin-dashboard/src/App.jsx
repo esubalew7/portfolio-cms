@@ -24,6 +24,8 @@ import SEOEditor from './pages/content/SEOEditor';
 import ProjectsEditor from './pages/content/ProjectsEditor';
 import NavbarEditor from './pages/content/NavbarEditor';
 import FooterEditor from './pages/content/FooterEditor';
+import Security from './pages/Security';
+import Verify2FA from './pages/auth/Verify2FA';
 
 const App = () => {
   return (
@@ -34,6 +36,7 @@ const App = () => {
           <ToastProvider>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/verify-2fa" element={<Verify2FA />} />
 
               <Route
                 path="/dashboard"
@@ -48,6 +51,7 @@ const App = () => {
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="security" element={<Security />} />
                 <Route path="content" element={<ContentIndex />} />
                 <Route path="content/hero" element={<HeroEditor />} />
                 <Route path="content/about" element={<AboutEditor />} />

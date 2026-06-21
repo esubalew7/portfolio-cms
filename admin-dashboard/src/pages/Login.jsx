@@ -65,11 +65,18 @@ const Login = () => {
     setLoginError('');
 
     try {
-      await api.post('/api/auth/google', {
+      const data = await api.post('/api/auth/google', {
         credential: credentialResponse.credential,
       });
 
-      navigate(from, { replace: true });
+      if (data.requiresTwoFactor && data.tempToken) {
+        navigate('/verify-2fa', {
+          state: { tempToken: data.tempToken, from },
+          replace: true,
+        });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       console.error('Google login error:', error);
       setLoginError(error.message || 'Google login failed. Please try again.');

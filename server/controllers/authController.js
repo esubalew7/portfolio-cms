@@ -234,6 +234,23 @@ export const googleLogin = async (req, res) => {
       });
     }
 
+    // ── Two-Factor Authentication check ──────────────────────
+    if (user.twoFactorEnabled) {
+      // Generate short-lived temporary token for 2FA verification
+      const tempToken = jwt.sign(
+        { id: user._id, purpose: '2fa' },
+        process.env.JWT_SECRET,
+        { expiresIn: '5m' }
+      );
+
+      return res.status(200).json({
+        success: true,
+        requiresTwoFactor: true,
+        tempToken,
+        message: '2FA verification required',
+      });
+    }
+
     // Generate the same JWT as email/password login
     const token = jwt.sign(
       { id: user._id },
@@ -247,6 +264,14 @@ export const googleLogin = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Google login successful',
+      data: {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        profileImage: user.profileImage,
+        twoFactorEnabled: user.twoFactorEnabled,
+      },
     });
   } catch (error) {
     console.error('Google login error:', error);

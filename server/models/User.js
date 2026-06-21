@@ -37,6 +37,16 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: '',
         },
+
+        // Two-Factor Authentication fields
+        twoFactorEnabled: {
+            type: Boolean,
+            default: false,
+        },
+        twoFactorSecret: {
+            type: String,
+            default: '',
+        },
     },
     {
         timestamps: true, // adds createdAt & updatedAt automatically

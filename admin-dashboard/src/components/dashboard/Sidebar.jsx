@@ -20,6 +20,7 @@ import {
   User as UserIcon,
   Menu as MenuIcon,
   Copyright,
+  Shield,
 } from 'lucide-react';
 import api from '../../utils/api';
 
@@ -52,6 +53,7 @@ const NAV_GROUPS = [
     label: 'System',
     items: [
       { path: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+      { path: '/dashboard/security', label: 'Security', icon: Shield },
       { path: '/dashboard/settings', label: 'Settings', icon: Settings },
     ],
   },

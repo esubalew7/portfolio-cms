@@ -10,6 +10,7 @@ import dashboardRoutes from "./routes/dashboardRoutes.js"; // Import dashboard r
 import notificationRoutes from "./routes/notificationRoutes.js"; // Import notification routes
 import analyticsRoutes from "./routes/analyticsRoutes.js"; // Import analytics routes
 import contentRoutes from "./routes/contentRoutes.js"; // Import content routes
+import twoFactorRoutes from "./routes/twoFactorRoutes.js"; // Import 2FA routes
 
 dotenv.config();                        // Load environment variables from .env
 
@@ -49,6 +50,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/auth/2fa", twoFactorRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
