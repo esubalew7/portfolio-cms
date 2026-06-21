@@ -5,7 +5,7 @@ import Card from '../../components/ui/Card';
 import FormInput from '../../components/ui/FormInput';
 
 const SEOEditor = () => {
-  const { data, loading, saving, error, update, save, refetch } = useContentSection('seo');
+  const { data, allContent, loading, saving, error, update, save, refetch } = useContentSection('seo');
 
   if (loading) {
     return (
@@ -36,6 +36,8 @@ const SEOEditor = () => {
     update({ ...d, [field]: value });
   };
 
+  const heroName = allContent?.hero?.name || 'Esubalew';
+
   return (
     <div>
       <SectionHeader
@@ -47,6 +49,11 @@ const SEOEditor = () => {
 
       <div className="space-y-4">
         <Card>
+          <div className="flex items-center gap-3 p-3 mb-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Meta Title auto-populates from Hero name. Leave empty to use <strong>{heroName} - Portfolio</strong>.
+            </p>
+          </div>
           <div className="space-y-4">
             <FormInput
               label="Meta Title"

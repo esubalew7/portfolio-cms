@@ -4,14 +4,12 @@ import { contentService } from '../services/contentService';
 const initialState = {
   content: {
     navbar: {
-      brandName: '',
       logo: '',
       resumeText: 'Resume',
       resumeUrl: '',
       navItems: [],
     },
     footer: {
-      title: '',
       copyright: '',
       socials: [],
     },

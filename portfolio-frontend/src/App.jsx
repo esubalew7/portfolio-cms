@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProjectProvider } from './context/ProjectContext';
 import { ContentProvider } from './context/ContentContext';
@@ -8,6 +9,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { Home } from './pages/Home';
 import { Loader } from './components/Loader';
 import { ScrollToTop } from './components/ScrollToTop';
+import { SEOHead } from './components/SEOHead';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,9 +22,11 @@ const App = () => {
   }, []);
 
   return (
+    <HelmetProvider>
     <ThemeProvider>
       <ProjectProvider>
         <ContentProvider>
+        <SEOHead />
         <BrowserRouter>
           <AnimatePresence>
             {isLoading && <Loader key="loader" />}
@@ -39,6 +43,7 @@ const App = () => {
         </ContentProvider>
       </ProjectProvider>
     </ThemeProvider>
+    </HelmetProvider>
   );
 };
 

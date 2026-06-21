@@ -7,6 +7,7 @@ const contentCache = {};
 export const useContentSection = (sectionName) => {
   const { showToast } = useToast();
   const [sectionData, setSectionData] = useState(null);
+  const [allContent, setAllContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -20,6 +21,7 @@ export const useContentSection = (sectionName) => {
       if (res.success && res.data) {
         contentCache[sectionName] = res.data[sectionName];
         setSectionData(res.data[sectionName]);
+        setAllContent(res.data);
       }
     } catch (err) {
       setError(err.message || 'Failed to load content');
@@ -53,5 +55,5 @@ export const useContentSection = (sectionName) => {
     }
   }, [sectionName, sectionData, showToast]);
 
-  return { data: sectionData, loading, saving, error, update, save, refetch: fetchContent };
+  return { data: sectionData, allContent, loading, saving, error, update, save, refetch: fetchContent };
 };

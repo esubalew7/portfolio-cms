@@ -7,7 +7,7 @@ import FormInput from '../../components/ui/FormInput';
 const SOCIAL_PLATFORMS = ['GitHub', 'LinkedIn', 'Telegram', 'Facebook', 'Twitter', 'Instagram'];
 
 const FooterEditor = () => {
-  const { data, loading, saving, error, update, save, refetch } = useContentSection('footer');
+  const { data, allContent, loading, saving, error, update, save, refetch } = useContentSection('footer');
 
   if (loading) {
     return (
@@ -88,7 +88,7 @@ const FooterEditor = () => {
     <div>
       <SectionHeader
         title="Footer Editor"
-        subtitle="Manage footer title, copyright text, and social media links."
+        subtitle="Manage copyright text and social media links. Footer name is synced from Hero section."
         onSave={save}
         saving={saving}
       />
@@ -96,12 +96,18 @@ const FooterEditor = () => {
       <div className="space-y-6">
         <Card>
           <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Content</h2>
+          <div className="flex items-center gap-3 p-4 mb-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">Footer Name</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                {allContent?.hero?.name || 'Esubalew'}
+              </p>
+              <p className="text-xs text-blue-500 dark:text-blue-400 mt-0.5">
+                Synced from Hero section name
+              </p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormInput
-              label="Footer Title"
-              value={d.title || ''}
-              onChange={(e) => set('title', e.target.value)}
-            />
             <FormInput
               label="Copyright Text"
               placeholder="All rights reserved."

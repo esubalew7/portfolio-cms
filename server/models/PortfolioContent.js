@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+const { Mixed } = mongoose.Schema.Types;
 
 const statSchema = new mongoose.Schema({
   label: { type: String, required: true },
@@ -120,7 +121,6 @@ const navItemSchema = new mongoose.Schema({
 }, { _id: false });
 
 const navbarSchema = new mongoose.Schema({
-  brandName: { type: String, default: "Esubalew" },
   logo: { type: String, default: "" },
   resumeText: { type: String, default: "Resume" },
   resumeUrl: { type: String, default: "/resume.pdf" },
@@ -133,7 +133,6 @@ const footerSocialSchema = new mongoose.Schema({
 }, { _id: false });
 
 const footerSchema = new mongoose.Schema({
-  title: { type: String, default: "Esubalew" },
   copyright: { type: String, default: "All rights reserved." },
   socials: [footerSocialSchema],
 }, { _id: false });
@@ -150,6 +149,7 @@ const portfolioContentSchema = new mongoose.Schema({
   resume: { type: resumeSchema, default: () => ({}) },
   contactInfo: { type: contactInfoSchema, default: () => ({}) },
   seo: { type: seoSchema, default: () => ({}) },
+  structuredData: { type: Mixed, default: {} },
 }, {
   timestamps: true,
 });

@@ -75,9 +75,10 @@ export const Navbar = () => {
   const content = useContentStore((s) => s.content);
   const socialLinks = content?.socialLinks || [];
   const navbar = content?.navbar || {};
+  const hero = content?.hero || {};
   const isHomePage = location.pathname === '/';
 
-  const brandName = navbar.brandName || 'Esubalew';
+  const brandName = hero.name || 'Esubalew';
   const logoUrl = navbar.logo;
   const resumeText = navbar.resumeText || 'Resume';
   const resumeUrl = navbar.resumeUrl || '/resume.pdf';

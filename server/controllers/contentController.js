@@ -1,10 +1,10 @@
 import PortfolioContent from "../models/PortfolioContent.js";
 import { emitContentSectionUpdated } from "../socket/emitters.js";
 import { createNotification } from "../services/notificationService.js";
+import { propagateHeroToDependents } from "../services/contentPropagationService.js";
 
 const getDefaultContent = () => ({
   navbar: {
-    brandName: "Esubalew",
     logo: "",
     resumeText: "Resume",
     resumeUrl: "/resume.pdf",
@@ -18,7 +18,6 @@ const getDefaultContent = () => ({
     ],
   },
   footer: {
-    title: "Esubalew",
     copyright: "All rights reserved.",
     socials: [
       { platform: "GitHub", url: "https://github.com/esubalew7" },
@@ -292,6 +291,17 @@ export const updateContent = async (req, res) => {
     }
 
     await content.save();
+
+    const propagated = propagateHeroToDependents(content);
+    for (const section of propagated) {
+      if (!updatedFields.includes(section)) {
+        updatedFields.push(section);
+      }
+    }
+
+    if (propagated.length > 0) {
+      await content.save();
+    }
 
     for (const section of updatedFields) {
       emitContentSectionUpdated(section, content[section]);

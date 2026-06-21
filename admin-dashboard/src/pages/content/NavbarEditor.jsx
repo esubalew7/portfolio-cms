@@ -16,7 +16,7 @@ const ALL_SECTIONS = [
 ];
 
 const NavbarEditor = () => {
-  const { data, loading, saving, error, update, save, refetch } = useContentSection('navbar');
+  const { data, allContent, loading, saving, error, update, save, refetch } = useContentSection('navbar');
 
   if (loading) {
     return (
@@ -72,7 +72,7 @@ const NavbarEditor = () => {
     <div>
       <SectionHeader
         title="Navbar Editor"
-        subtitle="Control branding, logo, resume link, and navigation visibility."
+        subtitle="Control logo, resume link, and navigation visibility. Brand name is synced from Hero section."
         onSave={save}
         saving={saving}
       />
@@ -80,12 +80,16 @@ const NavbarEditor = () => {
       <div className="space-y-6">
         <Card>
           <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Branding</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormInput
-              label="Brand Name"
-              value={d.brandName || ''}
-              onChange={(e) => set('brandName', e.target.value)}
-            />
+          <div className="flex items-center gap-3 p-4 mb-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">Brand Name</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                {allContent?.hero?.name || 'Esubalew'}
+              </p>
+              <p className="text-xs text-blue-500 dark:text-blue-400 mt-0.5">
+                Synced from Hero section name
+              </p>
+            </div>
           </div>
           <div className="mt-4">
             <ImageUploader

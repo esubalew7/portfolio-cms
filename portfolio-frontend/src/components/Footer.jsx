@@ -4,7 +4,8 @@ import { SocialIconRow } from './SocialLinks';
 export const Footer = () => {
   const content = useContentStore((s) => s.content);
   const footer = content?.footer || {};
-  const title = footer.title || 'Esubalew';
+  const hero = content?.hero || {};
+  const title = hero.name || 'Esubalew';
   const copyright = footer.copyright || `${title}. All rights reserved.`;
 
   return (
