@@ -3,6 +3,13 @@ import { contentService } from '../services/contentService';
 
 const initialState = {
   content: {
+    navbar: {
+      brandName: '',
+      logo: '',
+      resumeText: 'Resume',
+      resumeUrl: '',
+      navItems: [],
+    },
     hero: { greeting: 'Hello, I am', name: '', titles: [], description: '', image: '', cta: { primary: { text: '', link: '' }, secondary: { text: '', link: '' } } },
     about: { title: 'About Me', subtitle: '', description: '', image: '', stats: [], cta: { text: '', link: '' } },
     skills: { title: 'Core Skills', subtitle: '', categories: [] },

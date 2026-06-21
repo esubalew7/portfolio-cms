@@ -18,6 +18,7 @@ import {
   MessageSquare as MessageSquareIcon,
   Monitor,
   User as UserIcon,
+  Menu as MenuIcon,
 } from 'lucide-react';
 import api from '../../utils/api';
 
@@ -34,6 +35,7 @@ const NAV_GROUPS = [
     label: 'Content',
     expandable: true,
     items: [
+      { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon },
       { path: '/dashboard/content/hero', label: 'Hero Section', icon: Eye },
       { path: '/dashboard/content/about', label: 'About Section', icon: UserIcon },
       { path: '/dashboard/content/skills', label: 'Skills Section', icon: Code },

@@ -113,7 +113,22 @@ const seoSchema = new mongoose.Schema({
   keywords: { type: String, default: "" },
 }, { _id: false });
 
+const navItemSchema = new mongoose.Schema({
+  label: { type: String, required: true },
+  id: { type: String, required: true },
+  visible: { type: Boolean, default: true },
+}, { _id: false });
+
+const navbarSchema = new mongoose.Schema({
+  brandName: { type: String, default: "Esubalew" },
+  logo: { type: String, default: "" },
+  resumeText: { type: String, default: "Resume" },
+  resumeUrl: { type: String, default: "/resume.pdf" },
+  navItems: [navItemSchema],
+}, { _id: false });
+
 const portfolioContentSchema = new mongoose.Schema({
+  navbar: { type: navbarSchema, default: () => ({}) },
   hero: { type: heroSchema, default: () => ({}) },
   about: { type: aboutSchema, default: () => ({}) },
   skills: { type: skillsSchema, default: () => ({}) },

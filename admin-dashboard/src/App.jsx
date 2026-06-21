@@ -22,6 +22,7 @@ import TerminalEditor from './pages/content/TerminalEditor';
 import ContactEditor from './pages/content/ContactEditor';
 import SEOEditor from './pages/content/SEOEditor';
 import ProjectsEditor from './pages/content/ProjectsEditor';
+import NavbarEditor from './pages/content/NavbarEditor';
 
 const App = () => {
   return (
@@ -56,6 +57,7 @@ const App = () => {
                 <Route path="content/contact" element={<ContactEditor />} />
                 <Route path="content/projects" element={<ProjectsEditor />} />
                 <Route path="content/seo" element={<SEOEditor />} />
+                <Route path="content/navbar" element={<NavbarEditor />} />
               </Route>
 
               <Route path="/" element={<Navigate to="/login" replace />} />

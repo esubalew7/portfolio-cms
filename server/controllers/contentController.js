@@ -3,6 +3,20 @@ import { emitContentSectionUpdated } from "../socket/emitters.js";
 import { createNotification } from "../services/notificationService.js";
 
 const getDefaultContent = () => ({
+  navbar: {
+    brandName: "Esubalew",
+    logo: "",
+    resumeText: "Resume",
+    resumeUrl: "/resume.pdf",
+    navItems: [
+      { label: "Home", id: "home", visible: true },
+      { label: "About", id: "about", visible: true },
+      { label: "Skills", id: "skills", visible: true },
+      { label: "Projects", id: "projects", visible: true },
+      { label: "Experience", id: "experience", visible: true },
+      { label: "Contact", id: "contact", visible: true },
+    ],
+  },
   hero: {
     greeting: "Hello, I am",
     name: "Esubalew",
@@ -251,7 +265,7 @@ export const updateContent = async (req, res) => {
     }
 
     const allowedFields = [
-      "hero", "about", "skills", "experience",
+      "navbar", "hero", "about", "skills", "experience",
       "testimonials", "socialLinks", "resume", "contactInfo",
       "terminal", "seo",
     ];

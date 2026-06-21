@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { Sun, Moon, Menu, X, FileDown } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useContentStore } from '../store/contentStore';
 import { platformIcons } from './SocialLinks';
@@ -12,15 +12,6 @@ import {
   scrollToSectionById,
   isValidSectionId,
 } from '../utils/sectionNavigation';
-
-const NAV_LINKS = [
-  { name: 'Home', id: 'home' },
-  { name: 'About', id: 'about' },
-  { name: 'Skills', id: 'skills' },
-  { name: 'Projects', id: 'projects' },
-  { name: 'Experience', id: 'experience' },
-  { name: 'Contact', id: 'contact' },
-];
 
 const ACTIVE_LAYOUT_ID = 'nav-active-pill';
 const ACTIVE_SPRING = { type: 'spring', stiffness: 400, damping: 34, mass: 0.8 };
@@ -50,7 +41,7 @@ const DesktopNavLink = memo(function DesktopNavLink({ link, isActive, pathname, 
           transition={ACTIVE_SPRING}
         />
       )}
-      <span className="relative z-10 select-none">{link.name}</span>
+      <span className="relative z-10 select-none">{link.label}</span>
     </a>
   );
 });
@@ -67,7 +58,7 @@ const MobileNavLink = memo(function MobileNavLink({ link, isActive, onNavigate }
           : 'text-neutral-700 dark:text-neutral-300 active:bg-neutral-100 dark:active:bg-neutral-900/60'
       }`}
     >
-      {link.name}
+      {link.label}
     </button>
   );
 });
@@ -83,12 +74,22 @@ export const Navbar = () => {
 
   const content = useContentStore((s) => s.content);
   const socialLinks = content?.socialLinks || [];
+  const navbar = content?.navbar || {};
   const isHomePage = location.pathname === '/';
+
+  const brandName = navbar.brandName || 'Esubalew';
+  const logoUrl = navbar.logo;
+  const resumeText = navbar.resumeText || 'Resume';
+  const resumeUrl = navbar.resumeUrl || '/resume.pdf';
+
+  const visibleNavItems = useMemo(() => {
+    return (navbar.navItems || []).filter((item) => item.visible !== false);
+  }, [navbar.navItems]);
 
   const activeIndex = useMemo(() => {
     if (!isHomePage) return -1;
-    return NAV_LINKS.findIndex((link) => link.id === activeSection);
-  }, [activeSection, isHomePage]);
+    return visibleNavItems.findIndex((link) => link.id === activeSection);
+  }, [activeSection, isHomePage, visibleNavItems]);
 
   const runScroll = useCallback((sectionId, delay = 0) => {
     if (scrollTimeoutRef.current) {
@@ -170,9 +171,9 @@ export const Navbar = () => {
 
     let observer;
     const setupObserver = () => {
-      const sections = document.querySelectorAll(
-        SECTION_IDS.map((id) => `#${id}`).join(',')
-      );
+      const sectionIds = visibleNavItems.map((item) => item.id);
+      const selector = sectionIds.map((id) => `#${id}`).join(',');
+      const sections = document.querySelectorAll(selector);
 
       if (sections.length === 0) return;
 
@@ -200,7 +201,7 @@ export const Navbar = () => {
       observer?.disconnect();
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
-  }, [isHomePage]);
+  }, [isHomePage, visibleNavItems]);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -244,16 +245,20 @@ export const Navbar = () => {
           whileTap={{ scale: 0.98 }}
           className="text-[22px] font-extrabold tracking-tight flex items-center gap-2 group cursor-pointer select-none"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-base font-bold shadow-[0_0_15px_rgba(59,130,246,0.35)] transition-shadow duration-300 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-            E
-          </div>
+          {logoUrl ? (
+            <img src={logoUrl} alt={brandName} className="w-8 h-8 rounded-lg object-cover" />
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-base font-bold shadow-[0_0_15px_rgba(59,130,246,0.35)] transition-shadow duration-300 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+              {brandName.charAt(0).toUpperCase()}
+            </div>
+          )}
           <span className="bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent">
-            Esu<span className="font-medium text-neutral-500 dark:text-neutral-400">balew</span>
+            {brandName}
           </span>
         </motion.a>
 
         <nav className="hidden md:flex items-center gap-1 bg-neutral-200/30 dark:bg-neutral-900/40 p-1 rounded-full border border-neutral-200/50 dark:border-neutral-800/40">
-          {NAV_LINKS.map((link, index) => (
+          {visibleNavItems.map((link, index) => (
             <DesktopNavLink
               key={link.id}
               link={link}
@@ -265,6 +270,23 @@ export const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
+          {resumeUrl && (
+            <motion.a
+              href={resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative p-2.5 rounded-full border border-neutral-200/80 dark:border-neutral-800/80 bg-white/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-sm dark:shadow-[0_0_12px_rgba(255,255,255,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 overflow-hidden group cursor-pointer"
+              aria-label={resumeText}
+            >
+              <span className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="relative z-10">
+                <FileDown className="w-4 h-4" />
+              </div>
+            </motion.a>
+          )}
+
           <motion.button
             onClick={toggleTheme}
             whileHover={{ scale: 1.05, rotate: 15 }}
@@ -291,11 +313,22 @@ export const Navbar = () => {
               </AnimatePresence>
             </div>
           </motion.button>
-
-
         </div>
 
         <div className="md:hidden flex items-center gap-2">
+          {resumeUrl && (
+            <motion.a
+              href={resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileTap={{ scale: 0.92 }}
+              className="p-2.5 rounded-full border border-neutral-200/80 dark:border-neutral-800/80 bg-white/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+              aria-label={resumeText}
+            >
+              <FileDown className="w-4 h-4" />
+            </motion.a>
+          )}
+
           <motion.button
             onClick={toggleTheme}
             whileTap={{ scale: 0.92 }}
@@ -353,7 +386,7 @@ export const Navbar = () => {
           >
             <div className="h-[1px] bg-neutral-200/50 dark:bg-neutral-800/50 w-full my-2.5" />
             <div className="flex flex-col space-y-1.5 pb-3">
-              {NAV_LINKS.map((link) => (
+              {visibleNavItems.map((link) => (
                 <MobileNavLink
                   key={link.id}
                   link={link}
@@ -364,7 +397,17 @@ export const Navbar = () => {
 
               <div className="h-[1px] bg-neutral-200/50 dark:bg-neutral-800/50 w-full my-2" />
 
-
+              {resumeUrl && (
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 py-3 px-5 rounded-full text-[15px] font-medium tracking-wide text-neutral-700 dark:text-neutral-300 active:bg-neutral-100 dark:active:bg-neutral-900/60 transition-colors"
+                >
+                  <FileDown className="w-4 h-4" />
+                  {resumeText}
+                </a>
+              )}
             </div>
 
             <div className="flex justify-center items-center py-4.5 border-t border-neutral-200/30 dark:border-neutral-800/30">

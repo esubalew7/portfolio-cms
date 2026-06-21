@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { FileText, Eye, Settings as SettingsIcon, Code, Briefcase, Star, MessageSquare, Monitor, FolderOpen } from 'lucide-react';
+import { FileText, Eye, Settings as SettingsIcon, Code, Briefcase, Star, MessageSquare, Monitor, FolderOpen, Menu as MenuIcon } from 'lucide-react';
 import Card from '../components/ui/Card';
 
 const SECTIONS = [
@@ -11,6 +11,7 @@ const SECTIONS = [
   { path: '/dashboard/content/testimonials', label: 'Testimonials Section', icon: Star, desc: 'Client feedback, ratings, marquee display' },
   { path: '/dashboard/content/terminal', label: 'Terminal Section', icon: Monitor, desc: 'Interactive terminal commands and responses' },
   { path: '/dashboard/content/contact', label: 'Contact Section', icon: MessageSquare, desc: 'Contact info, form settings, success message' },
+  { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon, desc: 'Brand name, logo, resume button, navigation visibility' },
   { path: '/dashboard/content/seo', label: 'SEO Settings', icon: SettingsIcon, desc: 'Meta tags, Open Graph, social previews' },
 ];
 
