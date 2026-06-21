@@ -11,7 +11,7 @@ export const Footer = () => {
   return (
     <footer className="bg-gray-50 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 pt-6 pb-8 transition-colors duration-300 relative z-10">
       <div className="container mx-auto px-6 max-w-6xl">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-4 pr-16 md:pr-20">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
           <a href="#home" className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 tracking-wide">
             {title}
           </a>

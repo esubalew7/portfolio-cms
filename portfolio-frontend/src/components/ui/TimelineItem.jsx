@@ -41,7 +41,7 @@ const TimelineItem = ({
                 </div>
               </div>
 
-              <div className="text-sm text-neutral-500 dark:text-neutral-400 text-right">{duration}</div>
+              <div className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 text-right shrink-0 max-w-[120px] sm:max-w-none">{duration}</div>
             </div>
 
             <div className="mt-3">

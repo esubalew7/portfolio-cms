@@ -168,7 +168,7 @@ const Topbar = ({ onMenuClick, unreadCount: propUnreadCount, admin }) => {
             </button>
 
             {bellOpen && (
-              <div className="absolute right-0 top-10 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="absolute right-0 top-10 w-80 sm:w-96 max-w-[calc(100vw-1rem)] bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
                   <h3 className="text-sm font-bold text-gray-900 dark:text-white">Notifications</h3>
                   <div className="flex items-center gap-1">

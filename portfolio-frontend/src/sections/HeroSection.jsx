@@ -48,7 +48,7 @@ export const HeroSection = () => {
       <ParticlesBackground />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-1 relative z-10 w-full max-w-7xl">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-16 lg:gap-28">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 sm:gap-12 lg:gap-28">
 
           <motion.div
             variants={containerVariants}
@@ -67,7 +67,7 @@ export const HeroSection = () => {
             </motion.div>
 
             <motion.div variants={itemVariants} className="h-12 md:h-16 flex items-center">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300">
                 A passionate <br className="md:hidden" />
                 <span className="inline-block text-blue-600 dark:text-blue-400 border-r-4 border-blue-600 dark:border-blue-400 pr-2 ml-1 animate-pulse">
                   {typedText}
@@ -113,7 +113,7 @@ export const HeroSection = () => {
             <motion.div
               animate={{ y: [-8, 8, -8] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-              className="relative w-80 h-80 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem]"
+              className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem]"
             >
               <div className="absolute -inset-8 rounded-full
                 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.05)_0%,_transparent_75%)]

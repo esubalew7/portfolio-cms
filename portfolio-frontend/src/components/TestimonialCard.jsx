@@ -25,7 +25,7 @@ const TestimonialCard = memo(({ name, role, company, image, rating, feedback }, 
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="w-[300px] sm:w-[340px] shrink-0 select-none"
+      className="w-[280px] sm:w-[300px] lg:w-[340px] shrink-0 select-none"
     >
       <div className="h-full rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-neutral-900/50 backdrop-blur-xl shadow-lg hover:shadow-xl dark:shadow-black/20 transition-shadow duration-300 p-5 flex flex-col gap-3.5">
         <div className="flex items-center gap-3.5">

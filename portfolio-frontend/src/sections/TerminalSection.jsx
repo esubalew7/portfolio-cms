@@ -4,7 +4,7 @@ import { Terminal } from "../components/Terminal";
 
 export const TerminalSection = () => {
   return (
-    <section id="terminal" className="container mx-auto px-16 sm:px-18 lg:px-20 py-20 md:py-24 max-w-6xl">
+    <section id="terminal" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24 max-w-6xl">
       <motion.div
         variants={staggerContainer(0.2, 0)}
         initial="hidden"

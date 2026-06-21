@@ -121,7 +121,7 @@ export const ContactSection = () => {
       </div>
 
       <div className="container mx-auto px-6 max-w-7xl relative z-10">
-        <div className="flex flex-col lg:flex-row items-start justify-between gap-16 lg:gap-24">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-10 lg:gap-24">
 
           <motion.div
             initial={{ opacity: 0, x: -20 }}

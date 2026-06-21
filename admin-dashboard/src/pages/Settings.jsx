@@ -112,7 +112,7 @@ const Settings = () => {
 
         <div className="mt-6 space-y-6">
           {/* Avatar upload */}
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             <div className="relative group">
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold ring-4 ring-gray-100 dark:ring-gray-800 overflow-hidden">
                 {avatarSrc ? (

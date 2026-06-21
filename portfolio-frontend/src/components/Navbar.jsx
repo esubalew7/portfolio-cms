@@ -412,7 +412,7 @@ export const Navbar = () => {
             </div>
 
             <div className="flex justify-center items-center py-4.5 border-t border-neutral-200/30 dark:border-neutral-800/30">
-              <div className="flex gap-6">
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
                 {socialLinks.map((link) => (
                   <a
                     key={link.platform}

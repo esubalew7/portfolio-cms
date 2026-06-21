@@ -116,9 +116,9 @@ const SetupFlow = ({ onBack, onComplete }) => {
         <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Step 1: Scan the QR Code</h4>
         <div className="flex justify-center p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
           {qrCode ? (
-            <img src={qrCode} alt="2FA QR Code" className="w-48 h-48" />
+            <img src={qrCode} alt="2FA QR Code" className="w-40 sm:w-48 h-40 sm:h-48" />
           ) : (
-            <div className="w-48 h-48 flex items-center justify-center">
+            <div className="w-40 sm:w-48 h-40 sm:h-48 flex items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
             </div>
           )}

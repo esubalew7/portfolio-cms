@@ -29,7 +29,7 @@ const Terminal = ({
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-      className={`relative w-full ${isEmbedded ? 'h-[380px]' : 'h-[520px]'} ${className}`}
+      className={`relative w-full ${isEmbedded ? 'h-[320px] sm:h-[380px]' : 'h-[420px] sm:h-[520px]'} ${className}`}
     >
       <div className="h-full flex flex-col rounded-xl overflow-hidden border border-[#2a2a2a] bg-[#0c0c0c] shadow-[0_12px_48px_rgba(0,0,0,0.6)]">
         <header className="h-7 shrink-0 flex items-center bg-[#1a1a1a] border-b border-[#2a2a2a] px-3 select-none">

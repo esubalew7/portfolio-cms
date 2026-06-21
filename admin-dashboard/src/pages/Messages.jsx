@@ -243,7 +243,7 @@ const Messages = () => {
                                 {getMessagePreview(msg.message)}
                             </p>
 
-                            <div className="mt-5 grid grid-cols-3 gap-2">
+                            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2">
                                 <Button
                                     variant="secondary"
                                     icon={Eye}
