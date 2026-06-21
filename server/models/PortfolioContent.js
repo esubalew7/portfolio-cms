@@ -127,8 +127,20 @@ const navbarSchema = new mongoose.Schema({
   navItems: [navItemSchema],
 }, { _id: false });
 
+const footerSocialSchema = new mongoose.Schema({
+  platform: { type: String, required: true },
+  url: { type: String, default: "" },
+}, { _id: false });
+
+const footerSchema = new mongoose.Schema({
+  title: { type: String, default: "Esubalew" },
+  copyright: { type: String, default: "All rights reserved." },
+  socials: [footerSocialSchema],
+}, { _id: false });
+
 const portfolioContentSchema = new mongoose.Schema({
   navbar: { type: navbarSchema, default: () => ({}) },
+  footer: { type: footerSchema, default: () => ({}) },
   hero: { type: heroSchema, default: () => ({}) },
   about: { type: aboutSchema, default: () => ({}) },
   skills: { type: skillsSchema, default: () => ({}) },

@@ -17,6 +17,18 @@ const getDefaultContent = () => ({
       { label: "Contact", id: "contact", visible: true },
     ],
   },
+  footer: {
+    title: "Esubalew",
+    copyright: "All rights reserved.",
+    socials: [
+      { platform: "GitHub", url: "https://github.com/esubalew7" },
+      { platform: "LinkedIn", url: "https://linkedin.com/in/esubalew-molla-7a584739b" },
+      { platform: "Telegram", url: "https://t.me/Esuman7" },
+      { platform: "Facebook", url: "https://facebook.com" },
+      { platform: "Twitter", url: "https://twitter.com" },
+      { platform: "Instagram", url: "https://instagram.com/esubalew_7_7" },
+    ],
+  },
   hero: {
     greeting: "Hello, I am",
     name: "Esubalew",
@@ -265,7 +277,7 @@ export const updateContent = async (req, res) => {
     }
 
     const allowedFields = [
-      "navbar", "hero", "about", "skills", "experience",
+      "navbar", "footer", "hero", "about", "skills", "experience",
       "testimonials", "socialLinks", "resume", "contactInfo",
       "terminal", "seo",
     ];

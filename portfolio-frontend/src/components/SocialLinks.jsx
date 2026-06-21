@@ -35,9 +35,10 @@ const platformIcons = {
 
 export { platformIcons };
 
-export const SocialIconRow = ({ className = "" }) => {
+export const SocialIconRow = ({ className = "", links: propLinks }) => {
   const content = useContentStore((s) => s.content);
-  const links = content?.socialLinks || [];
+
+  const links = propLinks || content?.socialLinks || [];
 
   return (
     <div className={`flex items-center gap-4 ${className}`}>

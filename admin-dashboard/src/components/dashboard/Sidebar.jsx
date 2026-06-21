@@ -19,6 +19,7 @@ import {
   Monitor,
   User as UserIcon,
   Menu as MenuIcon,
+  Copyright,
 } from 'lucide-react';
 import api from '../../utils/api';
 
@@ -36,6 +37,7 @@ const NAV_GROUPS = [
     expandable: true,
     items: [
       { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon },
+      { path: '/dashboard/content/footer', label: 'Footer Editor', icon: Copyright },
       { path: '/dashboard/content/hero', label: 'Hero Section', icon: Eye },
       { path: '/dashboard/content/about', label: 'About Section', icon: UserIcon },
       { path: '/dashboard/content/skills', label: 'Skills Section', icon: Code },
