@@ -29,15 +29,15 @@ const ExperienceSection = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
           <h2 className="text-3xl md:text-4xl font-extrabold text-neutral-900 dark:text-white">{experience?.title || "Experience"}</h2>
-          <p className="mt-2 text-neutral-600 dark:text-neutral-300 max-w-2xl">{experience?.subtitle || ""}</p>
+          <p className="mt-2 text-neutral-600 dark:text-neutral-300 max-w-2xl leading-relaxed">{experience?.subtitle || ""}</p>
         </div>
       </div>
 
       <div className="mt-10 grid gap-10">
         {categories.map((category, ci) => (
           <div key={ci}>
-            <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-4">{category.name}</h3>
-            <div className="space-y-6">
+            <h3 className="text-lg sm:text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-3 sm:mb-4">{category.name}</h3>
+            <div className="space-y-4 sm:space-y-6">
               {(category.items || []).map((item, idx) => (
                 <TimelineItem key={idx} {...item} />
               ))}
