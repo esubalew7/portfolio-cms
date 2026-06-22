@@ -11,7 +11,7 @@ const SECTIONS = [
   { path: '/dashboard/content/testimonials', label: 'Testimonials Section', icon: Star, desc: 'Client feedback, ratings, marquee display' },
   { path: '/dashboard/content/terminal', label: 'Terminal Section', icon: Monitor, desc: 'Interactive terminal commands and responses' },
   { path: '/dashboard/content/contact', label: 'Contact Section', icon: MessageSquare, desc: 'Contact info, form settings, success message' },
-  { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon, desc: 'Logo, resume button, navigation visibility. Brand name synced from Hero.' },
+  { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon, desc: 'Logo, section visibility toggles, navigation labels. Brand name synced from Hero.' },
   { path: '/dashboard/content/footer', label: 'Footer Editor', icon: Copyright, desc: 'Copyright text, social media links. Footer name synced from Hero.' },
   { path: '/dashboard/content/seo', label: 'SEO Settings', icon: SettingsIcon, desc: 'Meta tags, Open Graph, social previews' },
 ];

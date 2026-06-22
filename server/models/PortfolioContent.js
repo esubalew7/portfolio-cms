@@ -117,14 +117,22 @@ const seoSchema = new mongoose.Schema({
 const navItemSchema = new mongoose.Schema({
   label: { type: String, required: true },
   id: { type: String, required: true },
-  visible: { type: Boolean, default: true },
 }, { _id: false });
 
 const navbarSchema = new mongoose.Schema({
   logo: { type: String, default: "" },
-  resumeText: { type: String, default: "Resume" },
-  resumeUrl: { type: String, default: "/resume.pdf" },
   navItems: [navItemSchema],
+}, { _id: false });
+
+const sectionsSchema = new mongoose.Schema({
+  hero: { type: Boolean, default: true },
+  about: { type: Boolean, default: true },
+  skills: { type: Boolean, default: true },
+  projects: { type: Boolean, default: true },
+  experience: { type: Boolean, default: true },
+  testimonials: { type: Boolean, default: false },
+  terminal: { type: Boolean, default: false },
+  contact: { type: Boolean, default: true },
 }, { _id: false });
 
 const footerSocialSchema = new mongoose.Schema({
@@ -138,6 +146,7 @@ const footerSchema = new mongoose.Schema({
 }, { _id: false });
 
 const portfolioContentSchema = new mongoose.Schema({
+  sections: { type: sectionsSchema, default: () => ({}) },
   navbar: { type: navbarSchema, default: () => ({}) },
   footer: { type: footerSchema, default: () => ({}) },
   hero: { type: heroSchema, default: () => ({}) },

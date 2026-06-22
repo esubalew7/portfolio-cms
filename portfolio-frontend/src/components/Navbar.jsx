@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, FileDown } from 'lucide-react';
+import { Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useContentStore } from '../store/contentStore';
 import { platformIcons } from './SocialLinks';
@@ -78,14 +78,13 @@ export const Navbar = () => {
   const hero = content?.hero || {};
   const isHomePage = location.pathname === '/';
 
+  const sections = content?.sections || {};
   const brandName = hero.name || 'Esubalew';
   const logoUrl = navbar.logo;
-  const resumeText = navbar.resumeText || 'Resume';
-  const resumeUrl = navbar.resumeUrl || '/resume.pdf';
 
   const visibleNavItems = useMemo(() => {
-    return (navbar.navItems || []).filter((item) => item.visible !== false);
-  }, [navbar.navItems]);
+    return (navbar.navItems || []).filter((item) => sections[item.id] !== false);
+  }, [navbar.navItems, sections]);
 
   const activeIndex = useMemo(() => {
     if (!isHomePage) return -1;
@@ -114,7 +113,7 @@ export const Navbar = () => {
   const navigateToSection = useCallback(
     (e, sectionId, { isMobile = false } = {}) => {
       e?.preventDefault();
-      if (!isValidSectionId(sectionId)) return;
+      if (!isValidSectionId(sectionId, sections)) return;
 
       setIsMenuOpen(false);
       setActiveSection(sectionId);
@@ -126,7 +125,7 @@ export const Navbar = () => {
 
       runScroll(sectionId, isMobile ? MOBILE_MENU_CLOSE_MS : 0);
     },
-    [isHomePage, navigate, runScroll]
+    [isHomePage, navigate, runScroll, sections]
   );
 
   const handleMobileNavigate = useCallback(
@@ -137,7 +136,7 @@ export const Navbar = () => {
   // Scroll after cross-route navigation (e.g. /experience → Home section)
   useEffect(() => {
     const pending = location.state?.scrollTo;
-    if (!isHomePage || !pending || !isValidSectionId(pending)) return;
+    if (!isHomePage || !pending || !isValidSectionId(pending, sections)) return;
 
     const timer = setTimeout(() => {
       scrollToSectionById(pending);
@@ -146,14 +145,14 @@ export const Navbar = () => {
     }, 150);
 
     return () => clearTimeout(timer);
-  }, [isHomePage, location.pathname, location.state, navigate]);
+  }, [isHomePage, location.pathname, location.state, navigate, sections]);
 
   // Handle direct hash URLs: /#projects
   useEffect(() => {
     if (!isHomePage || !location.hash) return;
 
     const sectionId = location.hash.replace('#', '');
-    if (!isValidSectionId(sectionId)) return;
+    if (!isValidSectionId(sectionId, sections)) return;
 
     const timer = setTimeout(() => {
       scrollToSectionById(sectionId);
@@ -161,7 +160,7 @@ export const Navbar = () => {
     }, 150);
 
     return () => clearTimeout(timer);
-  }, [isHomePage, location.hash]);
+  }, [isHomePage, location.hash, sections]);
 
   // Active section tracking via IntersectionObserver (re-bind when home mounts)
   useEffect(() => {
@@ -270,24 +269,7 @@ export const Navbar = () => {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          {resumeUrl && (
-            <motion.a
-              href={resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative p-2.5 rounded-full border border-neutral-200/80 dark:border-neutral-800/80 bg-white/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-sm dark:shadow-[0_0_12px_rgba(255,255,255,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 overflow-hidden group cursor-pointer"
-              aria-label={resumeText}
-            >
-              <span className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative z-10">
-                <FileDown className="w-4 h-4" />
-              </div>
-            </motion.a>
-          )}
-
+       <div className="hidden md:flex items-center gap-3">
           <motion.button
             onClick={toggleTheme}
             whileHover={{ scale: 1.05, rotate: 15 }}
@@ -317,19 +299,6 @@ export const Navbar = () => {
         </div>
 
         <div className="md:hidden flex items-center gap-2">
-          {resumeUrl && (
-            <motion.a
-              href={resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileTap={{ scale: 0.92 }}
-              className="p-2.5 rounded-full border border-neutral-200/80 dark:border-neutral-800/80 bg-white/80 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
-              aria-label={resumeText}
-            >
-              <FileDown className="w-4 h-4" />
-            </motion.a>
-          )}
-
           <motion.button
             onClick={toggleTheme}
             whileTap={{ scale: 0.92 }}
@@ -396,19 +365,6 @@ export const Navbar = () => {
                 />
               ))}
 
-              <div className="h-[1px] bg-neutral-200/50 dark:bg-neutral-800/50 w-full my-2" />
-
-              {resumeUrl && (
-                <a
-                  href={resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 py-3 px-5 rounded-full text-[15px] font-medium tracking-wide text-neutral-700 dark:text-neutral-300 active:bg-neutral-100 dark:active:bg-neutral-900/60 transition-colors"
-                >
-                  <FileDown className="w-4 h-4" />
-                  {resumeText}
-                </a>
-              )}
             </div>
 
             <div className="flex justify-center items-center py-4.5 border-t border-neutral-200/30 dark:border-neutral-800/30">

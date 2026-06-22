@@ -34,4 +34,11 @@ export const scrollToSectionById = (sectionId, behavior = 'smooth') => {
   return true;
 };
 
-export const isValidSectionId = (id) => SECTION_IDS.includes(id);
+export const isValidSectionId = (id, sections = null) => {
+  if (!SECTION_IDS.includes(id)) return false;
+  if (sections && sections[id] === false) return false;
+  return true;
+};
+
+export const getVisibleSectionIds = (sections = {}) =>
+  SECTION_IDS.filter((id) => sections[id] !== false);

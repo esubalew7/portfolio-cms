@@ -4,17 +4,25 @@ import { createNotification } from "../services/notificationService.js";
 import { propagateHeroToDependents } from "../services/contentPropagationService.js";
 
 const getDefaultContent = () => ({
+  sections: {
+    hero: true,
+    about: true,
+    skills: true,
+    projects: true,
+    experience: true,
+    testimonials: false,
+    terminal: false,
+    contact: true,
+  },
   navbar: {
     logo: "",
-    resumeText: "Resume",
-    resumeUrl: "/resume.pdf",
     navItems: [
-      { label: "Home", id: "home", visible: true },
-      { label: "About", id: "about", visible: true },
-      { label: "Skills", id: "skills", visible: true },
-      { label: "Projects", id: "projects", visible: true },
-      { label: "Experience", id: "experience", visible: true },
-      { label: "Contact", id: "contact", visible: true },
+      { label: "Home", id: "home" },
+      { label: "About", id: "about" },
+      { label: "Skills", id: "skills" },
+      { label: "Projects", id: "projects" },
+      { label: "Experience", id: "experience" },
+      { label: "Contact", id: "contact" },
     ],
   },
   footer: {
@@ -276,7 +284,7 @@ export const updateContent = async (req, res) => {
     }
 
     const allowedFields = [
-      "navbar", "footer", "hero", "about", "skills", "experience",
+      "sections", "navbar", "footer", "hero", "about", "skills", "experience",
       "testimonials", "socialLinks", "resume", "contactInfo",
       "terminal", "seo",
     ];

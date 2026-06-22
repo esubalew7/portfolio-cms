@@ -8,6 +8,8 @@ const SECTION_EVENTS = [
   'content:experience:update',
   'content:testimonials:update',
   'content:contact:update',
+  'content:navbar:update',
+  'content:sections:update',
 ];
 
 export default function useRealtimeContent(onContentEvent) {

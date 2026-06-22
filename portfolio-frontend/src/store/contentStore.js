@@ -3,10 +3,18 @@ import { contentService } from '../services/contentService';
 
 const initialState = {
   content: {
+    sections: {
+      hero: true,
+      about: true,
+      skills: true,
+      projects: true,
+      experience: true,
+      testimonials: false,
+      terminal: false,
+      contact: true,
+    },
     navbar: {
       logo: '',
-      resumeText: 'Resume',
-      resumeUrl: '',
       navItems: [],
     },
     footer: {

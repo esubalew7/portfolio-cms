@@ -1,22 +1,66 @@
+import { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { useContentSection } from '../../hooks/useContentSection';
+import { useToast } from '../../context/ToastContext';
 import Card from '../../components/ui/Card';
 import SectionHeader from '../../components/ui/SectionHeader';
 import FormInput from '../../components/ui/FormInput';
 import ImageUploader from '../../components/ui/ImageUploader';
+import api from '../../utils/api';
 
 const ALL_SECTIONS = [
+  { id: 'hero', label: 'Hero' },
+  { id: 'about', label: 'About' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'testimonials', label: 'Testimonials' },
+  { id: 'terminal', label: 'Terminal' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
   { id: 'about', label: 'About' },
   { id: 'skills', label: 'Skills' },
   { id: 'projects', label: 'Projects' },
   { id: 'experience', label: 'Experience' },
-  { id: 'terminal', label: 'Terminal' },
   { id: 'contact', label: 'Contact' },
 ];
 
+const Switch = ({ checked, onChange, id }) => (
+  <label htmlFor={id} className="relative inline-flex items-center cursor-pointer">
+    <input
+      type="checkbox"
+      id={id}
+      checked={checked}
+      onChange={onChange}
+      className="sr-only peer"
+    />
+    <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
+  </label>
+);
+
 const NavbarEditor = () => {
-  const { data, allContent, loading, saving, error, update, save, refetch } = useContentSection('navbar');
+  const { showToast } = useToast();
+  const { data, allContent, loading, saving, error, update, refetch } = useContentSection('navbar');
+  const [sections, setSections] = useState({
+    hero: true,
+    about: true,
+    skills: true,
+    projects: true,
+    experience: true,
+    testimonials: false,
+    terminal: false,
+    contact: true,
+  });
+  const [savingCustom, setSavingCustom] = useState(false);
+
+  useEffect(() => {
+    if (allContent?.sections) {
+      setSections((prev) => ({ ...prev, ...allContent.sections }));
+    }
+  }, [allContent]);
 
   if (loading) {
     return (
@@ -49,17 +93,10 @@ const NavbarEditor = () => {
 
   const currentNavItems = d.navItems || [];
 
-  const mergedNavItems = ALL_SECTIONS.map((section) => {
+  const mergedNavItems = NAV_ITEMS.map((section) => {
     const existing = currentNavItems.find((item) => item.id === section.id);
-    return existing || { id: section.id, label: section.label, visible: true };
+    return existing || { id: section.id, label: section.label };
   });
-
-  const toggleVisibility = (id) => {
-    const updated = mergedNavItems.map((item) =>
-      item.id === id ? { ...item, visible: !item.visible } : item
-    );
-    set('navItems', updated);
-  };
 
   const updateLabel = (id, label) => {
     const updated = mergedNavItems.map((item) =>
@@ -68,13 +105,29 @@ const NavbarEditor = () => {
     set('navItems', updated);
   };
 
+  const toggleSection = (id) => {
+    setSections((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleSave = async () => {
+    setSavingCustom(true);
+    try {
+      await api.put('/api/content', { navbar: d, sections });
+      showToast('Navbar saved!');
+    } catch (err) {
+      showToast('Failed to save: ' + (err.message || 'Unknown error'), 'error');
+    } finally {
+      setSavingCustom(false);
+    }
+  };
+
   return (
     <div>
       <SectionHeader
         title="Navbar Editor"
-        subtitle="Control logo, resume link, and navigation visibility. Brand name is synced from Hero section."
-        onSave={save}
-        saving={saving}
+        subtitle="Control branding, section visibility, and navigation labels."
+        onSave={handleSave}
+        saving={savingCustom}
       />
 
       <div className="space-y-6">
@@ -101,25 +154,47 @@ const NavbarEditor = () => {
         </Card>
 
         <Card>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Resume Button</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormInput
-              label="Button Text"
-              value={d.resumeText || ''}
-              onChange={(e) => set('resumeText', e.target.value)}
-            />
-            <FormInput
-              label="Resume URL"
-              value={d.resumeUrl || ''}
-              onChange={(e) => set('resumeUrl', e.target.value)}
-            />
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Section Visibility</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Toggle sections to show or hide them on the frontend. Hidden sections are removed from the navbar, mobile menu, scroll navigation, and page rendering.
+          </p>
+          <div className="space-y-2">
+            {ALL_SECTIONS.map((section) => (
+              <div
+                key={section.id}
+                className="flex items-center justify-between p-3.5 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
+              >
+                <div className="flex items-center gap-3">
+                  <Switch
+                    id={`section-${section.id}`}
+                    checked={sections[section.id] !== false}
+                    onChange={() => toggleSection(section.id)}
+                  />
+                  <label
+                    htmlFor={`section-${section.id}`}
+                    className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer select-none"
+                  >
+                    {section.label}
+                  </label>
+                </div>
+                <span
+                  className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                    sections[section.id] !== false
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                  }`}
+                >
+                  {sections[section.id] !== false ? 'Visible' : 'Hidden'}
+                </span>
+              </div>
+            ))}
           </div>
         </Card>
 
         <Card>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Navigation Visibility</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Navigation Labels</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            Toggle sections to show or hide them in the navbar. Edit display labels.
+            Customize the display labels for navigation links.
           </p>
           <div className="space-y-3">
             {mergedNavItems.map((item) => (
@@ -127,15 +202,6 @@ const NavbarEditor = () => {
                 key={item.id}
                 className="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
               >
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={item.visible !== false}
-                    onChange={() => toggleVisibility(item.id)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-9 h-5 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600" />
-                </label>
                 <div className="flex-1">
                   <input
                     type="text"
