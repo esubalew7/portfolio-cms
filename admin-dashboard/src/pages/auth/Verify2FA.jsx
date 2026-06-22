@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Shield, AlertCircle, Loader2, Smartphone, RefreshCw, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Shield, AlertCircle, Loader2, Smartphone, RefreshCw, ArrowLeft, CheckCircle2, Key } from 'lucide-react';
 import api from '../../utils/api';
 
 const CODE_LENGTH = 6;
@@ -16,6 +16,7 @@ const Verify2FA = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [countdown, setCountdown] = useState(300);
+  const [useRecoveryCode, setUseRecoveryCode] = useState(false);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ const Verify2FA = () => {
       return;
     }
     inputRef.current?.focus();
-  }, [tempToken, navigate]);
+  }, [tempToken, navigate, useRecoveryCode]);
 
   useEffect(() => {
     if (countdown <= 0) {
@@ -44,15 +45,28 @@ const Verify2FA = () => {
   };
 
   const handleCodeChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, CODE_LENGTH);
+    let value = e.target.value;
+    if (!useRecoveryCode) {
+      value = value.replace(/\D/g, '').slice(0, CODE_LENGTH);
+    } else {
+      value = value.replace(/[^0-9-]/g, '').slice(0, 5);
+      if (value.length === 3 && !value.includes('-')) {
+        value = value.slice(0, 2) + '-' + value.slice(2);
+      }
+    }
     setCode(value);
     setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (code.length !== CODE_LENGTH) {
-      setError(`Please enter a ${CODE_LENGTH}-digit code`);
+
+    const codeValid = useRecoveryCode
+      ? /^\d{2}-\d{2}$/.test(code)
+      : code.length === CODE_LENGTH;
+
+    if (!codeValid) {
+      setError(useRecoveryCode ? 'Enter a valid recovery code (XX-XX)' : `Please enter a ${CODE_LENGTH}-digit code`);
       return;
     }
 
@@ -93,7 +107,9 @@ const Verify2FA = () => {
             Two-Factor Authentication
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Enter the 6-digit code from your authenticator app
+            {useRecoveryCode
+              ? 'Enter one of your recovery codes'
+              : 'Enter the 6-digit code from your authenticator app'}
           </p>
         </div>
 
@@ -114,24 +130,30 @@ const Verify2FA = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                  <Smartphone className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                  {useRecoveryCode ? (
+                    <Key className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                  ) : (
+                    <Smartphone className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                  )}
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 text-center">
-                  Authentication Code
+                  {useRecoveryCode ? 'Recovery Code' : 'Authentication Code'}
                 </label>
                 <div className="flex justify-center">
                   <input
                     ref={inputRef}
                     type="text"
-                    inputMode="numeric"
+                    inputMode={useRecoveryCode ? 'text' : 'numeric'}
                     autoComplete="one-time-code"
                     value={code}
                     onChange={handleCodeChange}
-                    placeholder="000000"
-                    className={`w-48 text-center text-2xl font-mono tracking-[0.5em] px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${
+                    placeholder={useRecoveryCode ? 'XX-XX' : '000000'}
+                    className={`text-center text-2xl font-mono tracking-[0.5em] px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${
+                      useRecoveryCode ? 'w-36' : 'w-48'
+                    } ${
                       error
                         ? 'border-red-300 dark:border-red-700'
                         : 'border-gray-300 dark:border-gray-600'
@@ -140,7 +162,9 @@ const Verify2FA = () => {
                   />
                 </div>
                 <p className="text-xs text-gray-400 text-center mt-2">
-                  Enter the {CODE_LENGTH}-digit code from Google Authenticator
+                  {useRecoveryCode
+                    ? 'Each recovery code can only be used once'
+                    : 'Enter the code from Google Authenticator'}
                 </p>
               </div>
 
@@ -155,7 +179,7 @@ const Verify2FA = () => {
 
               <button
                 type="submit"
-                disabled={isVerifying || code.length !== CODE_LENGTH}
+                disabled={isVerifying}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-blue-500/20"
               >
                 {isVerifying ? (
@@ -169,12 +193,14 @@ const Verify2FA = () => {
               </button>
 
               <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <RefreshCw className={`h-3.5 w-3.5 ${countdown < 60 ? 'text-red-400' : ''}`} />
-                  <span className={countdown < 60 ? 'text-red-400 font-medium' : ''}>
-                    {formatTime(countdown)}
-                  </span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => { setUseRecoveryCode(!useRecoveryCode); setCode(''); setError(''); }}
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1.5 transition-colors"
+                >
+                  <Key className="h-3.5 w-3.5" />
+                  {useRecoveryCode ? 'Use authenticator code' : 'Use recovery code'}
+                </button>
 
                 <button
                   type="button"
@@ -185,6 +211,15 @@ const Verify2FA = () => {
                   Back to login
                 </button>
               </div>
+
+              {!useRecoveryCode && (
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+                  <RefreshCw className={`h-3.5 w-3.5 ${countdown < 60 ? 'text-red-400' : ''}`} />
+                  <span className={countdown < 60 ? 'text-red-400 font-medium' : ''}>
+                    {formatTime(countdown)}
+                  </span>
+                </div>
+              )}
             </form>
           )}
         </div>

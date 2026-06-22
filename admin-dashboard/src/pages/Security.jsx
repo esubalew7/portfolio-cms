@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Shield, Smartphone, CheckCircle2, AlertTriangle, XCircle, Loader2, Copy, Check, RefreshCw, Download, Key, ArrowLeft, Lock } from 'lucide-react';
+import {
+  Shield, Smartphone, CheckCircle2, AlertTriangle, XCircle,
+  Loader2, Copy, Check, RefreshCw, Download, Key, ArrowLeft, Lock, Eye, EyeOff,
+} from 'lucide-react';
 import api from '../utils/api';
 import Card from '../components/ui/Card';
 
@@ -7,10 +10,13 @@ const SetupFlow = ({ onBack, onComplete }) => {
   const [step, setStep] = useState('secret');
   const [secret, setSecret] = useState('');
   const [qrCode, setQrCode] = useState('');
+  const [recoveryCodes, setRecoveryCodes] = useState([]);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [codesCopied, setCodesCopied] = useState(false);
+  const [codesVisible, setCodesVisible] = useState(false);
 
   const handleSetup = useCallback(async () => {
     setLoading(true);
@@ -19,6 +25,7 @@ const SetupFlow = ({ onBack, onComplete }) => {
       const data = await api.post('/api/auth/2fa/setup');
       setSecret(data.data.secret);
       setQrCode(data.data.qrCode);
+      setRecoveryCodes(data.data.recoveryCodes || []);
       setStep('qr');
     } catch (err) {
       setError(err.message || 'Failed to start 2FA setup');
@@ -37,7 +44,6 @@ const SetupFlow = ({ onBack, onComplete }) => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback: select the text
       const el = document.createElement('textarea');
       el.value = secret;
       document.body.appendChild(el);
@@ -46,6 +52,23 @@ const SetupFlow = ({ onBack, onComplete }) => {
       document.body.removeChild(el);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleCopyCodes = async () => {
+    try {
+      await navigator.clipboard.writeText(recoveryCodes.join('\n'));
+      setCodesCopied(true);
+      setTimeout(() => setCodesCopied(false), 2000);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = recoveryCodes.join('\n');
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      setCodesCopied(true);
+      setTimeout(() => setCodesCopied(false), 2000);
     }
   };
 
@@ -59,7 +82,6 @@ const SetupFlow = ({ onBack, onComplete }) => {
     try {
       await api.post('/api/auth/2fa/verify-setup', { token: code });
       setStep('success');
-      setTimeout(() => onComplete(), 1500);
     } catch (err) {
       setError(err.message || 'Invalid code. Please try again.');
     } finally {
@@ -78,12 +100,73 @@ const SetupFlow = ({ onBack, onComplete }) => {
 
   if (step === 'success') {
     return (
-      <div className="text-center py-8">
-        <div className="mx-auto h-16 w-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
-          <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+      <div className="space-y-6">
+        <div className="text-center py-4">
+          <div className="mx-auto h-16 w-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+            <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+          </div>
+          <p className="text-lg font-semibold text-gray-900 dark:text-white">2FA Enabled Successfully!</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Your account is now more secure.</p>
         </div>
-        <p className="text-lg font-semibold text-gray-900 dark:text-white">2FA Enabled Successfully!</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Your account is now more secure.</p>
+
+        {recoveryCodes.length > 0 && (
+          <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-amber-700 dark:text-amber-400 mb-2">
+                  Save Your Recovery Codes
+                </p>
+                <p className="text-xs text-amber-600 dark:text-amber-500 mb-3">
+                  These codes can be used to access your account if you lose your authenticator device.
+                  Store them somewhere safe. Each code can only be used once.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 mb-3">
+              <button
+                type="button"
+                onClick={() => setCodesVisible(!codesVisible)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors"
+              >
+                {codesVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                {codesVisible ? 'Hide codes' : 'Show codes'}
+              </button>
+              <button
+                type="button"
+                onClick={handleCopyCodes}
+                className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors"
+              >
+                {codesCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                {codesCopied ? 'Copied!' : 'Copy all'}
+              </button>
+            </div>
+
+            {codesVisible && (
+              <div className="grid grid-cols-2 gap-2">
+                {recoveryCodes.map((rc, i) => (
+                  <div
+                    key={i}
+                    className="font-mono text-sm text-center py-2 px-3 rounded-lg bg-white dark:bg-gray-900 border border-amber-200 dark:border-amber-700 text-gray-900 dark:text-white"
+                  >
+                    {rc}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={onComplete}
+            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/20"
+          >
+            Done
+          </button>
+        </div>
       </div>
     );
   }
@@ -124,7 +207,7 @@ const SetupFlow = ({ onBack, onComplete }) => {
           )}
         </div>
         <p className="text-xs text-gray-400 text-center mt-2">
-          Scan this QR code with Google Authenticator
+          Scan this QR code with Google Authenticator, Authy, or Microsoft Authenticator
         </p>
       </div>
 
@@ -197,19 +280,176 @@ const SetupFlow = ({ onBack, onComplete }) => {
   );
 };
 
+const RecoveryCodesPanel = ({ onClose }) => {
+  const [codes, setCodes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [codesVisible, setCodesVisible] = useState(false);
+  const [codesCopied, setCodesCopied] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+
+  const fetchCodes = useCallback(async () => {
+    try {
+      const data = await api.post('/api/auth/2fa/recovery-codes/regenerate', { token: otpCode });
+      setCodes(data.data.recoveryCodes || []);
+      setOtpCode('');
+      setCodesVisible(true);
+    } catch (err) {
+      setError(err.message || 'Failed to regenerate codes');
+    } finally {
+      setLoading(false);
+      setRegenerating(false);
+    }
+  }, [otpCode]);
+
+  const handleRegenerate = async () => {
+    if (otpCode.length !== 6) {
+      setError('Please enter a 6-digit code');
+      return;
+    }
+    setRegenerating(true);
+    setError('');
+    await fetchCodes();
+  };
+
+  const handleCopyCodes = async () => {
+    try {
+      await navigator.clipboard.writeText(codes.join('\n'));
+      setCodesCopied(true);
+      setTimeout(() => setCodesCopied(false), 2000);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = codes.join('\n');
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      setCodesCopied(true);
+      setTimeout(() => setCodesCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div className="mt-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+      {codes.length === 0 && !loading ? (
+        <>
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Regenerate Recovery Codes</h4>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+            Enter a code from your authenticator app to confirm your identity and generate new recovery codes.
+          </p>
+          <div className="flex items-center gap-2 mb-3">
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={otpCode}
+              onChange={(e) => { setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError(''); }}
+              placeholder="000000"
+              className="w-28 text-center text-lg font-mono tracking-[0.3em] px-3 py-2 border-2 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+              disabled={regenerating}
+            />
+            <button
+              type="button"
+              onClick={handleRegenerate}
+              disabled={regenerating || otpCode.length !== 6}
+              className="px-4 py-2 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all"
+            >
+              {regenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Regenerate'}
+            </button>
+          </div>
+          {error && (
+            <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+              <XCircle className="h-3.5 w-3.5" />
+              {error}
+            </p>
+          )}
+        </>
+      ) : loading ? (
+        <div className="flex items-center justify-center py-4">
+          <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+        </div>
+      ) : (
+        <>
+          <div className="flex items-start gap-3 mb-3">
+            <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+                New Recovery Codes Generated
+              </p>
+              <p className="text-xs text-amber-600 dark:text-amber-500">
+                Previous codes are no longer valid. Save these codes somewhere safe.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 mb-3">
+            <button
+              type="button"
+              onClick={() => setCodesVisible(!codesVisible)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors"
+            >
+              {codesVisible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              {codesVisible ? 'Hide codes' : 'Show codes'}
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyCodes}
+              className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors"
+            >
+              {codesCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {codesCopied ? 'Copied!' : 'Copy all'}
+            </button>
+          </div>
+
+          {codesVisible && (
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              {codes.map((rc, i) => (
+                <div
+                  key={i}
+                  className="font-mono text-sm text-center py-2 px-3 rounded-lg bg-white dark:bg-gray-800 border border-amber-200 dark:border-amber-700 text-gray-900 dark:text-white"
+                >
+                  {rc}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors"
+          >
+            Done
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
 const Security = () => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [recoveryCodesCount, setRecoveryCodesCount] = useState(0);
+  const [lastVerifiedAt, setLastVerifiedAt] = useState(null);
+  const [isLocked, setIsLocked] = useState(false);
+  const [lockedUntil, setLockedUntil] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showSetup, setShowSetup] = useState(false);
   const [showDisableConfirm, setShowDisableConfirm] = useState(false);
   const [disableCode, setDisableCode] = useState('');
   const [disabling, setDisabling] = useState(false);
   const [disableError, setDisableError] = useState('');
+  const [showRecoveryPanel, setShowRecoveryPanel] = useState(false);
 
   const fetchStatus = useCallback(async () => {
     try {
       const data = await api.get('/api/auth/2fa/status');
       setTwoFactorEnabled(data.data.twoFactorEnabled);
+      setRecoveryCodesCount(data.data.recoveryCodesCount || 0);
+      setLastVerifiedAt(data.data.last2FAVerifiedAt);
+      setIsLocked(data.data.isLocked || false);
+      setLockedUntil(data.data.lockedUntil);
     } catch {
       // ignore
     } finally {
@@ -231,6 +471,7 @@ const Security = () => {
     try {
       await api.post('/api/auth/2fa/disable', { token: disableCode });
       setTwoFactorEnabled(false);
+      setRecoveryCodesCount(0);
       setShowDisableConfirm(false);
       setDisableCode('');
     } catch (err) {
@@ -267,6 +508,20 @@ const Security = () => {
                 Add an extra layer of security to your account by requiring a one-time code from your authenticator app.
               </p>
 
+              {isLocked && (
+                <div className="mt-4 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                  <div className="flex items-start gap-3">
+                    <Lock className="h-5 w-5 text-red-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-red-700 dark:text-red-400">Account Temporarily Locked</p>
+                      <p className="text-xs text-red-600 dark:text-red-500 mt-0.5">
+                        Too many failed 2FA attempts. Try again later.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {showSetup ? (
                 <div className="mt-6">
                   <SetupFlow
@@ -276,12 +531,12 @@ const Security = () => {
                     }}
                     onComplete={() => {
                       setShowSetup(false);
-                      setTwoFactorEnabled(true);
+                      fetchStatus();
                     }}
                   />
                 </div>
               ) : (
-                <div className="mt-6">
+                <div className="mt-6 space-y-4">
                   <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                       twoFactorEnabled
@@ -322,6 +577,35 @@ const Security = () => {
                       </button>
                     )}
                   </div>
+
+                  {twoFactorEnabled && (
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center gap-3">
+                        <Key className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            Recovery Codes
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {recoveryCodesCount > 0
+                              ? `${recoveryCodesCount} code(s) remaining`
+                              : 'No recovery codes remaining'}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowRecoveryPanel(!showRecoveryPanel)}
+                        className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                      >
+                        {showRecoveryPanel ? 'Close' : 'Manage'}
+                      </button>
+                    </div>
+                  )}
+
+                  {showRecoveryPanel && twoFactorEnabled && (
+                    <RecoveryCodesPanel onClose={() => { setShowRecoveryPanel(false); fetchStatus(); }} />
+                  )}
                 </div>
               )}
             </div>
@@ -374,6 +658,15 @@ const Security = () => {
           </Card>
         )}
 
+        {lastVerifiedAt && (
+          <Card>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Last 2FA Verification</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {new Date(lastVerifiedAt).toLocaleString()}
+            </p>
+          </Card>
+        )}
+
         <Card>
           <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Security Tips</h2>
           <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
@@ -388,6 +681,10 @@ const Security = () => {
             <li className="flex items-start gap-3">
               <Download className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
               <span>Keep your authenticator app backed up to avoid being locked out.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <Key className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+              <span>Save your recovery codes in a secure location. They are your last resort.</span>
             </li>
           </ul>
         </Card>

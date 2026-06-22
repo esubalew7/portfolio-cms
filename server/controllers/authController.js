@@ -169,6 +169,24 @@ export const login = async (req, res) => {
         }
 
         // -------------------------------
+        // TWO-FACTOR AUTHENTICATION CHECK
+        // -------------------------------
+        if (user.twoFactorEnabled) {
+            const tempToken = jwt.sign(
+              { id: user._id, purpose: '2fa' },
+              process.env.JWT_SECRET,
+              { expiresIn: '5m' }
+            );
+
+            return res.status(200).json({
+              success: true,
+              requiresTwoFactor: true,
+              tempToken,
+              message: '2FA verification required',
+            });
+        }
+
+        // -------------------------------
         // GENERATE TOKEN
         // -------------------------------
         const token = jwt.sign(

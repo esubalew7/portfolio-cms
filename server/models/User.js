@@ -47,6 +47,22 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: '',
         },
+        recoveryCodes: {
+            type: [String],
+            default: [],
+        },
+        last2FAVerifiedAt: {
+            type: Date,
+            default: null,
+        },
+        twoFactorAttempts: {
+            type: Number,
+            default: 0,
+        },
+        twoFactorLockedUntil: {
+            type: Date,
+            default: null,
+        },
     },
     {
         timestamps: true, // adds createdAt & updatedAt automatically

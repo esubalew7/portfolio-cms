@@ -100,13 +100,19 @@ const Login = () => {
     setLoginError('');
 
     try {
-      await api.post('/api/auth/login', {
+      const data = await api.post('/api/auth/login', {
         email: formData.email,
         password: formData.password
       });
 
-      // Server has set the HttpOnly cookie; navigate to the intended destination.
-      navigate(from, { replace: true });
+      if (data.requiresTwoFactor && data.tempToken) {
+        navigate('/verify-2fa', {
+          state: { tempToken: data.tempToken, from },
+          replace: true,
+        });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       console.error('Login error:', error);
       setLoginError(error.message || 'Login failed. Please try again.');
