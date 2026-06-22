@@ -21,6 +21,7 @@ import {
   Menu as MenuIcon,
   Copyright,
   Shield,
+  Activity,
 } from 'lucide-react';
 import api from '../../utils/api';
 
@@ -30,6 +31,7 @@ const NAV_GROUPS = [
     items: [
       { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
       { path: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
+      { path: '/dashboard/metrics', label: 'Metrics', icon: Activity },
       { path: '/dashboard/messages', label: 'Messages', icon: MessageSquare },
     ],
   },
