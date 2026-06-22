@@ -70,3 +70,45 @@ export async function getSystemHealth(req, res) {
     });
   }
 }
+
+export async function getOverviewMetrics(req, res) {
+  try {
+    const data = await metricsService.getOverviewMetrics();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('[Metrics] Overview error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch overview metrics',
+      error: error.message,
+    });
+  }
+}
+
+export async function getStorageMetrics(req, res) {
+  try {
+    const data = await metricsService.getStorageMetrics();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('[Metrics] Storage error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch storage metrics',
+      error: error.message,
+    });
+  }
+}
+
+export async function getSystemMetrics(req, res) {
+  try {
+    const data = await metricsService.getSystemMetrics();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('[Metrics] System error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch system metrics',
+      error: error.message,
+    });
+  }
+}

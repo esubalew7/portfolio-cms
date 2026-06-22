@@ -3,6 +3,8 @@ import os from 'os';
 import cloudinary from '../config/cloudinary.js';
 import Project from '../models/Project.js';
 import PortfolioContent from '../models/PortfolioContent.js';
+import Contact from '../models/Contact.js';
+import Notification from '../models/Notification.js';
 
 const cache = new Map();
 
@@ -227,6 +229,106 @@ export async function getSystemHealth() {
     arch: os.arch(),
     hostname: os.hostname(),
     environment: process.env.NODE_ENV || 'development',
+  };
+
+  return result;
+}
+
+export async function getOverviewMetrics() {
+  const cached = getCached('overviewMetrics');
+  if (cached) return cached;
+
+  const [cloudMetrics, mongoMetrics, healthData, projects] = await Promise.all([
+    getCloudinaryMetrics().catch(() => null),
+    getMongoDBMetrics().catch(() => null),
+    getSystemHealth().catch(() => null),
+    Project.countDocuments().catch(() => 0),
+  ]);
+
+  const cloudStorage = cloudMetrics?.storage?.used || 0;
+  const mongoStorage = mongoMetrics?.databaseSize || 0;
+  const totalStorageBytes = cloudStorage + mongoStorage;
+
+  const totalMedia = cloudMetrics?.assets?.total || 0;
+  const serverStatus = healthData?.status || 'healthy';
+
+  const result = {
+    totalStorage: formatBytes(totalStorageBytes),
+    totalStorageBytes,
+    totalProjects: projects,
+    totalMediaFiles: totalMedia,
+    serverStatus,
+    cloudinaryUsed: cloudMetrics?.storage?.usedFormatted || '0 B',
+    mongoDbSize: mongoMetrics?.databaseSizeFormatted || '0 B',
+  };
+
+  setCache('overviewMetrics', result, 30000);
+  return result;
+}
+
+export async function getStorageMetrics() {
+  const cached = getCached('storageMetrics');
+  if (cached) return cached;
+
+  const [cloudMetrics, mongoMetrics, storageBreakdown] = await Promise.all([
+    getCloudinaryMetrics().catch(() => null),
+    getMongoDBMetrics().catch(() => null),
+    getStorageBreakdown().catch(() => null),
+  ]);
+
+  const result = {
+    cloudinary: cloudMetrics ? {
+      used: cloudMetrics.storage.usedFormatted,
+      limit: cloudMetrics.storage.limitFormatted,
+      percent: cloudMetrics.storage.usagePercent,
+      images: cloudMetrics.assets.images,
+      videos: cloudMetrics.assets.videos,
+      total: cloudMetrics.assets.total,
+    } : null,
+    mongodb: mongoMetrics ? {
+      dataSize: mongoMetrics.databaseSizeFormatted,
+      storageSize: mongoMetrics.storageSizeFormatted,
+      collections: mongoMetrics.collections,
+      documents: mongoMetrics.totalDocuments,
+    } : null,
+    projectAssets: storageBreakdown ? {
+      totalSize: storageBreakdown.totalFormatted,
+      totalFiles: storageBreakdown.totalAssets,
+      sections: storageBreakdown.sections,
+    } : null,
+  };
+
+  setCache('storageMetrics', result, 30000);
+  return result;
+}
+
+export async function getSystemMetrics() {
+  const healthData = await getSystemHealth();
+
+  const cpus = os.cpus();
+  const cpuLoad = os.loadavg ? os.loadavg()[0] : 0;
+  const cpuPercent = cpuLoad > 0 ? parseFloat(((cpuLoad / cpus.length) * 100).toFixed(1)) : 0;
+
+  const result = {
+    cpu: {
+      percent: Math.min(cpuPercent, 100),
+      cores: cpus.length,
+      model: cpus[0]?.model || 'N/A',
+      loadAverage: cpuLoad.toFixed(2),
+    },
+    memory: {
+      percent: healthData.systemMemory.percent,
+      used: healthData.systemMemory.usedFormatted,
+      total: healthData.systemMemory.totalFormatted,
+      free: healthData.systemMemory.freeFormatted,
+    },
+    uptime: {
+      seconds: healthData.uptime,
+      formatted: healthData.uptimeFormatted,
+    },
+    status: healthData.status,
+    nodeVersion: healthData.nodeVersion,
+    environment: healthData.environment,
   };
 
   return result;

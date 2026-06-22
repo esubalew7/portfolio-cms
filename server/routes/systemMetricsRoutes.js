@@ -7,6 +7,9 @@ import {
   getApiPerformance,
   getStorageBreakdown,
   getSystemHealth,
+  getOverviewMetrics,
+  getStorageMetrics,
+  getSystemMetrics,
 } from '../controllers/systemMetricsController.js';
 
 const router = express.Router();
@@ -20,5 +23,8 @@ router.get('/mongodb', getMongoDBMetrics);
 router.get('/api-performance', getApiPerformance);
 router.get('/storage-breakdown', getStorageBreakdown);
 router.get('/health', getSystemHealth);
+router.get('/overview', getOverviewMetrics);
+router.get('/storage', getStorageMetrics);
+router.get('/system', getSystemMetrics);
 
 export default router;
