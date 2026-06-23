@@ -23,6 +23,7 @@ import {
   Shield,
   Activity,
   Share2,
+  ImageIcon,
 } from 'lucide-react';
 import api from '../../utils/api';
 
@@ -42,6 +43,7 @@ const NAV_GROUPS = [
     items: [
       { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon },
       { path: '/dashboard/content/social-links', label: 'Social Links', icon: Share2 },
+      { path: '/dashboard/content/media-library', label: 'Media Library', icon: ImageIcon },
       { path: '/dashboard/content/footer', label: 'Footer Editor', icon: Copyright },
       { path: '/dashboard/content/hero', label: 'Hero Section', icon: Eye },
       { path: '/dashboard/content/about', label: 'About Section', icon: UserIcon },

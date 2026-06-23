@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback } from 'react';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, ImageIcon } from 'lucide-react';
 import api from '../../utils/api';
+import MediaSelectorModal from '../dashboard/media/MediaSelectorModal';
 
 const ImageUploader = ({ value, onChange, label, error }) => {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(value || null);
   const [dragOver, setDragOver] = useState(false);
+  const [showMediaLib, setShowMediaLib] = useState(false);
   const inputRef = useRef(null);
 
   const handleFile = async (file) => {
@@ -50,6 +52,11 @@ const ImageUploader = ({ value, onChange, label, error }) => {
     if (inputRef.current) inputRef.current.value = '';
   };
 
+  const handleMediaSelect = (url) => {
+    setPreview(url);
+    onChange(url);
+  };
+
   const currentPreview = preview || value;
 
   return (
@@ -57,7 +64,7 @@ const ImageUploader = ({ value, onChange, label, error }) => {
       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
         {label}
       </label>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {currentPreview && (
           <div className="relative group w-full aspect-video rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
             <img src={currentPreview} alt="Preview" className="w-full h-full object-cover" />
@@ -73,6 +80,14 @@ const ImageUploader = ({ value, onChange, label, error }) => {
               </button>
               <button
                 type="button"
+                onClick={() => setShowMediaLib(true)}
+                className="p-2 bg-white/90 hover:bg-white text-gray-800 rounded-xl transition-colors"
+                title="Choose from Media Library"
+              >
+                <ImageIcon className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
                 onClick={handleRemove}
                 disabled={uploading}
                 className="p-2 bg-red-500/90 hover:bg-red-500 text-white rounded-xl transition-colors"
@@ -83,45 +98,66 @@ const ImageUploader = ({ value, onChange, label, error }) => {
             </div>
           </div>
         )}
-        <label
-          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-          className={`
-            flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-2xl cursor-pointer transition-all
-            ${dragOver ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10' : ''}
-            border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10
-            ${uploading ? 'opacity-50 pointer-events-none' : ''}
-            ${error ? 'border-red-500 bg-red-50 dark:bg-red-900/10' : ''}
-          `}
-        >
-          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            {uploading ? (
-              <div className="flex flex-col items-center gap-2">
-                <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm font-medium text-gray-500">Uploading...</p>
-              </div>
-            ) : (
-              <>
-                <Upload className={`h-8 w-8 mb-2 ${error ? 'text-red-500' : 'text-gray-400'}`} />
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  <span className="text-blue-600 dark:text-blue-400">Click to upload</span> or drag and drop
-                </p>
-                <p className="text-xs text-gray-400">PNG, JPG or WEBP (MAX. 5MB)</p>
-              </>
-            )}
-          </div>
-          <input
-            ref={inputRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleSelect}
-            disabled={uploading}
-          />
-        </label>
+
+        <div className="flex items-center gap-3">
+          <label
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            className={`
+              flex-1 flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-2xl cursor-pointer transition-all
+              ${dragOver ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10' : ''}
+              border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10
+              ${uploading ? 'opacity-50 pointer-events-none' : ''}
+              ${error ? 'border-red-500 bg-red-50 dark:bg-red-900/10' : ''}
+            `}
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              {uploading ? (
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-sm font-medium text-gray-500">Uploading...</p>
+                </div>
+              ) : (
+                <>
+                  <Upload className={`h-8 w-8 mb-2 ${error ? 'text-red-500' : 'text-gray-400'}`} />
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <span className="text-blue-600 dark:text-blue-400">Click to upload</span> or drag and drop
+                  </p>
+                  <p className="text-xs text-gray-400">PNG, JPG or WEBP (MAX. 5MB)</p>
+                </>
+              )}
+            </div>
+            <input
+              ref={inputRef}
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={handleSelect}
+              disabled={uploading}
+            />
+          </label>
+
+          <button
+            type="button"
+            onClick={() => setShowMediaLib(true)}
+            className="flex flex-col items-center justify-center h-32 w-24 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all cursor-pointer shrink-0"
+          >
+            <ImageIcon className="w-6 h-6 text-gray-400 mb-1" />
+            <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400 text-center leading-tight px-1">
+              Media Library
+            </span>
+          </button>
+        </div>
+
         {error && <p className="text-xs font-semibold text-red-500">{error}</p>}
       </div>
+
+      <MediaSelectorModal
+        open={showMediaLib}
+        onClose={() => setShowMediaLib(false)}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 };
