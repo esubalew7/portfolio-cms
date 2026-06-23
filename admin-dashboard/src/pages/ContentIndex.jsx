@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { FileText, Eye, Settings as SettingsIcon, Code, Briefcase, Star, MessageSquare, Monitor, FolderOpen, Menu as MenuIcon, Copyright } from 'lucide-react';
+import { FileText, Eye, Settings as SettingsIcon, Code, Briefcase, Star, MessageSquare, Monitor, FolderOpen, Menu as MenuIcon, Copyright, Share2 } from 'lucide-react';
 import Card from '../components/ui/Card';
 
 const SECTIONS = [
@@ -12,7 +12,8 @@ const SECTIONS = [
   { path: '/dashboard/content/terminal', label: 'Terminal Section', icon: Monitor, desc: 'Interactive terminal commands and responses' },
   { path: '/dashboard/content/contact', label: 'Contact Section', icon: MessageSquare, desc: 'Contact info, form settings, success message' },
   { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon, desc: 'Logo, section visibility toggles, navigation labels. Brand name synced from Hero.' },
-  { path: '/dashboard/content/footer', label: 'Footer Editor', icon: Copyright, desc: 'Copyright text, social media links. Footer name synced from Hero.' },
+  { path: '/dashboard/content/social-links', label: 'Social Links', icon: Share2, desc: 'Centralized management for all social media links. Reflects across Hero & Footer.' },
+  { path: '/dashboard/content/footer', label: 'Footer Editor', icon: Copyright, desc: 'Copyright text, social links now managed in Social Links editor.' },
   { path: '/dashboard/content/seo', label: 'SEO Settings', icon: SettingsIcon, desc: 'Meta tags, Open Graph, social previews' },
 ];
 

@@ -22,6 +22,7 @@ import {
   Copyright,
   Shield,
   Activity,
+  Share2,
 } from 'lucide-react';
 import api from '../../utils/api';
 
@@ -40,6 +41,7 @@ const NAV_GROUPS = [
     expandable: true,
     items: [
       { path: '/dashboard/content/navbar', label: 'Navbar Editor', icon: MenuIcon },
+      { path: '/dashboard/content/social-links', label: 'Social Links', icon: Share2 },
       { path: '/dashboard/content/footer', label: 'Footer Editor', icon: Copyright },
       { path: '/dashboard/content/hero', label: 'Hero Section', icon: Eye },
       { path: '/dashboard/content/about', label: 'About Section', icon: UserIcon },
@@ -88,9 +90,9 @@ const Sidebar = ({ open, onClose, admin }) => {
       : 'A';
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-white dark:bg-gray-950 border-r border-gray-200/50 dark:border-gray-800/50">
+    <div className="flex h-full flex-col bg-white dark:bg-[#0A0F1E] border-r border-gray-200 dark:border-gray-800/60 shadow-[1px_0_2px_-1px_rgba(0,0,0,0.05)] dark:shadow-[1px_0_3px_-1px_rgba(0,0,0,0.3)]">
       {/* Logo */}
-      <div className="flex items-center justify-between px-5 h-16 shrink-0 border-b border-gray-100/50 dark:border-gray-800/50">
+      <div className="flex items-center justify-between px-5 h-16 shrink-0 border-b border-gray-100 dark:border-gray-800/50">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-sm ring-1 ring-white/10">
             <span className="text-white text-sm font-bold">P</span>
@@ -142,19 +144,19 @@ const Sidebar = ({ open, onClose, admin }) => {
                     to={item.path}
                     onClick={onClose}
                     className={`
-                      relative flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-r-xl transition-all duration-150
+                      relative flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-r-xl transition-all duration-200
                       ${active
-                        ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-5 before:bg-blue-500 before:rounded-r-full'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/60 hover:text-gray-900 dark:hover:text-gray-200'
+                        ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3.5px] before:h-5 before:bg-blue-500 before:rounded-r-full before:shadow-sm before:shadow-blue-500/30 font-semibold'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/[0.06] hover:text-gray-900 dark:hover:text-gray-200'
                       }
                     `}
                   >
                     {Icon && (
-                      <span className={`shrink-0 ${active ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600'}`}>
+                      <span className={`shrink-0 transition-colors duration-200 ${active ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}`}>
                         <Icon className="w-[18px] h-[18px]" />
                       </span>
                     )}
-                    <span>{item.label}</span>
+                    <span className="transition-colors duration-200">{item.label}</span>
                   </NavLink>
                 );
               })}

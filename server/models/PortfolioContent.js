@@ -88,7 +88,8 @@ const testimonialsSchema = new mongoose.Schema({
 
 const socialLinkSchema = new mongoose.Schema({
   platform: { type: String, required: true },
-  url: { type: String, required: true },
+  url: { type: String, default: "" },
+  enabled: { type: Boolean, default: true },
 }, { _id: false });
 
 const resumeSchema = new mongoose.Schema({
@@ -138,6 +139,7 @@ const sectionsSchema = new mongoose.Schema({
 const footerSocialSchema = new mongoose.Schema({
   platform: { type: String, required: true },
   url: { type: String, default: "" },
+  enabled: { type: Boolean, default: true },
 }, { _id: false });
 
 const footerSchema = new mongoose.Schema({

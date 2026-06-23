@@ -38,7 +38,7 @@ export { platformIcons };
 export const SocialIconRow = ({ className = "", links: propLinks }) => {
   const content = useContentStore((s) => s.content);
 
-  const links = propLinks || content?.socialLinks || [];
+  const links = (propLinks || content?.socialLinks || []).filter(l => l.enabled !== false);
 
   return (
     <div className={`flex items-center gap-4 ${className}`}>

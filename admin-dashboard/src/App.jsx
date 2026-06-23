@@ -24,6 +24,7 @@ import SEOEditor from './pages/content/SEOEditor';
 import ProjectsEditor from './pages/content/ProjectsEditor';
 import NavbarEditor from './pages/content/NavbarEditor';
 import FooterEditor from './pages/content/FooterEditor';
+import SocialLinksEditor from './pages/content/SocialLinksEditor';
 import Security from './pages/Security';
 import Verify2FA from './pages/auth/Verify2FA';
 import PortfolioMetrics from './pages/dashboard/PortfolioMetrics';
@@ -65,6 +66,7 @@ const App = () => {
                 <Route path="content/seo" element={<SEOEditor />} />
                 <Route path="content/navbar" element={<NavbarEditor />} />
                 <Route path="content/footer" element={<FooterEditor />} />
+                <Route path="content/social-links" element={<SocialLinksEditor />} />
                 <Route path="metrics" element={<PortfolioMetrics />} />
               </Route>
 

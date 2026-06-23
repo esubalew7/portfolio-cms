@@ -3,6 +3,15 @@ import { emitContentSectionUpdated } from "../socket/emitters.js";
 import { createNotification } from "../services/notificationService.js";
 import { propagateHeroToDependents } from "../services/contentPropagationService.js";
 
+const SOCIAL_PLATFORMS_DEFAULT = [
+  { platform: "GitHub", url: "https://github.com/esubalew7", enabled: true },
+  { platform: "LinkedIn", url: "https://linkedin.com/in/esubalew-molla-7a584739b", enabled: true },
+  { platform: "Telegram", url: "https://t.me/Esuman7", enabled: true },
+  { platform: "Facebook", url: "https://facebook.com", enabled: true },
+  { platform: "Twitter", url: "https://twitter.com", enabled: true },
+  { platform: "Instagram", url: "https://instagram.com/esubalew_7_7", enabled: true },
+];
+
 const getDefaultContent = () => ({
   sections: {
     hero: true,
@@ -27,14 +36,7 @@ const getDefaultContent = () => ({
   },
   footer: {
     copyright: "All rights reserved.",
-    socials: [
-      { platform: "GitHub", url: "https://github.com/esubalew7" },
-      { platform: "LinkedIn", url: "https://linkedin.com/in/esubalew-molla-7a584739b" },
-      { platform: "Telegram", url: "https://t.me/Esuman7" },
-      { platform: "Facebook", url: "https://facebook.com" },
-      { platform: "Twitter", url: "https://twitter.com" },
-      { platform: "Instagram", url: "https://instagram.com/esubalew_7_7" },
-    ],
+    socials: SOCIAL_PLATFORMS_DEFAULT,
   },
   hero: {
     greeting: "Hello, I am",
@@ -225,14 +227,7 @@ const getDefaultContent = () => ({
       },
     ],
   },
-  socialLinks: [
-    { platform: "GitHub", url: "https://github.com/esubalew7" },
-    { platform: "LinkedIn", url: "https://linkedin.com/in/esubalew-molla-7a584739b" },
-    { platform: "Telegram", url: "https://t.me/Esuman7" },
-    { platform: "Facebook", url: "https://facebook.com" },
-    { platform: "Twitter", url: "https://twitter.com" },
-    { platform: "Instagram", url: "https://instagram.com/esubalew_7_7" },
-  ],
+  socialLinks: SOCIAL_PLATFORMS_DEFAULT,
   resume: {
     title: "Resume",
     url: "/resume.pdf",
@@ -257,12 +252,38 @@ const getDefaultContent = () => ({
   },
 });
 
+const migrateFooterSocials = async (content) => {
+  const hasFooterSocials = content.footer?.socials?.length > 0;
+  const hasCentralSocials = content.socialLinks?.length > 0;
+
+  if (hasFooterSocials && !hasCentralSocials) {
+    content.socialLinks = content.footer.socials.map(s => ({
+      platform: s.platform,
+      url: s.url || "",
+      enabled: s.enabled !== undefined ? s.enabled : true,
+    }));
+    await content.save();
+  }
+};
+
+const syncSocialLinks = async (content) => {
+  if (content.socialLinks) {
+    content.footer.socials = content.socialLinks.map(s => ({
+      platform: s.platform,
+      url: s.url || "",
+      enabled: s.enabled !== undefined ? s.enabled : true,
+    }));
+  }
+};
+
 export const getContent = async (req, res) => {
   try {
     let content = await PortfolioContent.findOne();
 
     if (!content) {
       content = await PortfolioContent.create(getDefaultContent());
+    } else {
+      await migrateFooterSocials(content);
     }
 
     res.status(200).json({ success: true, data: content });
@@ -296,6 +317,15 @@ export const updateContent = async (req, res) => {
         content[field] = req.body[field];
         updatedFields.push(field);
       }
+    }
+
+    if (updatedFields.includes("socialLinks") && content.socialLinks) {
+      content.footer.socials = content.socialLinks.map(s => ({
+        platform: s.platform,
+        url: s.url || "",
+        enabled: s.enabled !== undefined ? s.enabled : true,
+      }));
+      updatedFields.push("footer");
     }
 
     await content.save();
@@ -334,5 +364,53 @@ export const updateContent = async (req, res) => {
       message: "Server Error",
       error: error.message,
     });
+  }
+};
+
+export const getSocialLinks = async (req, res) => {
+  try {
+    let content = await PortfolioContent.findOne();
+    if (!content) {
+      content = await PortfolioContent.create(getDefaultContent());
+    } else {
+      await migrateFooterSocials(content);
+    }
+    res.status(200).json({ success: true, data: content.socialLinks || [] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
+  }
+};
+
+export const updateSocialLinks = async (req, res) => {
+  try {
+    let content = await PortfolioContent.findOne();
+    if (!content) {
+      content = await PortfolioContent.create(getDefaultContent());
+    }
+
+    content.socialLinks = req.body.socialLinks || [];
+    content.footer.socials = content.socialLinks.map(s => ({
+      platform: s.platform,
+      url: s.url || "",
+      enabled: s.enabled !== undefined ? s.enabled : true,
+    }));
+
+    await content.save();
+
+    emitContentSectionUpdated("socialLinks", content.socialLinks);
+    emitContentSectionUpdated("footer", content.footer);
+
+    await createNotification({
+      type: "content",
+      title: "Social links updated",
+      description: "Social links have been updated",
+      message: "Social Links",
+      relatedId: content._id,
+      relatedModel: "PortfolioContent",
+    });
+
+    res.status(200).json({ success: true, data: content.socialLinks });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
   }
 };

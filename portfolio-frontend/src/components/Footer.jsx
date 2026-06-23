@@ -7,6 +7,7 @@ export const Footer = () => {
   const hero = content?.hero || {};
   const title = hero.name || 'Esubalew';
   const copyright = footer.copyright || `${title}. All rights reserved.`;
+  const socialLinks = content?.socialLinks || footer.socials || [];
 
   return (
     <footer className="bg-gray-50 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 pt-6 pb-8 transition-colors duration-300 relative z-10">
@@ -16,7 +17,7 @@ export const Footer = () => {
             {title}
           </a>
 
-          <SocialIconRow links={footer.socials} className="gap-5" />
+          <SocialIconRow links={socialLinks} className="gap-5" />
         </div>
 
         <div className="flex justify-center border-gray-200 dark:border-gray-800">

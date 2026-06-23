@@ -73,7 +73,7 @@ export const Navbar = () => {
   const scrollTimeoutRef = useRef(null);
 
   const content = useContentStore((s) => s.content);
-  const socialLinks = content?.socialLinks || [];
+  const socialLinks = (content?.socialLinks || []).filter(l => l.enabled !== false);
   const navbar = content?.navbar || {};
   const hero = content?.hero || {};
   const isHomePage = location.pathname === '/';
