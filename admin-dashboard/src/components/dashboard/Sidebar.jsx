@@ -90,9 +90,9 @@ const Sidebar = ({ open, onClose, admin }) => {
       : 'A';
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-white dark:bg-[#0A0F1E] border-r border-gray-200 dark:border-gray-800/60 shadow-[1px_0_2px_-1px_rgba(0,0,0,0.05)] dark:shadow-[1px_0_3px_-1px_rgba(0,0,0,0.3)]">
+    <div className="flex h-full flex-col bg-gray-100 dark:bg-[#0B1220] border-r border-gray-300/60 dark:border-gray-700/30 shadow-[1px_0_3px_-1px_rgba(0,0,0,0.08)] dark:shadow-[1px_0_4px_-1px_rgba(0,0,0,0.4)]">
       {/* Logo */}
-      <div className="flex items-center justify-between px-5 h-16 shrink-0 border-b border-gray-100 dark:border-gray-800/50">
+      <div className="flex items-center justify-between px-5 h-16 shrink-0 border-b border-gray-300/50 dark:border-gray-700/30">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-sm ring-1 ring-white/10">
             <span className="text-white text-sm font-bold">P</span>
@@ -115,13 +115,13 @@ const Sidebar = ({ open, onClose, admin }) => {
         {NAV_GROUPS.map((group) => (
           <div key={group.label}>
             <div className="flex items-center justify-between px-3 mb-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-500">
                 {group.label}
               </p>
               {group.expandable && (
                 <button
                   onClick={() => setContentExpanded(!contentExpanded)}
-                  className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400"
+                  className="p-0.5 rounded hover:bg-white/70 dark:hover:bg-white/[0.06] text-gray-400"
                 >
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${contentExpanded ? '' : '-rotate-90'}`} />
                 </button>
@@ -146,8 +146,8 @@ const Sidebar = ({ open, onClose, admin }) => {
                     className={`
                       relative flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-r-xl transition-all duration-200
                       ${active
-                        ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3.5px] before:h-5 before:bg-blue-500 before:rounded-r-full before:shadow-sm before:shadow-blue-500/30 font-semibold'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/[0.06] hover:text-gray-900 dark:hover:text-gray-200'
+                        ? 'bg-blue-100/70 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3.5px] before:h-5 before:bg-blue-500 before:rounded-r-full before:shadow-sm before:shadow-blue-500/30 font-semibold'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-white/70 dark:hover:bg-white/[0.06] hover:text-gray-900 dark:hover:text-gray-200'
                       }
                     `}
                   >
@@ -166,10 +166,10 @@ const Sidebar = ({ open, onClose, admin }) => {
       </nav>
 
       {/* Profile Card */}
-      <div className="shrink-0 border-t border-gray-100/50 dark:border-gray-800/50 px-3 py-4">
+      <div className="shrink-0 border-t border-gray-300/50 dark:border-gray-700/30 px-3 py-4">
         <button
           onClick={() => navigate('/dashboard/settings')}
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors group"
+          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/70 dark:hover:bg-white/[0.04] transition-colors group"
         >
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-sm font-bold ring-2 ring-white dark:ring-gray-950 shrink-0 overflow-hidden">
             {admin?.profileImage ? (
@@ -191,14 +191,14 @@ const Sidebar = ({ open, onClose, admin }) => {
         <div className="mt-2 flex items-center gap-1">
           <button
             onClick={() => navigate('/dashboard/settings')}
-            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-white/70 dark:hover:bg-white/[0.06] transition-colors"
           >
             <Settings className="w-3.5 h-3.5" />
             Settings
           </button>
           <button
             onClick={handleLogout}
-            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-red-500 dark:text-red-400 hover:bg-red-100/50 dark:hover:bg-red-900/20 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
             Logout

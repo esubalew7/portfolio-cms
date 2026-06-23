@@ -33,7 +33,7 @@ const DashboardInner = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-white dark:bg-[#111827] text-gray-900 dark:text-gray-100">
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

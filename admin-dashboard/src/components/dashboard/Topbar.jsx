@@ -90,7 +90,7 @@ const Topbar = ({ onMenuClick, unreadCount: propUnreadCount, admin }) => {
       : 'A';
 
   return (
-    <header className="sticky top-0 z-30 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shrink-0">
+    <header className="sticky top-0 z-30 bg-white/70 dark:bg-[#111827]/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/30 shrink-0">
       <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Left: Menu button + Breadcrumb */}
         <div className="flex items-center gap-3 min-w-0">
