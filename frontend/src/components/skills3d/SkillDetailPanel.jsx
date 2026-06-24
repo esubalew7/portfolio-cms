@@ -142,7 +142,7 @@ export const SkillDetailPanel = React.memo(({ categoryName }) => {
                   >
                     {slug && (
                       <img
-                        src={`https://cdn.simpleicons.org/${slug}/ffffff`}
+                        src={`https://cdn.simpleicons.org/${slug}`}
                         alt={selectedNode.name}
                         className="w-7 h-7"
                         loading="lazy"

@@ -104,7 +104,6 @@ export const SkillOrbit = React.memo(({
           skill={skill}
           categoryName={category.name}
           index={i}
-          total={items.length}
           orbitIndex={orbitIndex}
           entranceProgress={entranceProgress}
           isFocused={isFocused}

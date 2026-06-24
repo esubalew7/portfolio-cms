@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useTheme } from '../../context/ThemeContext';
@@ -26,10 +26,14 @@ function findNodePosition(categories, skillName) {
   return null;
 }
 
-export const SkillConnections = React.memo(({ categories, entranceProgress }) => {
+function isLineConnected(line, nodeName) {
+  if (!nodeName) return false;
+  return line.source === nodeName || line.target === nodeName;
+}
+
+export const SkillConnections = React.memo(({ categories, entranceProgress, hoveredNode }) => {
   const { isDarkMode } = useTheme();
   const linesRef = useRef();
-  const [dashOffset, setDashOffset] = useState(0);
 
   const lineData = useMemo(() => {
     const data = [];
@@ -51,6 +55,8 @@ export const SkillConnections = React.memo(({ categories, entranceProgress }) =>
                 start: p1,
                 end: p2,
                 color: isDarkMode ? color.primary : color.secondary,
+                source: items[i].name,
+                target: items[j].name,
                 key,
               });
             }
@@ -72,6 +78,8 @@ export const SkillConnections = React.memo(({ categories, entranceProgress }) =>
               start: p1,
               end: p2,
               color: isDarkMode ? '#818cf8' : '#6366f1',
+              source,
+              target,
               key,
             });
           }
@@ -97,12 +105,20 @@ export const SkillConnections = React.memo(({ categories, entranceProgress }) =>
   const colors = useMemo(() => {
     if (lineData.length === 0) return null;
     const col = [];
+    const hasHover = !!hoveredNode;
     for (const line of lineData) {
+      let brightness = 1;
+      if (hasHover) {
+        brightness = isLineConnected(line, hoveredNode.name) ? 1.0 : 0.06;
+      }
       const c = new THREE.Color(line.color);
+      c.r *= brightness;
+      c.g *= brightness;
+      c.b *= brightness;
       col.push(c.r, c.g, c.b, c.r, c.g, c.b);
     }
     return new THREE.Float32BufferAttribute(col, 3);
-  }, [lineData]);
+  }, [lineData, hoveredNode]);
 
   useFrame((state) => {
     if (!linesRef.current || !geometry) return;

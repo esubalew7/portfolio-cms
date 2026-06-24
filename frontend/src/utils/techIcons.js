@@ -64,8 +64,8 @@ export function isTextureReady(name) {
   return img && img.complete && img.naturalWidth > 0;
 }
 
-export function createNodeCanvasTexture(categoryColor, brandColor) {
-  const key = `${categoryColor}-${brandColor}`;
+export function createNodeCanvasTexture(categoryColor, brandColor, isDarkMode = true) {
+  const key = `${categoryColor}-${brandColor}-${isDarkMode}`;
   if (canvasCache.has(key)) return canvasCache.get(key);
 
   const canvas = document.createElement('canvas');
@@ -78,36 +78,51 @@ export function createNodeCanvasTexture(categoryColor, brandColor) {
 
   ctx.clearRect(0, 0, 128, 128);
 
-  const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, r + 12);
-  glow.addColorStop(0, categoryColor + '30');
-  glow.addColorStop(0.5, categoryColor + '10');
-  glow.addColorStop(1, categoryColor + '00');
-  ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r + 12, 0, Math.PI * 2);
-  ctx.fill();
+  if (isDarkMode) {
+    const bgGrad = ctx.createRadialGradient(cx - 15, cy - 15, 5, cx, cy, r);
+    bgGrad.addColorStop(0, categoryColor + '40');
+    bgGrad.addColorStop(0.3, categoryColor + '25');
+    bgGrad.addColorStop(0.7, 'rgba(15, 23, 42, 0.55)');
+    bgGrad.addColorStop(1, 'rgba(15, 23, 42, 0.3)');
+    ctx.fillStyle = bgGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
 
-  const bgGrad = ctx.createRadialGradient(cx - 15, cy - 15, 5, cx, cy, r);
-  bgGrad.addColorStop(0, 'rgba(255,255,255,0.25)');
-  bgGrad.addColorStop(0.4, categoryColor + '20');
-  bgGrad.addColorStop(0.8, categoryColor + '08');
-  bgGrad.addColorStop(1, 'rgba(255,255,255,0.02)');
-  ctx.fillStyle = bgGrad;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fill();
+    ctx.strokeStyle = categoryColor + '70';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
 
-  ctx.strokeStyle = categoryColor + '60';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - 3, 0, Math.PI * 2);
+    ctx.stroke();
+  } else {
+    const bgGrad = ctx.createRadialGradient(cx - 15, cy - 15, 5, cx, cy, r);
+    bgGrad.addColorStop(0, categoryColor + '30');
+    bgGrad.addColorStop(0.3, 'rgba(30, 41, 59, 0.35)');
+    bgGrad.addColorStop(0.7, 'rgba(30, 41, 59, 0.2)');
+    bgGrad.addColorStop(1, 'rgba(30, 41, 59, 0.12)');
+    ctx.fillStyle = bgGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
 
-  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r - 2, 0, Math.PI * 2);
-  ctx.stroke();
+    ctx.strokeStyle = categoryColor + '80';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - 3, 0, Math.PI * 2);
+    ctx.stroke();
+  }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.needsUpdate = true;

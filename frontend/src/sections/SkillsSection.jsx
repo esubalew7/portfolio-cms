@@ -86,7 +86,7 @@ function CategoryPopup({ category, isDarkMode, isVisible }) {
                     style={{ backgroundColor: brandColor + '20' }}
                   >
                     <img
-                      src={`https://cdn.simpleicons.org/${getSlug(item.name)}/ffffff`}
+                      src={`https://cdn.simpleicons.org/${getSlug(item.name)}`}
                       alt={item.name}
                       className="w-3.5 h-3.5"
                       loading="lazy"

@@ -53,7 +53,7 @@ function CameraController({ focusCategory, categories }) {
   return null;
 }
 
-function GalaxyScene({ categories, entranceProgress, focusCategory, onNodeHover }) {
+function GalaxyScene({ categories, entranceProgress, focusCategory, onNodeHover, hoveredNode }) {
   return (
     <>
       <GalaxyLighting />
@@ -70,7 +70,7 @@ function GalaxyScene({ categories, entranceProgress, focusCategory, onNodeHover 
           onNodeHover={onNodeHover}
         />
       ))}
-      <SkillConnections categories={categories} entranceProgress={entranceProgress} />
+      <SkillConnections categories={categories} entranceProgress={entranceProgress} hoveredNode={hoveredNode} />
     </>
   );
 }
@@ -164,6 +164,7 @@ export const SkillGalaxy = React.memo(({
               entranceProgress={entranceProgress}
               focusCategory={focusCategory}
               onNodeHover={() => {}}
+              hoveredNode={hoveredNode}
             />
             <AdaptiveDpr pixelated />
           </Suspense>

@@ -34,7 +34,7 @@ export const SkillNode = React.memo(({
   onHoverChange,
 }) => {
   const { isDarkMode } = useTheme();
-  const meshRef = useRef();
+  const groupRef = useRef();
   const glowRef = useRef();
   const badgeRef = useRef();
   const ringRef = useRef();
@@ -54,14 +54,13 @@ export const SkillNode = React.memo(({
   const brandColor = BRAND_COLORS[skill.name] || primaryColor;
 
   const level = skill.level || 70;
-  const nodeScale = 0.5 + (level / 100) * 0.5;
   const badgeScale = 0.6 + (level / 100) * 0.4;
 
   const delay = orbitIndex * 0.2 + index * 0.04;
 
   const glassTexture = useMemo(() => {
-    return createNodeCanvasTexture(primaryColor, brandColor);
-  }, [primaryColor, brandColor]);
+    return createNodeCanvasTexture(primaryColor, brandColor, isDarkMode);
+  }, [primaryColor, brandColor, isDarkMode]);
 
   const iconTexture = useMemo(() => getIconTexture(skill.name), [skill.name]);
 
@@ -80,7 +79,7 @@ export const SkillNode = React.memo(({
   }, [skill.name, iconTexture]);
 
   useFrame((state) => {
-    if (!meshRef.current) return;
+    if (!badgeRef.current) return;
 
     const elapsed = state.clock.elapsedTime;
     const progress = Math.min(Math.max((elapsed - delay) * 0.8, 0), 1);
@@ -93,34 +92,31 @@ export const SkillNode = React.memo(({
       combinedProgress = 1;
     }
 
-    const currentScale = nodeScale * hoverScaleRef.current * combinedProgress;
-    meshRef.current.scale.setScalar(currentScale);
-
     if (glowRef.current) {
-      const glowScale = nodeScale * (1.2 + Math.sin(elapsed * 1.5 + index) * 0.25) * hoverScaleRef.current * combinedProgress;
-      glowRef.current.scale.setScalar(glowScale);
-      glowRef.current.material.opacity = (0.2 + Math.sin(elapsed * 1 + index * 0.5) * 0.08) * (isHoveredRef.current ? 0.8 : 1);
+      const glowS = badgeScale * 1.6 * hoverScaleRef.current * combinedProgress;
+      glowRef.current.scale.setScalar(glowS);
+      glowRef.current.material.opacity = (0.15 + Math.sin(elapsed * 1.5 + index) * 0.08) * (isHoveredRef.current ? 0.7 : 1);
     }
 
     if (badgeRef.current) {
       const badgeS = badgeScale * hoverScaleRef.current * combinedProgress;
       badgeRef.current.scale.setScalar(badgeS);
-      badgeRef.current.material.opacity = 0.85 * (isHoveredRef.current ? 1 : 0.85);
+      badgeRef.current.material.opacity = (0.9 + Math.sin(elapsed * 1 + index * 0.3) * 0.05) * (isHoveredRef.current ? 1 : 0.9);
     }
 
     if (ringRef.current) {
-      const ringS = badgeScale * 1.05 * hoverScaleRef.current * combinedProgress;
+      const ringS = badgeScale * 1.08 * hoverScaleRef.current * combinedProgress;
       ringRef.current.scale.setScalar(ringS);
-      ringRef.current.material.opacity = (0.5 + Math.sin(elapsed * 2 + index) * 0.15) * (isHoveredRef.current ? 0.9 : 0.5);
+      ringRef.current.material.opacity = (0.6 + Math.sin(elapsed * 2 + index) * 0.15) * (isHoveredRef.current ? 0.95 : 0.6);
     }
 
     if (iconSpriteRef.current && iconLoaded) {
-      const iconS = badgeScale * 0.55 * hoverScaleRef.current * combinedProgress;
+      const iconS = badgeScale * 0.75 * hoverScaleRef.current * combinedProgress;
       iconSpriteRef.current.scale.setScalar(iconS);
-      iconSpriteRef.current.material.opacity = (0.7 + Math.sin(elapsed * 1.2 + index) * 0.1) * (isHoveredRef.current ? 1 : 0.7);
+      iconSpriteRef.current.material.opacity = (0.85 + Math.sin(elapsed * 1.2 + index) * 0.08) * (isHoveredRef.current ? 1 : 0.85);
     }
 
-    meshRef.current.getWorldPosition(worldPos.current);
+    badgeRef.current.getWorldPosition(worldPos.current);
     worldPos.current.project(camera);
     screenPos.current.x = (worldPos.current.x * 0.5 + 0.5) * window.innerWidth;
     screenPos.current.y = (-worldPos.current.y * 0.5 + 0.5) * window.innerHeight;
@@ -158,7 +154,14 @@ export const SkillNode = React.memo(({
   const opacity = isFocused !== undefined ? (isFocused ? 1 : 0.2) : 1;
 
   return (
-    <group position={position}>
+    <group
+      ref={groupRef}
+      position={position}
+      onPointerOver={handlePointerOver}
+      onPointerMove={handlePointerMove}
+      onPointerOut={handlePointerOut}
+      onClick={handleClick}
+    >
       <sprite
         ref={glowRef}
         position={[0, 0, -0.05]}
@@ -167,34 +170,25 @@ export const SkillNode = React.memo(({
         <spriteMaterial
           map={glowTexture}
           transparent
-          opacity={0.2 * opacity}
+          opacity={0.15 * opacity}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
           color={glowColor}
         />
       </sprite>
 
-      <mesh
-        ref={meshRef}
-        onPointerOver={handlePointerOver}
-        onPointerMove={handlePointerMove}
-        onPointerOut={handlePointerOut}
-        onClick={handleClick}
-        scale={[nodeScale, nodeScale, nodeScale]}
+      <sprite
+        ref={ringRef}
+        position={[0, 0, 0.01]}
+        scale={[badgeScale * 1.08, badgeScale * 1.08, 1]}
       >
-        <sphereGeometry args={[GALAXY.node.coreRadius, 20, 20]} />
-        <meshPhysicalMaterial
-          color={new THREE.Color(isDarkMode ? colorSet.primary : colorSet.secondary)}
-          emissive={new THREE.Color(colorSet.glow)}
-          emissiveIntensity={isDarkMode ? 0.4 : 0.15}
-          metalness={0.1}
-          roughness={0.3}
+        <spriteMaterial
+          map={glassTexture}
           transparent
           opacity={0.6 * opacity}
-          clearcoat={0.2}
-          envMapIntensity={0.5}
+          depthWrite={false}
         />
-      </mesh>
+      </sprite>
 
       <sprite
         ref={badgeRef}
@@ -204,20 +198,7 @@ export const SkillNode = React.memo(({
         <spriteMaterial
           map={glassTexture}
           transparent
-          opacity={0.85 * opacity}
-          depthWrite={false}
-        />
-      </sprite>
-
-      <sprite
-        ref={ringRef}
-        position={[0, 0, 0.01]}
-        scale={[badgeScale * 1.05, badgeScale * 1.05, 1]}
-      >
-        <spriteMaterial
-          map={glassTexture}
-          transparent
-          opacity={0.5 * opacity}
+          opacity={0.9 * opacity}
           depthWrite={false}
         />
       </sprite>
@@ -226,7 +207,7 @@ export const SkillNode = React.memo(({
         <sprite
           ref={iconSpriteRef}
           position={[0, 0, 0.06]}
-          scale={[badgeScale * 0.55, badgeScale * 0.55, 1]}
+          scale={[badgeScale * 0.75, badgeScale * 0.75, 1]}
         >
           <spriteMaterial
             map={iconTexture}
