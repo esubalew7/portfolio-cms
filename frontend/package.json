@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.17.14",
     "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.14.0",
     "framer-motion": "^12.38.0",
@@ -21,6 +23,7 @@
     "react-router-dom": "^7.13.2",
     "react-tsparticles": "^2.12.2",
     "socket.io-client": "^4.8.3",
+    "three": "^0.184.0",
     "tsparticles-slim": "^2.12.0",
     "zustand": "^5.0.14"
   },
