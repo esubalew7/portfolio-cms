@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useTheme } from '../../context/ThemeContext';
@@ -6,10 +6,10 @@ import { GALAXY, getCategoryColor } from '../../utils/skillGalaxyConfig';
 import { SkillNode } from './SkillNode';
 import { OrbitCenterIcon } from './OrbitCenterIcon';
 
-function OrbitRing({ radius, color, opacity, entranceProgress, index }) {
+function OrbitRing({ radius, color, opacity, entranceProgress, index, speedMultiplier }) {
   const ringRef = useRef();
   const totalSpeeds = GALAXY.orbits.speeds;
-  const speed = totalSpeeds[index] || 0.03;
+  const baseSpeed = totalSpeeds[index] || 0.03;
 
   const points = useMemo(() => {
     const segments = 80;
@@ -22,13 +22,13 @@ function OrbitRing({ radius, color, opacity, entranceProgress, index }) {
   }, [radius]);
 
   const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry().setFromPoints(points);
-    return geo;
+    return new THREE.BufferGeometry().setFromPoints(points);
   }, [points]);
 
   useFrame((state) => {
     if (!ringRef.current) return;
-    ringRef.current.rotation.z += speed * 0.01;
+    const speedMod = speedMultiplier !== undefined ? speedMultiplier : 1;
+    ringRef.current.rotation.z += baseSpeed * 0.01 * speedMod;
     const progress = Math.min(Math.max((state.clock.elapsedTime - index * 0.3) * 0.5, 0), 1);
     const eased = 1 - Math.pow(1 - progress, 3);
     const combinedOpacity = opacity * (entranceProgress !== undefined ? entranceProgress * eased : 1);
@@ -52,6 +52,8 @@ export const SkillOrbit = React.memo(({
   category,
   orbitIndex,
   entranceProgress,
+  isFocused,
+  onNodeHover,
 }) => {
   const { isDarkMode } = useTheme();
   const groupRef = useRef();
@@ -61,11 +63,13 @@ export const SkillOrbit = React.memo(({
   const tilt = tilts[orbitIndex % tilts.length];
   const colorSet = getCategoryColor(category.name);
   const color = isDarkMode ? colorSet.primary : colorSet.secondary;
-  const items = category.items || [];
+  const [hoveredIndex, setHoveredIndex] = React.useState(-1);
+  const items = category.items;
 
   const nodePositions = useMemo(() => {
-    return items.map((_, i) => {
-      const angle = (i / items.length) * Math.PI * 2;
+    const skillItems = items || [];
+    return skillItems.map((_, i) => {
+      const angle = (i / skillItems.length) * Math.PI * 2;
       return {
         x: Math.cos(angle) * radius,
         y: Math.sin(angle) * radius,
@@ -74,15 +78,24 @@ export const SkillOrbit = React.memo(({
     });
   }, [items, radius]);
 
+  const handleHover = useCallback((isHovered) => {
+    setHoveredIndex(isHovered ? 1 : -1);
+    if (onNodeHover) onNodeHover(category.name, isHovered);
+  }, [category.name, onNodeHover]);
+
+  const groupOpacity = isFocused !== undefined ? (isFocused ? 1 : 0.15) : 1;
+  const speedMultiplier = hoveredIndex >= 0 ? 0.3 : 1;
+
   return (
     <group ref={groupRef} rotation={[tilt, 0, 0]}>
       <OrbitCenterIcon categoryName={category.name} orbitIndex={orbitIndex} />
       <OrbitRing
         radius={radius}
         color={color}
-        opacity={GALAXY.orbits.ringOpacity}
+        opacity={GALAXY.orbits.ringOpacity * groupOpacity}
         entranceProgress={entranceProgress}
         index={orbitIndex}
+        speedMultiplier={speedMultiplier}
       />
       {items.map((skill, i) => (
         <SkillNode
@@ -94,6 +107,8 @@ export const SkillOrbit = React.memo(({
           total={items.length}
           orbitIndex={orbitIndex}
           entranceProgress={entranceProgress}
+          isFocused={isFocused}
+          onHoverChange={handleHover}
         />
       ))}
     </group>

@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useMemo, useRef, Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
+import React, { useState, useCallback, useMemo, useRef, Suspense, useEffect } from 'react';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { AdaptiveDpr } from '@react-three/drei';
 import * as THREE from 'three';
-import { useTheme } from '../../context/ThemeContext';
 import { GALAXY } from '../../utils/skillGalaxyConfig';
+import { preloadIconTexture } from '../../utils/techIcons';
 import { GalaxyInteractionContext } from '../../hooks/useSkillInteraction';
 import { GalaxyBackground } from './GalaxyBackground';
 import { GalaxyLighting } from './GalaxyLighting';
@@ -13,11 +13,52 @@ import { SkillConnections } from './SkillConnections';
 import { SkillTooltip } from './SkillTooltip';
 import { SkillDetailPanel } from './SkillDetailPanel';
 
-function GalaxyScene({ categories, entranceProgress }) {
+function CameraController({ focusCategory, categories }) {
+  const { camera } = useThree();
+  const initialPos = useRef(new THREE.Vector3());
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (!initialized.current) {
+      initialPos.current.copy(camera.position);
+      initialized.current = true;
+    }
+  }, [camera]);
+
+  useFrame(() => {
+    if (!focusCategory || !categories || categories.length === 0) {
+      const target = initialPos.current.clone();
+      camera.position.lerp(target, 0.03);
+      camera.lookAt(0, 0, 0);
+      return;
+    }
+
+    const catIndex = categories.findIndex((c) => c.name === focusCategory);
+    if (catIndex < 0) return;
+
+    const radii = GALAXY.orbits.radii;
+    const radius = radii[catIndex % radii.length];
+    const tilt = (GALAXY.orbits.tilts[catIndex % radii.length] || 0);
+
+    const target = new THREE.Vector3(
+      radius * 1.5,
+      radius * 0.8 + Math.abs(tilt) * 2,
+      radius * 2.5
+    );
+
+    camera.position.lerp(target, 0.04);
+    camera.lookAt(0, 0, 0);
+  });
+
+  return null;
+}
+
+function GalaxyScene({ categories, entranceProgress, focusCategory, onNodeHover }) {
   return (
     <>
       <GalaxyLighting />
       <GalaxyBackground />
+      <CameraController focusCategory={focusCategory} categories={categories} />
       <SkillCore label="FULL STACK" />
       {categories.map((cat, i) => (
         <SkillOrbit
@@ -25,6 +66,8 @@ function GalaxyScene({ categories, entranceProgress }) {
           category={cat}
           orbitIndex={i}
           entranceProgress={entranceProgress}
+          isFocused={focusCategory ? focusCategory === cat.name : undefined}
+          onNodeHover={onNodeHover}
         />
       ))}
       <SkillConnections categories={categories} entranceProgress={entranceProgress} />
@@ -34,17 +77,25 @@ function GalaxyScene({ categories, entranceProgress }) {
 
 export const SkillGalaxy = React.memo(({
   categories,
-  title,
-  subtitle,
   entranceProgress,
+  focusCategory,
 }) => {
-  const { isDarkMode } = useTheme();
   const [hoveredNode, setHoveredNode] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
   const [hoveredScreenPos, setHoveredScreenPos] = useState({ x: 0, y: 0 });
 
   const clearHover = useCallback(() => setHoveredNode(null), []);
   const clearSelection = useCallback(() => setSelectedNode(null), []);
+
+  useEffect(() => {
+    if (categories) {
+      for (const cat of categories) {
+        for (const item of cat.items || []) {
+          preloadIconTexture(item.name);
+        }
+      }
+    }
+  }, [categories]);
 
   const ctxValue = useMemo(() => ({
     hoveredNode,
@@ -55,7 +106,7 @@ export const SkillGalaxy = React.memo(({
     setHoveredScreenPos,
     clearHover,
     clearSelection,
-  }), [hoveredNode, selectedNode, hoveredScreenPos]);
+  }), [hoveredNode, selectedNode, hoveredScreenPos, clearHover, clearSelection]);
 
   const activeCategoryName = useMemo(() => {
     if (hoveredNode) {
@@ -83,13 +134,16 @@ export const SkillGalaxy = React.memo(({
     depth: true,
   }), []);
 
+  const cameraPos = useMemo(() => GALAXY.camera.position.toArray(), []);
+  const cameraFov = GALAXY.camera.fov;
+
   return (
     <GalaxyInteractionContext.Provider value={ctxValue}>
       <div className="relative w-full h-full">
         <Canvas
           camera={{
-            position: GALAXY.camera.position.toArray(),
-            fov: GALAXY.camera.fov,
+            position: cameraPos,
+            fov: cameraFov,
             near: GALAXY.camera.near,
             far: GALAXY.camera.far,
           }}
@@ -105,7 +159,12 @@ export const SkillGalaxy = React.memo(({
           }}
         >
           <Suspense fallback={null}>
-            <GalaxyScene categories={categories} entranceProgress={entranceProgress} />
+            <GalaxyScene
+              categories={categories}
+              entranceProgress={entranceProgress}
+              focusCategory={focusCategory}
+              onNodeHover={() => {}}
+            />
             <AdaptiveDpr pixelated />
           </Suspense>
         </Canvas>
