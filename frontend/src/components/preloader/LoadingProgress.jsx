@@ -29,8 +29,8 @@ export const LoadingProgress = ({ progress, loadingMessage, phase }) => {
   const show = phase === 'progress' || phase === 'collapse' || phase === 'done';
 
   const currentRoleIndex = useMemo(() => {
-    if (progress < 30) return 0;
-    if (progress < 65) return 1;
+    if (progress < 15) return 0;
+    if (progress < 45) return 1;
     return 2;
   }, [progress]);
 

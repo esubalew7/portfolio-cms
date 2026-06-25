@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useContentStore } from '../store/contentStore';
 import { useProjects } from '../context/ProjectContext';
 
-const MIN_DISPLAY_MS = 2600;
+const MIN_DISPLAY_MS = 5000;
 const PHASES = ['logo', 'text', 'neural', 'progress', 'collapse', 'done'];
 
 const loadingMessages = [
@@ -33,9 +33,9 @@ export const usePortfolioLoading = () => {
   useEffect(() => {
     if (phase >= 4) return;
     const timers = [
-      setTimeout(() => { if (phase < 1) setPhase(1); }, 300),
-      setTimeout(() => { if (phase < 2) setPhase(2); }, 800),
-      setTimeout(() => { if (phase < 3) setPhase(3); }, 1400),
+      setTimeout(() => { if (phase < 1) setPhase(1); }, 600),
+      setTimeout(() => { if (phase < 2) setPhase(2); }, 1800),
+      setTimeout(() => { if (phase < 3) setPhase(3); }, 3200),
     ];
     return () => timers.forEach(clearTimeout);
   }, [phase]);
@@ -43,7 +43,7 @@ export const usePortfolioLoading = () => {
   useEffect(() => {
     if (phase < 1 || phase >= 4) return;
     if (visibleChars >= 8) return;
-    const t = setTimeout(() => setVisibleChars((p) => Math.min(p + 1, 8)), 90 + Math.random() * 40);
+    const t = setTimeout(() => setVisibleChars((p) => Math.min(p + 1, 8)), 160 + Math.random() * 80);
     return () => clearTimeout(t);
   }, [phase, visibleChars]);
 
@@ -78,7 +78,7 @@ export const usePortfolioLoading = () => {
     const t2 = setTimeout(() => {
       setPhase(5);
       setIsComplete(true);
-    }, remaining + 700);
+    }, remaining + 800);
 
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [actualLoadingDone]);

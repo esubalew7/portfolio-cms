@@ -17,7 +17,7 @@ export const Preloader = ({ onComplete }) => {
   useEffect(() => {
     if (phase === 'collapse') {
       setFlashActive(true);
-      const t = setTimeout(() => setFlashActive(false), 600);
+      const t = setTimeout(() => setFlashActive(false), 800);
       return () => clearTimeout(t);
     }
   }, [phase]);
