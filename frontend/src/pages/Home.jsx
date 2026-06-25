@@ -40,11 +40,7 @@ export const Home = () => {
 
       {sections.projects !== false && <ProjectsSection />}
 
-      {sections.experience !== false && (
-        <div className="relative bg-gradient-to-t from-gray-50 dark:from-gray-950/80 to-transparent pt-8">
-          <ExperienceSection />
-        </div>
-      )}
+      {sections.experience !== false && <ExperienceSection />}
 
       {sections.contact !== false && (
         <div className="relative bg-gradient-to-t from-gray-50 dark:from-gray-950/80 to-transparent pt-10">
