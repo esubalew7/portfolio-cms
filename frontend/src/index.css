@@ -31,6 +31,18 @@ body {
   @apply bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-100;
 }
 
+body.cursor-hidden,
+body.cursor-hidden * {
+  cursor: none !important;
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  body.cursor-hidden,
+  body.cursor-hidden * {
+    cursor: auto !important;
+  }
+}
+
 
 
 /* Custom Scrollbar */

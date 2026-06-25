@@ -10,6 +10,7 @@ import { Home } from './pages/Home';
 import { Loader } from './components/Loader';
 import { ScrollToTop } from './components/ScrollToTop';
 import { SEOHead } from './components/SEOHead';
+import { CursorSystem } from './components/cursor/CursorSystem';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +28,7 @@ const App = () => {
       <ProjectProvider>
         <ContentProvider>
         <SEOHead />
+        <CursorSystem>
         <BrowserRouter>
           <AnimatePresence>
             {isLoading && <Loader key="loader" />}
@@ -40,6 +42,7 @@ const App = () => {
 
           <ScrollToTop />
         </BrowserRouter>
+        </CursorSystem>
         </ContentProvider>
       </ProjectProvider>
     </ThemeProvider>

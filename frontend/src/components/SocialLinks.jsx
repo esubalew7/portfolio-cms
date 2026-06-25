@@ -49,6 +49,7 @@ export const SocialIconRow = ({ className = "", links: propLinks }) => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.platform}
+          data-cursor="open"
           className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-300 transform hover:scale-110"
         >
           {platformIcons[link.platform] || (

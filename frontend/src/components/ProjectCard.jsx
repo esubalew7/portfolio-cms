@@ -40,6 +40,7 @@ const ProjectCard = ({ project }) => {
           href={liveUrl} 
           target="_blank" 
           rel="noopener noreferrer"
+          data-cursor="explore"
           className="block w-full h-full cursor-pointer relative group/image overflow-hidden"
         >
           {/* Zooming Image */}
@@ -99,6 +100,7 @@ const ProjectCard = ({ project }) => {
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
+            data-cursor="code"
             className="flex-1 text-center py-3.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

@@ -1,0 +1,71 @@
+export const CURSOR = {
+  core: {
+    restSize: 8,
+    hoverSize: 18,
+    activeSize: 14,
+    dark: { color: '#3b82f6', glow: 'rgba(59,130,246,0.6)', glowSpread: 32 },
+    light: { color: '#2563eb', glow: 'rgba(37,99,235,0.4)', glowSpread: 28 },
+  },
+  ring: {
+    restSize: 36,
+    hoverSize: 60,
+    activeSize: 48,
+    borderWidth: 1.5,
+    dark: { color: 'rgba(96,165,250,0.5)', glow: 'rgba(96,165,250,0.15)' },
+    light: { color: 'rgba(37,99,235,0.35)', glow: 'rgba(37,99,235,0.1)' },
+    rotationSpeed: 0.4,
+  },
+  label: {
+    offsetX: 24,
+    offsetY: -24,
+    fontSize: 10,
+    letterSpacing: 1.5,
+  },
+  trail: {
+    maxParticles: 28,
+    baseSize: 3,
+    fadeFactor: 0.85,
+    shrinkFactor: 0.9,
+    minSpeed: 0.3,
+    spawnRate: 1,
+    fastSpawnRate: 3,
+    fastThreshold: 1.5,
+  },
+  glow: {
+    size: 40,
+    dark: { color: 'rgba(59,130,246,0.25)', blur: 20 },
+    light: { color: 'rgba(37,99,235,0.15)', blur: 16 },
+  },
+  depthShadow: {
+    size: 16,
+    dark: { color: 'rgba(0,0,0,0.4)', blur: 12, offsetY: 4 },
+    light: { color: 'rgba(0,0,0,0.15)', blur: 8, offsetY: 3 },
+  },
+  magnetic: {
+    radius: 140,
+    strength: 0.25,
+    lerpSpeed: 0.12,
+  },
+  physics: {
+    positionLerp: 0.18,
+    ringLerp: 0.14,
+    labelLerp: 0.1,
+    springStiffness: 0.02,
+    springDamping: 0.8,
+    velocityInfluence: 0.15,
+  },
+};
+
+export const CURSOR_STATES = {
+  default: { text: '', label: 'default' },
+  click: { text: 'CLICK', label: 'click' },
+  open: { text: 'OPEN', label: 'open' },
+  visit: { text: 'VISIT', label: 'visit' },
+  code: { text: 'CODE', label: 'code' },
+  rotate: { text: 'ROTATE', label: 'rotate' },
+  view: { text: 'VIEW', label: 'view' },
+  explore: { text: 'EXPLORE', label: 'explore' },
+  save: { text: 'SAVE', label: 'save' },
+  delete: { text: 'DELETE', label: 'delete' },
+  upload: { text: 'UPLOAD', label: 'upload' },
+};
