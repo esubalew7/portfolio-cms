@@ -1,13 +1,15 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import useSocket from '../hooks/useSocket';
 
 const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
-  const { socket, status, isConnected } = useSocket();
+  const socketState = useSocket();
+
+  const value = useMemo(() => socketState, [socketState.socket, socketState.status]);
 
   return (
-    <SocketContext.Provider value={{ socket, status, isConnected }}>
+    <SocketContext.Provider value={value}>
       {children}
     </SocketContext.Provider>
   );

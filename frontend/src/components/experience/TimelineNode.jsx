@@ -58,6 +58,7 @@ export const TimelineNode = React.memo(({ item, isActive, isVisible, index }) =>
             src={item.logo}
             alt={item.company || 'logo'}
             className="w-3/5 h-3/5 object-contain"
+            loading="lazy"
           />
         ) : (
           <span

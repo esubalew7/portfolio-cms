@@ -1,11 +1,39 @@
+import React, { Suspense } from 'react';
 import { useContentStore } from '../store/contentStore';
 import { HeroSection } from '../sections/HeroSection';
-import { AboutSection } from '../sections/AboutSection';
-import { SkillsSection } from '../sections/SkillsSection';
-import { ProjectsSection } from '../sections/ProjectsSection';
-import { TerminalSection } from '../sections/TerminalSection';
-import ExperienceSection from '../sections/ExperienceSection';
-import { ContactSection } from '../sections/ContactSection';
+
+const AboutSection = React.lazy(() =>
+  import('../sections/AboutSection').then(m => ({ default: m.AboutSection }))
+);
+const SkillsSection = React.lazy(() =>
+  import('../sections/SkillsSection').then(m => ({ default: m.SkillsSection }))
+);
+const ProjectsSection = React.lazy(() =>
+  import('../sections/ProjectsSection').then(m => ({ default: m.ProjectsSection }))
+);
+const TerminalSection = React.lazy(() =>
+  import('../sections/TerminalSection').then(m => ({ default: m.TerminalSection }))
+);
+const ExperienceSection = React.lazy(() =>
+  import('../sections/ExperienceSection').then(m => ({ default: m.default }))
+);
+const ContactSection = React.lazy(() =>
+  import('../sections/ContactSection').then(m => ({ default: m.ContactSection }))
+);
+
+const SectionFallback = () => (
+  <div className="h-64 flex items-center justify-center">
+    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+  </div>
+);
+
+const sectionWrapper = (Component, className = '') => (
+  <div className={className}>
+    <Suspense fallback={<SectionFallback />}>
+      <Component />
+    </Suspense>
+  </div>
+);
 
 export const Home = () => {
   const sections = useContentStore((s) => s.content?.sections || {});
@@ -20,34 +48,17 @@ export const Home = () => {
 
       {sections.hero !== false && <HeroSection />}
 
-      {sections.terminal !== false && (
-        <div className="relative border-y border-gray-200/50 dark:border-white/5 backdrop-blur-sm bg-white/40 dark:bg-black/10 transition-colors">
-          <TerminalSection />
-        </div>
-      )}
+      {sections.terminal !== false && sectionWrapper(TerminalSection, 'relative border-y border-gray-200/50 dark:border-white/5 backdrop-blur-sm bg-white/40 dark:bg-black/10 transition-colors')}
 
-      {sections.about !== false && (
-        <div className="relative border-y border-gray-200/50 dark:border-white/5 backdrop-blur-sm bg-white/40 dark:bg-black/10 transition-colors">
-          <AboutSection />
-        </div>
-      )}
+      {sections.about !== false && sectionWrapper(AboutSection, 'relative border-y border-gray-200/50 dark:border-white/5 backdrop-blur-sm bg-white/40 dark:bg-black/10 transition-colors')}
 
-      {sections.skills !== false && (
-        <div className="relative bg-gradient-to-b from-transparent via-gray-50/50 to-transparent dark:via-gray-900/30">
-          <SkillsSection />
-        </div>
-      )}
+      {sections.skills !== false && sectionWrapper(SkillsSection, 'relative bg-gradient-to-b from-transparent via-gray-50/50 to-transparent dark:via-gray-900/30')}
 
-      {sections.projects !== false && <ProjectsSection />}
+      {sections.projects !== false && sectionWrapper(ProjectsSection)}
 
-      {sections.experience !== false && <ExperienceSection />}
+      {sections.experience !== false && sectionWrapper(ExperienceSection)}
 
-      {sections.contact !== false && (
-        <div className="relative bg-gradient-to-t from-gray-50 dark:from-gray-950/80 to-transparent pt-10">
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-800 to-transparent"></div>
-          <ContactSection />
-        </div>
-      )}
+      {sections.contact !== false && sectionWrapper(ContactSection, 'relative bg-gradient-to-t from-gray-50 dark:from-gray-950/80 to-transparent pt-10')}
     </div>
   );
 };

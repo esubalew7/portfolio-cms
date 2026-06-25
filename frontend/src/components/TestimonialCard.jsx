@@ -30,7 +30,7 @@ const TestimonialCard = memo(({ name, role, company, image, rating, feedback }, 
       <div className="h-full rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-neutral-900/50 backdrop-blur-xl shadow-lg hover:shadow-xl dark:shadow-black/20 transition-shadow duration-300 p-5 flex flex-col gap-3.5">
         <div className="flex items-center gap-3.5">
           {image ? (
-            <img
+            <img loading="lazy"
               src={image}
               alt={name}
               loading="lazy"

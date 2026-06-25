@@ -59,6 +59,7 @@ export const ExperienceCard = React.memo(({ item, isActive, isVisible }) => {
             src={item.logo}
             alt={item.company || ''}
             className="w-10 h-10 rounded-lg object-cover shrink-0"
+            loading="lazy"
           />
         )}
         <div className="min-w-0 flex-1">

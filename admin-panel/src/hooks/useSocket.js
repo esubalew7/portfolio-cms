@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
 const SOCKET_URL =
@@ -9,10 +9,10 @@ const SOCKET_URL =
 
 export default function useSocket() {
   const [status, setStatus] = useState('disconnected');
-  const socketRef = useRef(null);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socket = io(SOCKET_URL, {
+    const s = io(SOCKET_URL, {
       withCredentials: true,
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -21,36 +21,35 @@ export default function useSocket() {
       reconnectionDelayMax: 5000,
     });
 
-    socket.on('connect', () => {
+    s.on('connect', () => {
       setStatus('connected');
-      socket.emit('join:admin');
+      s.emit('join:admin');
     });
 
-    socket.on('disconnect', () => {
+    s.on('disconnect', () => {
       setStatus('disconnected');
     });
 
-    socket.io.on('reconnect_attempt', () => {
+    s.io.on('reconnect_attempt', () => {
       setStatus('reconnecting');
     });
 
-    socket.io.on('reconnect', () => {
+    s.io.on('reconnect', () => {
       setStatus('connected');
-      socket.emit('join:admin');
+      s.emit('join:admin');
     });
 
-    socket.on('connect_error', (err) => {
+    s.on('connect_error', (err) => {
       console.error('[Socket] Connection error:', err.message);
       setStatus('disconnected');
     });
 
-    socketRef.current = socket;
+    setSocket(s);
 
     return () => {
-      socket.disconnect();
-      socketRef.current = null;
+      s.disconnect();
     };
   }, []);
 
-  return { socket: socketRef.current, status, isConnected: status === 'connected' };
+  return { socket, status, isConnected: status === 'connected' };
 }

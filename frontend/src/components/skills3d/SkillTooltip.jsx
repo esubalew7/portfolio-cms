@@ -57,7 +57,7 @@ export const SkillTooltip = React.memo(({ categoryName }) => {
               className="w-8 h-8 rounded-lg flex items-center justify-center text-lg font-bold shadow-sm shrink-0"
               style={{ backgroundColor: brandColor + '20', color: brandColor }}
             >
-              <img
+              <img loading="lazy"
                 src={`https://cdn.simpleicons.org/${hoveredNode.name.toLowerCase().replace(/[^a-z0-9]+/g, '')}`}
                 alt={hoveredNode.name}
                 className="w-5 h-5"

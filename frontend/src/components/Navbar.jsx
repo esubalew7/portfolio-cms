@@ -246,7 +246,7 @@ export const Navbar = () => {
           className="text-[22px] font-extrabold tracking-tight flex items-center gap-2 group cursor-pointer select-none"
         >
           {logoUrl ? (
-            <img src={logoUrl} alt={brandName} className="w-8 h-8 rounded-lg object-cover" />
+            <img src={logoUrl} alt={brandName} className="w-8 h-8 rounded-lg object-cover" loading="lazy" />
           ) : (
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-base font-bold shadow-[0_0_15px_rgba(59,130,246,0.35)] transition-shadow duration-300 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
               {brandName.charAt(0).toUpperCase()}

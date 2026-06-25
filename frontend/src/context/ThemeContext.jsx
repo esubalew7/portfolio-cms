@@ -1,10 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 
 const ThemeContext = createContext(undefined);
 
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check localStorage or system preference on initial load
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme === 'dark';
@@ -23,10 +22,12 @@ export const ThemeProvider = ({ children }) => {
     }
   }, [isDarkMode]);
 
-  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+  const toggleTheme = useCallback(() => setIsDarkMode((prev) => !prev), []);
+
+  const value = useMemo(() => ({ isDarkMode, toggleTheme }), [isDarkMode, toggleTheme]);
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

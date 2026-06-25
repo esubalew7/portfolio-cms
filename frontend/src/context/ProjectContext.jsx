@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import api from '../utils/api';
 import useRealtimeProjects from '../hooks/useRealtimeProjects';
 
@@ -18,12 +18,11 @@ export const ProjectProvider = ({ children }) => {
       setError(null);
       setLoading(false);
     } catch (err) {
-      console.error('Error fetching projects:', err);
-
-      const isNetworkError = err.code === 'ECONNABORTED' ||
-                            err.message.includes('Network Error') ||
-                            err.message.includes('Failed to fetch') ||
-                            !err.response;
+      const isNetworkError =
+        err.code === 'ECONNABORTED' ||
+        err.message?.includes('Network Error') ||
+        err.message?.includes('Failed to fetch') ||
+        !err.response;
 
       if (isNetworkError) {
         setError('Server is waking up, please wait...');
@@ -54,7 +53,7 @@ export const ProjectProvider = ({ children }) => {
     };
   }, []);
 
-  const addProject = async (projectData) => {
+  const addProject = useCallback(async (projectData) => {
     try {
       const response = await api.post('/api/projects', projectData);
       setProjects((prev) => [...prev, response]);
@@ -64,9 +63,9 @@ export const ProjectProvider = ({ children }) => {
       setError(errorMessage);
       throw new Error(errorMessage);
     }
-  };
+  }, []);
 
-  const updateProject = async (id, projectData) => {
+  const updateProject = useCallback(async (id, projectData) => {
     try {
       const response = await api.put(`/api/projects/${id}`, projectData);
       setProjects((prev) =>
@@ -78,9 +77,9 @@ export const ProjectProvider = ({ children }) => {
       setError(errorMessage);
       throw new Error(errorMessage);
     }
-  };
+  }, []);
 
-  const deleteProject = async (id) => {
+  const deleteProject = useCallback(async (id) => {
     try {
       await api.delete(`/api/projects/${id}`);
       setProjects((prev) => prev.filter((p) => p._id !== id && p.id !== id));
@@ -90,21 +89,15 @@ export const ProjectProvider = ({ children }) => {
       setError(errorMessage);
       throw new Error(errorMessage);
     }
-  };
+  }, []);
+
+  const value = useMemo(() => ({
+    projects, loading, error, fetchProjects, refreshProjects,
+    addProject, updateProject, deleteProject
+  }), [projects, loading, error, fetchProjects, refreshProjects, addProject, updateProject, deleteProject]);
 
   return (
-    <ProjectContext.Provider
-      value={{
-        projects,
-        loading,
-        error,
-        fetchProjects,
-        refreshProjects,
-        addProject,
-        updateProject,
-        deleteProject
-      }}
-    >
+    <ProjectContext.Provider value={value}>
       {children}
     </ProjectContext.Provider>
   );

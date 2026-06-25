@@ -134,6 +134,7 @@ export const HeroSection = () => {
                   src={hero?.image || '/images/esu2.png'}
                   alt={hero?.name || 'Portfolio'}
                   className="w-full h-full object-cover object-top"
+                  loading="lazy"
                 />
               </motion.div>
             </motion.div>

@@ -14,7 +14,10 @@ const SECTION_EVENTS = [
 
 export default function useRealtimeContent(onContentEvent) {
   const callbackRef = useRef(onContentEvent);
-  callbackRef.current = onContentEvent;
+
+  useEffect(() => {
+    callbackRef.current = onContentEvent;
+  }, [onContentEvent]);
 
   useEffect(() => {
     const socket = connectPortfolio();

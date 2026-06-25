@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { connectPortfolio, disconnectPortfolio } from '../services/socket';
 
 const PROJECT_EVENTS = ['project:create', 'project:update', 'project:delete'];
 
 export default function useRealtimeProjects(onProjectEvent) {
+  const callbackRef = useRef(onProjectEvent);
+
+  useEffect(() => {
+    callbackRef.current = onProjectEvent;
+  }, [onProjectEvent]);
+
   useEffect(() => {
     const socket = connectPortfolio();
 
     const handler = (data) => {
-      onProjectEvent(data);
+      callbackRef.current?.(data);
     };
 
     for (const event of PROJECT_EVENTS) {
@@ -21,5 +27,5 @@ export default function useRealtimeProjects(onProjectEvent) {
       }
       disconnectPortfolio();
     };
-  }, [onProjectEvent]);
+  }, []);
 }

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useCallback, useRef } from 'react';
+import { createContext, useContext, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useContentStore } from '../store/contentStore';
 import useRealtimeContent from '../hooks/useRealtimeContent';
 import useRealtimeProjects from '../hooks/useRealtimeProjects';
@@ -32,8 +32,10 @@ export function ContentProvider({ children }) {
     };
   }, []);
 
+  const value = useMemo(() => ({ refreshContent }), [refreshContent]);
+
   return (
-    <ContentContext.Provider value={{ refreshContent }}>
+    <ContentContext.Provider value={value}>
       {children}
     </ContentContext.Provider>
   );

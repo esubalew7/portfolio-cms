@@ -44,7 +44,7 @@ const ProjectCard = ({ project }) => {
           className="block w-full h-full cursor-pointer relative group/image overflow-hidden"
         >
           {/* Zooming Image */}
-          <img
+          <img loading="lazy"
             src={imageSrc}
             alt={project.title || "Project Image"}
             onLoad={() => setImageLoaded(true)}
