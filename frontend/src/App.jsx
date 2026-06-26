@@ -9,7 +9,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { Home } from './pages/Home';
 import { ScrollToTop } from './components/ScrollToTop';
 import { SEOHead } from './components/SEOHead';
-import { CursorSystem } from './components/cursor/CursorSystem';
+import { Cursor } from './components/cursor/Cursor';
 import { Preloader } from './components/preloader/Preloader';
 
 const App = () => {
@@ -33,7 +33,7 @@ const App = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <CursorSystem>
+            <Cursor>
             <BrowserRouter>
               <Routes>
                 <Route element={<MainLayout />}>
@@ -42,7 +42,7 @@ const App = () => {
               </Routes>
               <ScrollToTop />
             </BrowserRouter>
-            </CursorSystem>
+            </Cursor>
           </motion.div>
         )}
         </ContentProvider>

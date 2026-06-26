@@ -62,16 +62,3 @@ export function getInteractionState(target) {
   return null;
 }
 
-export function setupInteractionObserver() {
-  const observer = new MutationObserver(() => {
-    const elements = document.querySelectorAll('[data-cursor]');
-    for (const el of elements) {
-      const state = el.dataset.cursor;
-      if (state && INTERACTION_ELEMENTS[state]) {
-        el.dataset.cursorState = INTERACTION_ELEMENTS[state].state;
-      }
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  return () => observer.disconnect();
-}
