@@ -13,7 +13,7 @@
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.17.14",
     "axios": "^1.14.0",
-    "framer-motion": "^12.38.0",
+    "framer-motion": "^12.43.0",
     "lucide-react": "^0.460.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

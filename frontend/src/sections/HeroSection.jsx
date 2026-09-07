@@ -1,146 +1,140 @@
+import React, { Suspense, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useTypewriter } from '../hooks/useTypewriter';
-import { SocialIconRow } from '../components/SocialLinks';
 import { useContentStore } from '../store/contentStore';
 import { HeroSkeleton } from '../components/SkeletonLoader';
-import { HeroCanvas } from '../components/hero3d/HeroCanvas';
+import { AvailabilityBadge } from '../components/hero/AvailabilityBadge';
+import { EditorialHeadline } from '../components/hero/EditorialHeadline';
+import { HeroCTA } from '../components/hero/HeroCTA';
+import { FloatingMetrics } from '../components/hero/FloatingMetrics';
+import { ErrorBoundary } from '../components/common/ErrorBoundary';
+
+// Lazy-load the heavy 3D WebGL Canvas so critical editorial typography renders instantaneously
+const LazyHeroCanvas = React.lazy(() => import('../components/hero/HeroCanvas'));
+
+function Canvas3DPlaceholder() {
+  return (
+    <div className="w-full h-[380px] sm:h-[460px] md:h-[520px] lg:h-[600px] flex items-center justify-center">
+      <div className="relative flex items-center justify-center">
+        {/* Subtle pulsating architectural ring placeholder */}
+        <div className="w-32 h-32 rounded-full border border-border-subtle animate-ping opacity-20" />
+        <div className="absolute w-24 h-24 rounded-full border border-accent/30 animate-pulse" />
+        <div className="absolute w-2 h-2 rounded-full bg-accent" />
+      </div>
+    </div>
+  );
+}
+
+function ScrollDiscoveryIndicator() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 1.2, duration: 0.8 }}
+      className="hidden md:flex flex-col items-center gap-2 pt-12 pb-4 text-content-muted select-none"
+    >
+      <span className="text-[11px] font-code tracking-widest uppercase text-content-muted/80">
+        Explore Systems
+      </span>
+      <motion.div
+        animate={{ y: [0, 6, 0] }}
+        transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+        className="w-5 h-8 rounded-full border border-border-subtle flex items-start justify-center p-1"
+      >
+        <div className="w-1 h-2 rounded-full bg-accent/80" />
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export const HeroSection = () => {
   const { content, loading, error, retry } = useContentStore();
-  const { hero, resume } = content;
-  const typedText = useTypewriter(hero?.titles || []);
+  const { hero, resume } = content || {};
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2 },
-    },
-  };
+  // Cinematic sequence state: Mount 3D after initial critical typography paint
+  const [mount3D, setMount3D] = useState(false);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: 'easeOut' },
-    },
-  };
+  useEffect(() => {
+    // 1.5s cinematic reveal sequence delay for 3D mounting to guarantee 100% smooth FCP
+    const timer = setTimeout(() => {
+      setMount3D(true);
+    }, 1200);
 
-  if (loading) return <HeroSkeleton />;
-  if (error)
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading && !hero?.name) return <HeroSkeleton />;
+
+  if (error && !hero?.name) {
     return (
-      <section className="relative min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-red-500 dark:text-red-400 font-medium">{error}</p>
+      <section className="relative min-h-[70vh] flex items-center justify-center px-6">
+        <div className="text-center space-y-4 max-w-md p-8 rounded-lg bg-surface-base border border-border shadow-soft">
+          <p className="text-sm font-medium text-warning">{error}</p>
           <button
             onClick={retry}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+            className="px-6 py-2.5 rounded-md bg-accent text-accent-foreground font-medium text-sm transition-colors hover:bg-accent-hover"
           >
-            Retry
+            Retry Connection
           </button>
         </div>
       </section>
     );
+  }
 
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center py-0 lg:py-10 overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-between pt-16 md:pt-24 lg:pt-28 pb-12 overflow-hidden bg-noise"
     >
-      <div className="absolute inset-0 z-0">
-        <HeroCanvas />
+      {/* 0.0s Atmospheric Aurora and Radial Spotlight Background Layers */}
+      <div className="absolute inset-0 bg-aurora pointer-events-none -z-10" aria-hidden="true" />
+      <div className="absolute top-1/4 right-10 w-[600px] h-[600px] bg-radial-glow opacity-80 pointer-events-none -z-10" aria-hidden="true" />
+
+      {/* 12-Column Responsive Editorial Container */}
+      <div className="editorial-container flex-grow flex items-center w-full z-10">
+        <div className="editorial-grid w-full items-center">
+          {/* Left: 7 Columns Editorial Storytelling */}
+          <div className="col-span-12 lg:col-span-7 space-y-7 lg:space-y-9 pr-0 lg:pr-6">
+            {/* 0.8s Availability Badge */}
+            <AvailabilityBadge statusText="Available for Engineering Roles & Systems Architecture" />
+
+            {/* 0.3s Monumental Editorial Headline */}
+            <EditorialHeadline hero={hero} />
+
+            {/* 0.8s Product-Level Actions (Magnetic CTA + Resume) */}
+            <HeroCTA cta={hero?.cta} resumeUrl={resume?.url} />
+
+            {/* Floating Senior Engineering Metrics */}
+            <FloatingMetrics />
+          </div>
+
+          {/* Right: 5 Columns Signature Engineering Constellation (3D) */}
+          <div className="col-span-12 lg:col-span-5 relative flex items-center justify-center mt-10 lg:mt-0">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.0, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full relative"
+            >
+              {mount3D ? (
+                <ErrorBoundary fallback={<Canvas3DPlaceholder />}>
+                  <Suspense fallback={<Canvas3DPlaceholder />}>
+                    <LazyHeroCanvas />
+                  </Suspense>
+                </ErrorBoundary>
+              ) : (
+                <Canvas3DPlaceholder />
+              )}
+            </motion.div>
+          </div>
+        </div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-1 relative z-10 w-full max-w-7xl">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 sm:gap-12 lg:gap-28">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="w-full md:w-1/2 lg:w-1/2 space-y-6 md:space-y-8 pointer-events-auto text-center md:text-left flex flex-col items-center md:items-start lg:pl-12"
-          >
-            <motion.div variants={itemVariants}>
-              <p className="text-blue-600 dark:text-blue-400 font-bold tracking-widest uppercase mb-4 text-sm md:text-base">
-                {hero?.greeting || 'Hello, I am'}
-              </p>
-              <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2">
-                {hero?.name || ''}
-              </h1>
-
-              <div className="h-12 md:h-16 flex items-center mt-4">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300">
-                  A passionate <br className="md:hidden" />
-                  <span className="inline-block text-blue-600 dark:text-blue-400 border-r-4 border-blue-600 dark:border-blue-400 pr-2 ml-1 animate-pulse">
-                    {typedText}
-                  </span>
-                </h2>
-              </div>
-
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-lg leading-relaxed mt-6">
-                {hero?.description || ''}
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-6 w-full sm:w-auto">
-                {hero?.cta?.primary?.text && (
-                  <a
-                    href={hero.cta.primary.link || '#projects'}
-                    className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-blue-500/30 w-full sm:w-auto text-lg text-center"
-                  >
-                    {hero.cta.primary.text}
-                  </a>
-                )}
-                <a
-                  href={resume?.url || hero?.cta?.secondary?.link || '/resume.pdf'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-full font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md w-full sm:w-auto text-lg hover:border-blue-200 dark:hover:border-gray-600 text-center"
-                >
-                  {hero?.cta?.secondary?.text || resume?.buttonText || 'Download Resume'}
-                </a>
-              </div>
-
-              <div className="pt-6">
-                <SocialIconRow className="gap-5 lg:gap-6 scale-105 origin-center md:origin-left" />
-              </div>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85, y: 20 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.4, ease: 'easeOut' }}
-            viewport={{ once: true }}
-            className="w-full md:w-1/2 lg:w-2/5 flex justify-center md:justify-end pointer-events-auto mt-8 md:mt-0"
-          >
-            <motion.div
-              animate={{ y: [-8, 8, -8] }}
-              transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }}
-              className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem]"
-            >
-              <div
-                className="absolute -inset-8 rounded-full
-                bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.05)_0%,_transparent_75%)]
-                dark:bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.03)_0%,_transparent_75%)]
-                blur-2xl pointer-events-none"
-              />
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="relative w-full h-full rounded-full overflow-hidden z-10"
-              >
-                <img
-                  src={hero?.image || '/images/esu2.png'}
-                  alt={hero?.name || 'Portfolio'}
-                  className="w-full h-full object-cover object-top"
-                  loading="lazy"
-                />
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
+      {/* Editorial Scroll Discovery Anchor */}
+      <div className="w-full flex justify-center z-10">
+        <ScrollDiscoveryIndicator />
       </div>
     </section>
   );
 };
+
+export default HeroSection;
