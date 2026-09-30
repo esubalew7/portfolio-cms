@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import api from '../utils/api';
-import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,15 @@ const Login = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [loginNotice, setLoginNotice] = useState('');
+  const [isForgotMode, setIsForgotMode] = useState(false);
+  const [resetCodeSent, setResetCodeSent] = useState(false);
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
+  const [resetError, setResetError] = useState('');
+  const [isResetLoading, setIsResetLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -98,6 +107,7 @@ const Login = () => {
 
     setIsLoading(true);
     setLoginError('');
+    setLoginNotice('');
 
     try {
       const data = await api.post('/api/auth/login', {
@@ -121,6 +131,74 @@ const Login = () => {
     }
   };
 
+  const handleRequestReset = async (e) => {
+    e.preventDefault();
+    setResetError('');
+    setResetMessage('');
+    setIsResetLoading(true);
+
+    try {
+      await api.post('/api/auth/forgot-password', { email: formData.email });
+      setResetCodeSent(true);
+      setResetMessage('If this email is authorized, a verification code has been sent.');
+    } catch (error) {
+      setResetError(error.message || 'Could not send a verification code. Please try again.');
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setResetError('');
+    setResetMessage('');
+
+    if (newPassword !== confirmPassword) {
+      setResetError('The passwords do not match.');
+      return;
+    }
+
+    setIsResetLoading(true);
+    try {
+      const data = await api.post('/api/auth/reset-password', {
+        email: formData.email,
+        code: resetCode,
+        password: newPassword,
+      });
+      setIsForgotMode(false);
+      setResetCodeSent(false);
+      setResetCode('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setResetMessage('');
+      setLoginNotice(data.message || 'Password reset successfully. You can now sign in.');
+      setFormData((previous) => ({ ...previous, password: '' }));
+    } catch (error) {
+      setResetError(error.message || 'Could not reset the password. Check the code and try again.');
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+
+  const openForgotPassword = () => {
+    setIsForgotMode(true);
+    setResetCodeSent(false);
+    setResetCode('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setResetError('');
+    setResetMessage('');
+    setLoginError('');
+    setLoginNotice('');
+  };
+
+  const returnToSignIn = () => {
+    setIsForgotMode(false);
+    setResetError('');
+    setResetMessage('');
+    setLoginError('');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -130,15 +208,16 @@ const Login = () => {
             <Lock className="h-6 w-6 text-white" />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
-            Admin Login
+            {isForgotMode ? 'Reset Password' : 'Admin Login'}
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to access the admin dashboard
+            {isForgotMode ? 'Verify your email to choose a new password' : 'Sign in to access the admin dashboard'}
           </p>
         </div>
 
         {/* Login Form */}
         <div className="bg-white dark:bg-gray-800 py-8 px-6 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
+          {!isForgotMode && <>
           {/* Google Login Button */}
           <div className="mb-6">
             <div className="flex justify-center">
@@ -174,8 +253,10 @@ const Login = () => {
               </span>
             </div>
           </div>
+          </>}
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={isForgotMode ? (resetCodeSent ? handleResetPassword : handleRequestReset) : handleSubmit}>
+            {!isForgotMode && <>
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -282,6 +363,94 @@ const Login = () => {
                 )}
               </button>
             </div>
+            <div className="text-right">
+              <button type="button" onClick={openForgotPassword} className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                Forgot password?
+              </button>
+            </div>
+            {loginNotice && <p role="status" className="text-sm text-green-700 dark:text-green-400">{loginNotice}</p>}
+            </>}
+
+            {isForgotMode && <>
+              <div>
+                <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Admin email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    id="reset-email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={formData.email}
+                    onChange={(event) => setFormData((previous) => ({ ...previous, email: event.target.value }))}
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                    placeholder="Enter your admin email"
+                  />
+                </div>
+              </div>
+
+              {resetCodeSent && <>
+                <div>
+                  <label htmlFor="reset-code" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email verification code</label>
+                  <input
+                    id="reset-code"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    maxLength={6}
+                    pattern="[0-9]{6}"
+                    required
+                    value={resetCode}
+                    onChange={(event) => setResetCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                    placeholder="6-digit code"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New password</label>
+                  <input
+                    id="new-password"
+                    type="password"
+                    autoComplete="new-password"
+                    minLength={8}
+                    required
+                    value={newPassword}
+                    onChange={(event) => setNewPassword(event.target.value)}
+                    className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                    placeholder="Use upper/lowercase, a number, and a symbol"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm new password</label>
+                  <input
+                    id="confirm-password"
+                    type="password"
+                    autoComplete="new-password"
+                    minLength={8}
+                    required
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                    placeholder="Enter the new password again"
+                  />
+                </div>
+              </>}
+
+              {resetMessage && <p role="status" className="text-sm text-green-700 dark:text-green-400">{resetMessage}</p>}
+              {resetError && <p role="alert" className="text-sm text-red-700 dark:text-red-400">{resetError}</p>}
+
+              <button
+                type="submit"
+                disabled={isResetLoading}
+                className="w-full flex justify-center items-center py-2 px-4 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isResetLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Working...</> : resetCodeSent ? 'Verify code and reset password' : 'Send verification code'}
+              </button>
+              {resetCodeSent && <button type="button" onClick={handleRequestReset} disabled={isResetLoading} className="w-full text-sm text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50">Send a new code</button>}
+              <button type="button" onClick={returnToSignIn} className="w-full flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                <ArrowLeft className="h-4 w-4" /> Back to sign in
+              </button>
+            </>}
           </form>
 
 

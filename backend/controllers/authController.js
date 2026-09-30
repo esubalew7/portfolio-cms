@@ -1,5 +1,7 @@
 // Import User model
 import User from "../models/User.js";
+import PasswordResetCode from "../models/PasswordResetCode.js";
+import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
 
 // Import jsonwebtoken
 import jwt from "jsonwebtoken";
@@ -13,6 +15,7 @@ import {
 
 import { createNotification } from "../services/notificationService.js";
 import { emitProfileUpdate } from "../socket/emitters.js";
+import { sendPasswordResetCode } from "../services/emailService.js";
 
 
 // ========================================
@@ -218,6 +221,105 @@ export const login = async (req, res) => {
             error: error.message,
         });
     }
+};
+
+const passwordResetCodeHash = (email, code) => createHmac('sha256', process.env.JWT_SECRET)
+  .update(`${email}:${code}`)
+  .digest('hex');
+
+export const requestPasswordReset = async (req, res) => {
+  const genericResponse = {
+    success: true,
+    message: 'If this email is authorized, a reset code has been sent.',
+  };
+
+  try {
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    if (!email || !adminEmail || email !== adminEmail || !process.env.JWT_SECRET) {
+      return res.status(200).json(genericResponse);
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(200).json(genericResponse);
+
+    const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+    await PasswordResetCode.findOneAndUpdate(
+      { email },
+      { codeHash: passwordResetCodeHash(email, code), attempts: 0, expiresAt },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+
+    try {
+      await sendPasswordResetCode(email, code);
+    } catch (mailError) {
+      await PasswordResetCode.deleteOne({ email });
+      throw mailError;
+    }
+
+    return res.status(200).json(genericResponse);
+  } catch (error) {
+    console.error('Password reset email error:', error.message);
+    return res.status(503).json({
+      success: false,
+      message: 'Unable to send a reset code right now. Check the server email configuration and try again.',
+    });
+  }
+};
+
+export const resetPasswordWithCode = async (req, res) => {
+  try {
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const code = typeof req.body.code === 'string' ? req.body.code.trim() : '';
+    const password = typeof req.body.password === 'string' ? req.body.password : '';
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+
+    if (!email || email !== adminEmail || !/^\d{6}$/.test(code)) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset code.' });
+    }
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',
+      });
+    }
+
+    const resetRecord = await PasswordResetCode.findOne({ email });
+    if (!resetRecord || resetRecord.expiresAt <= new Date() || resetRecord.attempts >= 5) {
+      if (resetRecord) await PasswordResetCode.deleteOne({ _id: resetRecord._id });
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset code.' });
+    }
+
+    const submittedHash = Buffer.from(passwordResetCodeHash(email, code), 'hex');
+    const storedHash = Buffer.from(resetRecord.codeHash, 'hex');
+    const codeMatches = submittedHash.length === storedHash.length && timingSafeEqual(submittedHash, storedHash);
+    if (!codeMatches) {
+      resetRecord.attempts += 1;
+      if (resetRecord.attempts >= 5) await resetRecord.deleteOne();
+      else await resetRecord.save();
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset code.' });
+    }
+
+    const consumed = await PasswordResetCode.findOneAndDelete({ _id: resetRecord._id, codeHash: resetRecord.codeHash });
+    if (!consumed) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset code.' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired reset code.' });
+
+    user.password = password;
+    user.passwordChangedAt = new Date();
+    await user.save();
+    clearTokenCookie(res);
+
+    return res.status(200).json({ success: true, message: 'Password reset successfully. You can now sign in.' });
+  } catch (error) {
+    console.error('Password reset error:', error.message);
+    return res.status(500).json({ success: false, message: 'Unable to reset the password right now.' });
+  }
 };
 
 // ========================================

@@ -32,3 +32,25 @@ export const changePasswordLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const passwordResetRequestLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  message: {
+    success: false,
+    message: 'Too many reset requests. Please try again in 1 hour.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const passwordResetVerifyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: {
+    success: false,
+    message: 'Too many password reset attempts. Please try again later.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
