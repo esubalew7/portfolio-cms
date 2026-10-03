@@ -2,9 +2,9 @@
 import express from "express";
 
 // Import controller functions
-import { register, login, googleLogin, getMe, updateProfile, uploadProfileImage, changePassword, logout } from "../controllers/authController.js";
+import { register, login, googleLogin, getMe, updateProfile, uploadProfileImage, changePassword, logout, requestPasswordReset, resetPasswordWithCode } from "../controllers/authController.js";
 import protect from "../middleware/authMiddleware.js";
-import { changePasswordLimiter } from "../middleware/rateLimiter.js";
+import { changePasswordLimiter, passwordResetRequestLimiter, passwordResetVerifyLimiter } from "../middleware/rateLimiter.js";
 import upload from "../middleware/upload.js";
 
 // Create router
@@ -22,6 +22,9 @@ router.post("/register", register);
 // @desc    Login admin
 // ===============================
 router.post("/login", login);
+
+router.post("/forgot-password", passwordResetRequestLimiter, requestPasswordReset);
+router.post("/reset-password", passwordResetVerifyLimiter, resetPasswordWithCode);
 
 // ===============================
 // @route   POST /api/auth/google
